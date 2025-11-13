@@ -81,7 +81,8 @@ model LuckyNumber {
   drawId      String
   draw        Draw       @relation(fields: [drawId], references: [id])
   purchase    Purchase[]
-  winner      Winner[]
+  winnerId    String?
+  winner      Winner?
 
   @@unique([number, drawId])
 }
