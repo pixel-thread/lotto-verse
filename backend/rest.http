@@ -1,0 +1,180 @@
+### 
+
+@drawId = c076ed8a-a9ea-4e71-b4f0-16156dd5a452
+@luckyNumberId = 88f63943-af43-4ccf-9ce2-0625b3c875e1
+@userId = d8bb68ec-6c30-49c5-87f4-f41c471a78b0
+
+
+### 
+
+# @name me
+
+GET {{NEXT_PUBLIC_API_BASE_URL}}/auth HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+
+### 
+
+# @name Admin Create monthly Draw
+
+POST {{NEXT_PUBLIC_API_BASE_URL}}/admin/draw HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+{
+  "digitsCount": 5,
+  "endRange": 200,
+  "prize": {
+    "amount": 1000,
+    "description": "This is a test draw"
+  },
+  "startRange": 1
+}
+
+
+### 
+
+# @name Admin Get All monthly Draw
+
+GET {{NEXT_PUBLIC_API_BASE_URL}}/admin/draw HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+
+### 
+
+# @name Admin Get draw by id
+
+GET {{NEXT_PUBLIC_API_BASE_URL}}/admin/draw/{{drawId}} HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+
+### 
+
+# @name Admin delete draw by id
+
+DELETE {{NEXT_PUBLIC_API_BASE_URL}}/admin/draw/{{drawId}} HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+
+### 
+
+# @name Admin toggle active draw by id
+
+POST {{NEXT_PUBLIC_API_BASE_URL}}/admin/draw/{{drawId}}/toggle-active HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+
+### 
+
+# @name Admin declear draw winner
+
+POST {{NEXT_PUBLIC_API_BASE_URL}}/admin/draw/{{drawId}}/winner HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+
+### 
+
+# @name Get current active draw
+
+GET {{NEXT_PUBLIC_API_BASE_URL}}/draw/current HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+
+### 
+
+# @name Get current active draw
+
+GET {{NEXT_PUBLIC_API_BASE_URL}}/draw/current/lucky-numbers HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+
+### 
+
+# @name Get draw purchase users
+
+GET {{NEXT_PUBLIC_API_BASE_URL}}/draw/current/users HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+
+### 
+
+# @name Get draw lucky numbers
+
+GET {{NEXT_PUBLIC_API_BASE_URL}}/draw/{{drawId}}/lucky-numbers HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+
+### 
+
+# @name Get draw not purchase lucky numbers
+
+GET {{NEXT_PUBLIC_API_BASE_URL}}/draw/{{drawId}}/lucky-numbers/available HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+
+### 
+
+# @name Get draw winner
+
+GET {{NEXT_PUBLIC_API_BASE_URL}}/draw/{{drawId}}/winner HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+
+### 
+
+# @name Get all user purchase
+
+GET {{NEXT_PUBLIC_API_BASE_URL}}/user/{{userId}}/purchases HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+
+### 
+
+# @name create payment for lucky number
+
+POST {{NEXT_PUBLIC_API_BASE_URL}}/payment/razorpay HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+{
+  "luckyNumberId": "{{luckyNumberId}}"
+}
+
+
+### 
+
+# @name verify payment for lucky number
+
+POST {{NEXT_PUBLIC_API_BASE_URL}}/payment/razorpay HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+{
+  "key": "rzp_test_Rdfa1pxFIC6Fxt",
+  "luckyNumberId": "{{luckyNumberId}}",
+  "razorpay_order_id": "order_RdgcgzezNVxcpk",
+  "razorpay_payment_id": "",
+  "razorpay_signature": ""
+}
+
+
+### 
+
+# @name get notifications
+
+GET {{NEXT_PUBLIC_API_BASE_URL}}/notifications HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}

@@ -1,0 +1,138 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  USER
+}
+enum NotificationType {
+  IMPORTANT
+  ALL
+  DRAW
+  REWARD
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  title     String
+  message   String
+  type      NotificationType
+  isRead    Boolean           @default(false)
+  createdAt DateTime          @default(now())
+
+  // Optional user relation — null means it's for ALL users
+  userId    String?           
+  user      User?             @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id           String        @id @default(uuid())
+  role         Role          @default(USER)
+  clerkId      String        @unique
+  purchases    Purchase[]
+  winnings     Winner[]
+  transactions Transaction[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  notifications Notification[]
+
+  @@unique([role, clerkId])
+}
+
+model Draw {
+  id                String        @id @default(uuid())
+  month             String        @unique // Format: "YYYY-MM"
+  startRange        Int
+  isWinnerDecleared Boolean       @default(false)
+  entryFee          Float         @default(30)
+  endRange          Int
+  endDate           DateTime?
+  isActive          Boolean       @default(false)
+  createdAt         DateTime      @default(now())
+  luckyNumbers      LuckyNumber[]
+  purchases         Purchase[]
+  winner            Winner?
+  prize             Prize?
+  createdBy         String
+}
+
+model Prize {
+  id          String @id @default(uuid())
+  drawId      String @unique
+  description String
+  amount      Float
+  draw        Draw   @relation(fields: [drawId], references: [id])
+}
+
+model LuckyNumber {
+  id          String     @id @default(uuid())
+  number      Int
+  isPurchased Boolean    @default(false)
+  drawId      String
+  draw        Draw       @relation(fields: [drawId], references: [id])
+  purchase    Purchase[]
+
+  @@unique([number, drawId])
+}
+
+enum PurchaseStatus {
+  SUCCESS
+  FAILED
+  PENDING
+}
+
+model Purchase {
+  id            String         @id @default(uuid())
+  userId        String
+  luckyNumberId String
+  razorpayId    String         @unique
+  amount        Float
+  drawId        String
+  user          User           @relation(fields: [userId], references: [id])
+  luckyNumber   LuckyNumber[]
+  draw          Draw           @relation(fields: [drawId], references: [id])
+  status        PurchaseStatus @default(PENDING)
+  createdAt     DateTime       @default(now())
+  transactions  Transaction[]
+
+  @@index([userId, drawId])
+  @@index([luckyNumberId, status])
+}
+
+model Winner {
+  id     String    @id @default(uuid())
+  drawId String    @unique // One winner per draw
+  userId String
+  isPaid Boolean   @default(false)
+  paidAt DateTime?
+  draw   Draw      @relation(fields: [drawId], references: [id])
+  user   User      @relation(fields: [userId], references: [id])
+}
+
+enum TransactionStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+model Transaction {
+  id            String            @id @default(uuid())
+  userId        String
+  purchaseId    String?
+  amount        Float
+  status        TransactionStatus @default(PENDING) // e.g. 'pending', 'success', 'failed'
+  paymentMethod String // e.g. 'razorpay'
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  user          User              @relation(fields: [userId], references: [id])
+  purchase      Purchase?         @relation(fields: [purchaseId], references: [id])
+}

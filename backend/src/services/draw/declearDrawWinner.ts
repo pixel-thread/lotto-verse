@@ -1,0 +1,64 @@
+import { prisma } from "@/src/lib/db/prisma";
+import { getUniquePurchase } from "../purchase/getUniquePurchase";
+
+type DeclareRandomWinnerProps = {
+  drawId: string;
+};
+
+export async function pickAndDeclareRandomWinner({
+  drawId,
+}: DeclareRandomWinnerProps) {
+  // Find all purchases for the draw
+  const purchases = await prisma.purchase.findMany({ where: { drawId } });
+
+  if (purchases.length === 0) {
+    throw new Error("No purchases found for this draw");
+  }
+
+  // Pick a random purchase
+  const randomIndex = Math.floor(Math.random() * purchases.length);
+  const winnerUserId = purchases[randomIndex].userId;
+
+  const isWinnerPurchaseExist = await getUniquePurchase({
+    where: {
+      userId_drawId: { userId: winnerUserId, drawId },
+    },
+  });
+
+  if (!isWinnerPurchaseExist) {
+    throw new Error(
+      "User Purchase not found && cannot be declared as winner, Please try again",
+    );
+  }
+
+  // Use the previous declareWinner function or inline logic
+  // Check if winner exists for draw
+  const existingWinner = await prisma.winner.findUnique({ where: { drawId } });
+
+  if (existingWinner) {
+    // Update winner
+    const updatedWinner = await prisma.winner.update({
+      where: { id: existingWinner.id },
+      data: { userId: winnerUserId, isPaid: false, paidAt: null },
+    });
+
+    await prisma.draw.update({
+      where: { id: drawId },
+      data: { winner: { connect: { id: updatedWinner.id } } },
+    });
+    return updatedWinner;
+  } else {
+    // Create winner
+    const newWinner = await prisma.winner.create({
+      data: { drawId, userId: winnerUserId, isPaid: false },
+      include: { user: true },
+    });
+
+    await prisma.draw.update({
+      where: { id: drawId },
+      data: { winner: { connect: { id: newWinner.id } } },
+      include: { luckyNumbers: true },
+    });
+    return newWinner;
+  }
+}
