@@ -3,7 +3,7 @@ import { pickAndDeclareRandomWinner } from "@/src/services/draw/declearDrawWinne
 import { getDrawWinner } from "@/src/services/draw/getDrawWinner";
 import { getUniqueDraw } from "@/src/services/draw/getUniqueDraw";
 import { getDrawPurchase } from "@/src/services/purchase/getDrawPurchase";
-import { getUniquePurchase } from "@/src/services/purchase/getUniquePurchase";
+import { getUniqueUser } from "@/src/services/user/getUserByClerkId";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
 import { requireSuperAdmin } from "@/src/utils/middleware/requireSuperAdmin";
 import { ErrorResponse, SuccessResponse } from "@/src/utils/next-response";
@@ -52,25 +52,26 @@ export async function POST(
         message: "No Winner is Declared",
       });
     }
-    const userPurchase = await getUniquePurchase({
-      where: { userId_drawId: { userId: winner.userId, drawId: drawId } },
-    });
 
-    if (!userPurchase) {
+    const user = await getUniqueUser({ where: { id: winner.userId } });
+
+    if (!user) {
       return ErrorResponse({
         status: 400,
-        message: "Error while getting user purchase, Please try again",
+        message: "User not found",
       });
     }
 
-    const user = await clerk.users.getUser(winner.userId);
+    const clerkUser = await clerk.users.getUser(user?.clerkId);
 
     const data = {
-      clerkId: user.id,
-      name: user.username,
-      email: user.emailAddresses[0].emailAddress,
-      purchase: userPurchase,
-      luckyNumber: userPurchase?.luckyNumber.number,
+      userId: user.id,
+      name:
+        clerkUser.username || clerkUser.firstName + " " + clerkUser.lastName,
+      email: clerkUser.primaryEmailAddress?.emailAddress,
+      phone: clerkUser.primaryPhoneNumber?.phoneNumber,
+      imageUrl: clerkUser.imageUrl,
+      winnerId: winner.id,
     };
 
     return SuccessResponse({

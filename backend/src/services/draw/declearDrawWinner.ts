@@ -17,12 +17,11 @@ export async function pickAndDeclareRandomWinner({
 
   // Pick a random purchase
   const randomIndex = Math.floor(Math.random() * purchases.length);
+  const winnerUser = purchases[randomIndex];
   const winnerUserId = purchases[randomIndex].userId;
 
   const isWinnerPurchaseExist = await getUniquePurchase({
-    where: {
-      userId_drawId: { userId: winnerUserId, drawId },
-    },
+    where: { razorpayId: winnerUser.razorpayId },
   });
 
   if (!isWinnerPurchaseExist) {
