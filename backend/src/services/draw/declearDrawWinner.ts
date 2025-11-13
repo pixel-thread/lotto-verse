@@ -48,16 +48,28 @@ export async function pickAndDeclareRandomWinner({
     return updatedWinner;
   } else {
     // Create winner
-    const newWinner = await prisma.winner.create({
-      data: { drawId, userId: winnerUserId, isPaid: false },
-      include: { user: true },
-    });
+    return await prisma.$transaction(async (tx) => {
+      const newWinner = await tx.winner.create({
+        data: {
+          drawId,
+          userId: winnerUserId,
+          isPaid: false,
+          luckyNumberId: winnerUser.luckyNumberId,
+        },
+        include: { user: true },
+      });
 
-    await prisma.draw.update({
-      where: { id: drawId },
-      data: { winner: { connect: { id: newWinner.id } } },
-      include: { luckyNumbers: true },
+      await tx.luckyNumber.update({
+        where: { id: winnerUser.luckyNumberId },
+        data: { winnerId: newWinner.id },
+      });
+
+      await tx.draw.update({
+        where: { id: drawId },
+        data: { winner: { connect: { id: newWinner.id } } },
+        include: { luckyNumbers: true },
+      });
+      return newWinner;
     });
-    return newWinner;
   }
 }
