@@ -1,7 +1,8 @@
 import { UnauthorizedError } from "@/src/utils/errors/unAuthError";
 import { requireAuth } from "./requiredAuth";
+import { NextRequest } from "next/server";
 
-export async function requireSuperAdmin(req: Request) {
+export async function requireSuperAdmin(req: NextRequest) {
   const user = await requireAuth(req);
   if (!user) {
     throw new UnauthorizedError("Unauthorized");

@@ -7,9 +7,10 @@ import { getUniquePurchase } from "@/src/services/purchase/getUniquePurchase";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
 import { requireSuperAdmin } from "@/src/utils/middleware/requireSuperAdmin";
 import { ErrorResponse, SuccessResponse } from "@/src/utils/next-response";
+import { NextRequest } from "next/server";
 
 export async function POST(
-  req: Request,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {

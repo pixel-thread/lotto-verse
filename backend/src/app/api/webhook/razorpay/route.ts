@@ -5,12 +5,6 @@ import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import getRawBody from "raw-body";
 
-export const config = {
-  api: {
-    bodyParser: false, // Disable body parsing so we can verify signature with raw body
-  },
-};
-
 export async function POST(req: Request, res: NextResponse) {
   const secret = env.RAZORPAY_WEBHOOK_SECRET;
 

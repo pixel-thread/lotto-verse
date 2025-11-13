@@ -5,8 +5,9 @@ import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
 import { requireSuperAdmin } from "@/src/utils/middleware/requireSuperAdmin";
 import { ErrorResponse, SuccessResponse } from "@/src/utils/next-response";
 import { createDrawSchema } from "@/src/utils/validation/draw";
+import { NextRequest } from "next/server";
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   try {
     await requireSuperAdmin(req);
     const draws = await getAllDraw();
@@ -20,7 +21,7 @@ export async function GET(req: Request) {
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const user = await requireSuperAdmin(req);
     const body = createDrawSchema.parse(await req.json());
