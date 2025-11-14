@@ -5,6 +5,7 @@
 // import { NextRequest, NextResponse } from "next/server";
 // import getRawBody from "raw-body";
 
+import { logger } from "@/src/utils/logger";
 import { SuccessResponse } from "@/src/utils/next-response";
 
 // export async function POST(req: Request, res: NextResponse) {
@@ -67,6 +68,7 @@ import { SuccessResponse } from "@/src/utils/next-response";
 // }
 
 export async function GET(req: Request) {
+  console.log("webhook", req);
   return SuccessResponse({
     message: "Successfully fetched webhook",
     data: "webhook",
