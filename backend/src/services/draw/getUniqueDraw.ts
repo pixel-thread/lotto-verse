@@ -5,5 +5,5 @@ type GetUniqueDrawProps = {
   where: Prisma.DrawWhereUniqueInput;
 };
 export async function getUniqueDraw({ where }: GetUniqueDrawProps) {
-  return await prisma.draw.findUnique({ where });
+  return await prisma.draw.findUnique({ where, include: { prize: true } });
 }
