@@ -12,7 +12,6 @@ import {
   Circle,
   Spinner,
 } from 'tamagui';
-import { useCurrentDraw } from '@/src/hooks/draw/useCurrentDraw';
 import useCurrentDrawNumbers from '@/src/hooks/draw/useCurrentDrawNumbers';
 import { RecentDrawParticipants } from '../home/RecentDrawParticipants';
 import { ContinuousShuffleCounter } from '../home/slot-counter/ContinousShuffleCounter';
@@ -21,9 +20,14 @@ import { HowItWorkSection } from './HowItWorkSection';
 import { drawRule } from '@/src/lib/constant/draw/drawRule';
 import { router, Stack } from 'expo-router';
 import { CustomHeader } from '../../common/CustomHeader';
+import useGetDraw from '@/src/hooks/draw/useGetDraw';
 
-export function DrawDetailScreen() {
-  const { data: draw, refetch: refetchDraw, isFetching: isDrawLoading } = useCurrentDraw();
+type Props = {
+  id: string;
+};
+export function DrawDetailScreen({ id }: Props) {
+  const { data: draw, refetch: refetchDraw, isFetching: isDrawLoading } = useGetDraw({ id });
+
   const {
     data: luckyNumbers,
     isFetching: isLuckyLoading,
@@ -39,9 +43,18 @@ export function DrawDetailScreen() {
 
   if (!draw) {
     return (
-      <YStack flex={1} justify="center" items="center">
-        <Spinner size="large" />
-      </YStack>
+      <>
+        <Stack.Screen
+          options={{
+            title: 'Luck Draw',
+            header: ({ back }) => <CustomHeader back={!!back} />,
+            headerShown: true,
+          }}
+        />
+        <YStack flex={1} justify="center" items="center">
+          <Spinner size="large" />
+        </YStack>
+      </>
     );
   }
 

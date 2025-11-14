@@ -6,5 +6,5 @@ type Props = {
 };
 
 export async function getDrawPurchase({ where }: Props) {
-  return await prisma.purchase.findMany({ where });
+  return await prisma.purchase.findMany({ where, include: { user: true } });
 }

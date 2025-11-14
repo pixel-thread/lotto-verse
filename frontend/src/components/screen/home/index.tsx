@@ -41,6 +41,10 @@ export function HomeScreen() {
     }
   }, [refetchDraw, refetchLuckyNumbers]);
 
+  if (!draw) {
+    return null;
+  }
+
   return (
     <>
       <Stack.Screen
@@ -68,7 +72,7 @@ export function HomeScreen() {
               <Card
                 elevate
                 bordered
-                onPress={() => router.push(`/draw/draw-details`)}
+                onPress={() => router.push(`/draw/${draw.id}`)}
                 paddingBlock="$8"
                 paddingInline="$6"
                 marginHorizontal={20}
