@@ -98,6 +98,15 @@ Authorization: Bearer {{TOKEN}}
 
 ### 
 
+# @name Get draw by id
+
+GET {{NEXT_PUBLIC_API_BASE_URL}}/draw/{{drawId}} HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+
+### 
+
 # @name Get draw purchase users
 
 GET {{NEXT_PUBLIC_API_BASE_URL}}/draw/current/users HTTP/1.1
