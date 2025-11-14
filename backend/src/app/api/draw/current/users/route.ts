@@ -25,6 +25,14 @@ export async function GET(req: NextRequest) {
     const drawPurchases = await getDrawPurchase({
       where: { drawId: activeDraw.id, status: "SUCCESS" },
     });
+
+    if (drawPurchases.length === 0) {
+      return SuccessResponse({
+        message: "No active purchase",
+        data: [],
+      });
+    }
+
     // Make sure clerkIds have same normalization as below
     const clerkIds = drawPurchases.map((purchase) => purchase.user.clerkId);
     // Create map with normalized keys
@@ -40,7 +48,6 @@ export async function GET(req: NextRequest) {
     const data = await Promise.all(
       users.data.map(async (user) => {
         const purchase = purchaseMap.get(user.id.toLowerCase().trim());
-
         const luckyNumber = await getUniqueLuckyNumber({
           where: { id: purchase?.luckyNumberId },
         });
@@ -57,7 +64,6 @@ export async function GET(req: NextRequest) {
         };
       }),
     );
-    logger.log(data);
     return SuccessResponse({
       message: "Successfully fetched draw users",
       data: data,
