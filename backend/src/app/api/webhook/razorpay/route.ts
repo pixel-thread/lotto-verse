@@ -50,7 +50,7 @@ export async function POST(req: Request) {
           JSON.stringify(event.payload.payment, null, 2),
         );
         await updatePurchase({
-          where: { razorpayId: event.payload.payment.entity.id },
+          where: { razorpayPaymentId: event.payload.payment.entity.id },
           data: { status: "SUCCESS" },
         });
         break;
@@ -58,7 +58,7 @@ export async function POST(req: Request) {
       case "payment.failed":
         console.log("payment.failed");
         await updatePurchase({
-          where: { razorpayId: event.payload.payment.entity.id },
+          where: { razorpayPaymentId: event.payload.payment.entity.id },
           data: { status: "FAILED" },
         });
         break;

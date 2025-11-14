@@ -63,10 +63,10 @@ export async function POST(req: NextRequest) {
 
     // 5. FAILURE:
     if (!isVerified) {
-      // await updatePurchase({
-      //   where: { razorpayId: body.razorpay_order_id },
-      //   data: { status: "FAILED" },
-      // });
+      await updatePurchase({
+        where: { razorpayId: body.razorpay_order_id },
+        data: { status: "FAILED" },
+      });
 
       return ErrorResponse({
         message: "Payment verification failed",
@@ -78,10 +78,10 @@ export async function POST(req: NextRequest) {
       where: { razorpayId: body.razorpay_order_id },
     });
 
-    // const orderUpdate = await updatePurchase({
-    //   where: { razorpayId: body.razorpay_order_id },
-    //   data: { status: "SUCCESS" },
-    // });
+    await updatePurchase({
+      where: { razorpayId: body.razorpay_order_id },
+      data: { razorpayPaymentId: body.razorpay_payment_id },
+    });
 
     // await updateLuckyNumber({
     //   where: { id: luckyNumber.id },

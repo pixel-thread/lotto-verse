@@ -94,18 +94,19 @@ enum PurchaseStatus {
 }
 
 model Purchase {
-  id            String         @id @default(uuid())
-  userId        String
-  luckyNumberId String
-  razorpayId    String         @unique
-  amount        Float
-  drawId        String
-  user          User           @relation(fields: [userId], references: [id])
-  luckyNumber   LuckyNumber[]
-  draw          Draw           @relation(fields: [drawId], references: [id])
-  status        PurchaseStatus @default(PENDING)
-  createdAt     DateTime       @default(now())
-  transactions  Transaction[]
+  id                String         @id @default(uuid())
+  userId            String
+  luckyNumberId     String
+  razorpayId        String         @unique
+  razorpayPaymentId String         @unique
+  amount            Float
+  drawId            String
+  user              User           @relation(fields: [userId], references: [id])
+  luckyNumber       LuckyNumber[]
+  draw              Draw           @relation(fields: [drawId], references: [id])
+  status            PurchaseStatus @default(PENDING)
+  createdAt         DateTime       @default(now())
+  transactions      Transaction[]
 
   @@unique([userId, luckyNumberId])
   @@index([userId, drawId])

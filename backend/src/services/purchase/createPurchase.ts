@@ -39,6 +39,7 @@ export async function createPurchaseAtomic({ data }: Props) {
       data: {
         razorpayId: data.razorpayId,
         amount: data.amount,
+        razorpayPaymentId: "",
         status: "PENDING", // or SUCCESS based on flow
         luckyNumberId: data.luckyNumberId,
         drawId: data.drawId,
