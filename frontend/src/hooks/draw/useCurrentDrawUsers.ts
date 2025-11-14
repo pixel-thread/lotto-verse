@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 type DrawUserT = {
   id: number | string;
   name: string;
+  email: string;
   purchaseAt: string;
   number: number;
   imageUrl: string;

@@ -2,8 +2,8 @@ import { getUniqueDraw } from "@/src/services/draw/getUniqueDraw";
 import { getUniqueLuckyNumber } from "@/src/services/lucky-number/getUniqueLuckyNumber";
 import { createPurchaseAtomic } from "@/src/services/purchase/createPurchase";
 import { getPurchaseByLuckyNumber } from "@/src/services/purchase/getPurchaseByLuckyNumber";
-import { getUniquePurchase } from "@/src/services/purchase/getUniquePurchase";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
+import { logger } from "@/src/utils/logger";
 import { requireAuth } from "@/src/utils/middleware/requiredAuth";
 import { ErrorResponse, SuccessResponse } from "@/src/utils/next-response";
 import { createRazorPayOrder } from "@/src/utils/razorpay/createOrder";
@@ -14,6 +14,7 @@ import { NextRequest } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     const user = await requireAuth(req);
+
     const body = createPaymentSchema.parse(await req.json());
 
     if (!user) {
@@ -92,6 +93,7 @@ export async function POST(req: NextRequest) {
       status: 201,
     });
   } catch (error) {
+    logger.log(error);
     return handleApiErrors(error);
   }
 }
