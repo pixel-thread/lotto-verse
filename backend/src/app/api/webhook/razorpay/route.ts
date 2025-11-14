@@ -45,7 +45,10 @@ export async function POST(req: Request) {
     switch (event.event) {
       case "payment.captured":
         console.log("payment.captured");
-        console.log(JSON.stringify(event.payload, null, 2));
+        console.log(
+          "Event payload",
+          JSON.stringify(event.payload.payment, null, 2),
+        );
         await updatePurchase({
           where: { razorpayId: event.payload.payment.entity.id },
           data: { status: "SUCCESS" },
