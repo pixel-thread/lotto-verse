@@ -43,6 +43,7 @@ export async function POST(req: Request) {
     switch (event.event) {
       case "payment.captured":
         // Update purchase status to SUCCESS
+        console.log("payment.captured");
         await updatePurchase({
           where: { razorpayId: event.payload.payment.entity.id },
           data: { status: "SUCCESS" },
@@ -51,6 +52,7 @@ export async function POST(req: Request) {
 
       case "payment.failed":
         // Update purchase status to FAILED
+        console.log("payment.failed");
         await updatePurchase({
           where: { razorpayId: event.payload.payment.entity.id },
           data: { status: "FAILED" },
@@ -59,6 +61,7 @@ export async function POST(req: Request) {
 
       default:
         // For other events you can decide default action or ignore
+        console.log("default.failed");
         await updatePurchase({
           where: { razorpayId: event.payload.payment.entity.id },
           data: { status: "FAILED" },
