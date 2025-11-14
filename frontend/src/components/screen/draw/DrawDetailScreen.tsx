@@ -25,6 +25,7 @@ import useGetDraw from '@/src/hooks/draw/useGetDraw';
 type Props = {
   id: string;
 };
+
 export function DrawDetailScreen({ id }: Props) {
   const { data: draw, refetch: refetchDraw, isFetching: isDrawLoading } = useGetDraw({ id });
 
@@ -40,6 +41,22 @@ export function DrawDetailScreen({ id }: Props) {
     } finally {
     }
   }, [refetchDraw, refetchLuckyNumbers]);
+  if (isDrawLoading) {
+    return (
+      <>
+        <Stack.Screen
+          options={{
+            title: 'Luck Draw',
+            header: ({ back }) => <CustomHeader back={!!back} />,
+            headerShown: true,
+          }}
+        />
+        <YStack flex={1} justify="center" items="center">
+          <Spinner size="large" />
+        </YStack>
+      </>
+    );
+  }
 
   if (!draw) {
     return (
@@ -52,7 +69,9 @@ export function DrawDetailScreen({ id }: Props) {
           }}
         />
         <YStack flex={1} justify="center" items="center">
-          <Spinner size="large" />
+          <Text fontSize={24} fontWeight="bold">
+            Draw not found
+          </Text>
         </YStack>
       </>
     );

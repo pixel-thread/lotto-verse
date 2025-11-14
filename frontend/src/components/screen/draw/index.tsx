@@ -7,12 +7,13 @@ import { Stack } from 'expo-router';
 import { CustomHeader } from '@components/common/CustomHeader';
 import { drawRule } from '@/src/lib/constant/draw/drawRule';
 import { useCurrentDraw } from '@/src/hooks/draw/useCurrentDraw';
+import { NoActiveDraw } from './NoActiveDraw';
 
 export function DrawScreen() {
   const { data: draw } = useCurrentDraw();
 
   if (!draw) {
-    return null;
+    return <NoActiveDraw />;
   }
 
   return (

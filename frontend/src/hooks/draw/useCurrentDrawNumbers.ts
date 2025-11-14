@@ -1,10 +1,9 @@
 import { DRAW_ENDPOINTS } from '@/src/lib/endpoints/draw';
+import { LuckyNumbersT } from '@/src/types/lucky-number';
 import { MetaT } from '@/src/types/meta';
 import http from '@/src/utils/http';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-
-type LuckyNumbersT = { number: number; id: string; isPurchased: boolean };
 
 type Props = {
   page?: number;

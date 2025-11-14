@@ -9,6 +9,7 @@ import { RecentDrawParticipants } from './RecentDrawParticipants';
 import { RefreshControl } from 'react-native';
 import { Ternary } from '../../common/Ternary';
 import { WinnerCard } from './WinnerCard';
+import { NoActiveDraw } from '../draw/NoActiveDraw';
 
 export function HomeScreen() {
   const { data: draw, refetch: refetchDraw, isFetching: isDrawLoading } = useCurrentDraw();
@@ -42,7 +43,7 @@ export function HomeScreen() {
   }, [refetchDraw, refetchLuckyNumbers]);
 
   if (!draw) {
-    return null;
+    return <NoActiveDraw />;
   }
 
   return (
