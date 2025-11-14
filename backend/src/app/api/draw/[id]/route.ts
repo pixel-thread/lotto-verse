@@ -1,7 +1,7 @@
-import { getDrawWinner } from "@/src/services/draw/getDrawWinner";
+import { getUniqueDraw } from "@/src/services/draw/getUniqueDraw";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
 import { requireAuth } from "@/src/utils/middleware/requiredAuth";
-import { ErrorResponse, SuccessResponse } from "@/src/utils/next-response";
+import { SuccessResponse } from "@/src/utils/next-response";
 import { NextRequest } from "next/server";
 
 export async function GET(
@@ -11,19 +11,10 @@ export async function GET(
   try {
     await requireAuth(req);
     const drawId = (await params).id;
-
-    const drawWinner = await getDrawWinner({ id: drawId });
-
-    if (!drawWinner) {
-      return ErrorResponse({
-        status: 400,
-        message: "Winner is yet to be declear",
-      });
-    }
-
+    const draw = await getUniqueDraw({ where: { id: drawId } });
     return SuccessResponse({
-      message: "Successfully fetched winner",
-      data: drawWinner,
+      message: "Successfully fetched draw",
+      data: draw,
       status: 200,
     });
   } catch (error) {

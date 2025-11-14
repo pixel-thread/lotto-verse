@@ -3,9 +3,10 @@ import { getUserPurchase } from "@/src/services/user/getUserPurchase";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
 import { requireAuth } from "@/src/utils/middleware/requiredAuth";
 import { ErrorResponse, SuccessResponse } from "@/src/utils/next-response";
+import { NextRequest } from "next/server";
 
 export async function GET(
-  req: Request,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
