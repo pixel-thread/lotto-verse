@@ -3,5 +3,5 @@ import { useLocalSearchParams } from 'expo-router';
 
 export default function page() {
   const { id } = useLocalSearchParams();
-  return <DrawDetailScreen />;
+  return <DrawDetailScreen id={id.toString()} />;
 }

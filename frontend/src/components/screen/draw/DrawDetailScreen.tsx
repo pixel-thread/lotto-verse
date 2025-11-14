@@ -43,9 +43,18 @@ export function DrawDetailScreen({ id }: Props) {
 
   if (!draw) {
     return (
-      <YStack flex={1} justify="center" items="center">
-        <Spinner size="large" />
-      </YStack>
+      <>
+        <Stack.Screen
+          options={{
+            title: 'Luck Draw',
+            header: ({ back }) => <CustomHeader back={!!back} />,
+            headerShown: true,
+          }}
+        />
+        <YStack flex={1} justify="center" items="center">
+          <Spinner size="large" />
+        </YStack>
+      </>
     );
   }
 
