@@ -1,112 +1,138 @@
-import React from 'react';
-import { ScrollView } from 'react-native';
-import { YStack, XStack, Text, Card, Button, Avatar, Separator } from 'tamagui';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import { useUser, useAuth } from '@clerk/clerk-expo';
-import { LinearGradient } from 'tamagui/linear-gradient';
+import React, { useCallback } from 'react';
+import { RefreshControl } from 'react-native';
+import { YStack, XStack, Text, ScrollView, Card, H1, Paragraph, Button, Circle } from 'tamagui';
+import { router, Stack } from 'expo-router';
+import { CustomHeader } from '../../common/CustomHeader';
+import { useUser } from '@clerk/clerk-expo';
 
 export function ProfileScreen() {
-  const router = useRouter();
+  const [isLoading, setIsLoading] = React.useState(false);
   const { user } = useUser();
-  const { isSignedIn } = useAuth();
 
-  if (!user || !isSignedIn) {
-    return (
-      <YStack flex={1} justifyContent="center" alignItems="center">
-        <Text fontSize={18}>No user found or not signed in.</Text>
-      </YStack>
-    );
-  }
-
-  /** Reusable section button component */
-  function SectionButton({
-    label,
-    icon,
-    onPress,
-  }: {
-    label: string;
-    icon: keyof typeof Ionicons.glyphMap;
-    onPress: () => void;
-  }) {
-    return (
-      <Card
-        bordered
-        hoverStyle={{ backgroundColor: '$blue2' }}
-        pressStyle={{ backgroundColor: '$blue3' }}
-        borderRadius="$6"
-        padding="$4"
-        onPress={onPress}
-        elevate>
-        <XStack alignItems="center" justifyContent="space-between">
-          <XStack alignItems="center" gap="$3">
-            <Ionicons name={icon} size={22} color="#007AFF" />
-            <Text fontSize={16}>{label}</Text>
-          </XStack>
-          <Ionicons name="chevron-forward" size={20} color="#999" />
-        </XStack>
-      </Card>
-    );
+  const onRefresh = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+  if (!user) {
+    return null;
   }
 
   return (
-    <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
-      <Avatar circular size={110} borderWidth={3} borderColor="white" elevation="$4">
-        <Avatar.Image src={user.imageUrl} accessibilityLabel="User Avatar" />
-        <Avatar.Fallback backgroundColor="$blue5" />
-      </Avatar>
+    <>
+      <Stack.Screen
+        options={{
+          title: 'Profile',
+          header: ({ back }) => <CustomHeader back={!!back} />,
+          headerShown: true,
+        }}
+      />
+      <ScrollView
+        flex={1}
+        refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefresh} />}
+        style={{ padding: 20 }}>
+        <YStack gap="$6" items="center">
+          <Circle size={120} bg="$background" borderWidth={2} borderColor="$borderColor">
+            <Text fontSize={48} fontWeight="900" color="$green10">
+              A
+            </Text>
+          </Circle>
 
-      <Text fontSize={26} fontWeight="900" color="white" marginTop="$3">
-        {user.fullName || 'User'}
-      </Text>
+          <H1 fontWeight="900" fontSize={36} color="$green10">
+            {user?.username || user?.firstName}
+          </H1>
 
-      <Text fontSize={15} color="white" opacity={0.8}>
-        {user.primaryEmailAddress?.emailAddress || user.emailAddresses[0]?.emailAddress || ''}
-      </Text>
+          <Paragraph size="$6" color="gray" maxW={280}>
+            {user?.primaryEmailAddress?.emailAddress}
+          </Paragraph>
 
-      <YStack padding="$5" gap="$5">
-        <Separator />
+          <Card padding="$4" rounded="$6" borderWidth={1} borderColor="$borderColor" width="100%">
+            <YStack gap="$2" items="center">
+              <Text fontSize={12} color="gray" textTransform="uppercase" fontWeight="700">
+                Member Since
+              </Text>
+              <Text fontSize={20} fontWeight="700">
+                {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
+              </Text>
+            </YStack>
+          </Card>
 
-        {/* Settings / Actions */}
-        <YStack gap="$3">
-          <SectionButton
-            label="Edit Basic Info"
-            icon="person-circle-outline"
-            onPress={() => router.push('/profile/edit-basic')}
-          />
-          <SectionButton
-            label="Change Password"
-            icon="lock-closed-outline"
-            onPress={() => router.push('/profile/edit-password')}
-          />
-          <SectionButton
-            label="Payment Information"
-            icon="card-outline"
-            onPress={() => router.push('/profile/payment-info')}
-          />
-          <SectionButton
-            label="Security Settings"
-            icon="shield-checkmark-outline"
-            onPress={() => router.push('/profile/security-settings')}
-          />
-          <SectionButton
-            label="Notification Preferences"
-            icon="notifications-outline"
-            onPress={() => router.push('/profile/notification-settings')}
-          />
+          <XStack justify="space-between" gap="$4" width="100%">
+            <Card flex={1} padding="$4" rounded="$6" borderWidth={1} borderColor="$borderColor">
+              <Text fontSize={12} color="gray" textTransform="uppercase" fontWeight="700" mb={4}>
+                Draws Participated
+              </Text>
+              <Text fontSize={24} fontWeight="900">
+                00
+              </Text>
+            </Card>
+            <Card flex={1} padding="$4" rounded="$6" borderWidth={1} borderColor="$borderColor">
+              <Text fontSize={12} color="gray" textTransform="uppercase" fontWeight="700" mb={4}>
+                Total Wins
+              </Text>
+              <Text fontSize={24} fontWeight="900">
+                00
+              </Text>
+            </Card>
+          </XStack>
+
+          <Card padding="$4" rounded="$6" borderWidth={1} borderColor="$borderColor" width="100%">
+            <YStack gap="$2" items="center">
+              <Text fontSize={12} color="gray" textTransform="uppercase" fontWeight="700">
+                Total Billing
+              </Text>
+              <H1 fontWeight="900" fontSize={36} color="$green10">
+                ₹ {user.billingAmount}
+              </H1>
+            </YStack>
+          </Card>
+
+          {/* Buttons in rows - two per row */}
+          <YStack width="100%" gap="$3">
+            <XStack justify="space-between" gap="$3">
+              <Button onPress={() => router.push('/profile/edit')} themeInverse size="$6" flex={1}>
+                <Button.Text fontWeight={'bold'}>Edit Profile</Button.Text>
+              </Button>
+              <Button onPress={() => router.push('/profile/wins')} themeInverse size="$6" flex={1}>
+                <Button.Text fontWeight={'bold'}>Draw Wins</Button.Text>
+              </Button>
+            </XStack>
+
+            <XStack justify="space-between" gap="$3">
+              <Button
+                onPress={() => router.push('/settings/account')}
+                themeInverse
+                size="$6"
+                flex={1}>
+                <Button.Text fontWeight={'bold'}>Account Settings</Button.Text>
+              </Button>
+              <Button
+                onPress={() => router.push('/settings/notifications')}
+                themeInverse
+                size="$6"
+                flex={1}>
+                <Button.Text fontWeight={'bold'}>Notification Settings</Button.Text>
+              </Button>
+            </XStack>
+
+            <XStack justify="space-between" gap="$3">
+              <Button
+                onPress={() => router.push('/settings/privacy')}
+                themeInverse
+                size="$6"
+                flex={1}>
+                <Button.Text fontWeight={'bold'}>Privacy Settings</Button.Text>
+              </Button>
+              <Button onPress={() => alert('Logout pressed')} size="$6" flex={1}>
+                <Button.Text fontWeight={'bold'}>Logout</Button.Text>
+              </Button>
+            </XStack>
+          </YStack>
         </YStack>
-
-        <Separator marginVertical="$4" />
-
-        <Button
-          theme="red"
-          icon={<Ionicons name="log-out-outline" size={20} />}
-          onPress={() => router.push('/logout')}
-          size="$5"
-          borderRadius="$8">
-          Log Out
-        </Button>
-      </YStack>
-    </ScrollView>
+      </ScrollView>
+    </>
   );
 }

@@ -4,7 +4,7 @@ import { Platform, TouchableOpacity } from 'react-native';
 import colors from 'tailwindcss/colors';
 import type { ReactNode } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Button, View, Card } from 'tamagui';
+import { View, Card } from 'tamagui';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 

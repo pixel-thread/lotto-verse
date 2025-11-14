@@ -12,7 +12,6 @@ import {
   Circle,
   Spinner,
 } from 'tamagui';
-import { useCurrentDraw } from '@/src/hooks/draw/useCurrentDraw';
 import useCurrentDrawNumbers from '@/src/hooks/draw/useCurrentDrawNumbers';
 import { RecentDrawParticipants } from '../home/RecentDrawParticipants';
 import { ContinuousShuffleCounter } from '../home/slot-counter/ContinousShuffleCounter';
@@ -21,9 +20,14 @@ import { HowItWorkSection } from './HowItWorkSection';
 import { drawRule } from '@/src/lib/constant/draw/drawRule';
 import { router, Stack } from 'expo-router';
 import { CustomHeader } from '../../common/CustomHeader';
+import useGetDraw from '@/src/hooks/draw/useGetDraw';
 
-export function DrawDetailScreen() {
-  const { data: draw, refetch: refetchDraw, isFetching: isDrawLoading } = useCurrentDraw();
+type Props = {
+  id: string;
+};
+export function DrawDetailScreen({ id }: Props) {
+  const { data: draw, refetch: refetchDraw, isFetching: isDrawLoading } = useGetDraw({ id });
+
   const {
     data: luckyNumbers,
     isFetching: isLuckyLoading,

@@ -24,9 +24,9 @@ export function NotificationScreen() {
   const filtered =
     filter === 'ALL' ? notifications : notifications?.filter((n) => n.type === filter);
 
-  // if (isLoading) {
-  //   return <NotificationSkeleton />;
-  // }
+  if (isLoading) {
+    return <NotificationSkeleton />;
+  }
 
   return (
     <>
@@ -44,7 +44,7 @@ export function NotificationScreen() {
         paddingBlockEnd={40}>
         <YStack gap="$2">
           {/* Filter Buttons */}
-          <XStack justify="space-around" marginBlockEnd="$2">
+          <XStack justify="space-around" paddingBlockStart="$2" marginBlockEnd="$2">
             {NOTIFICATION_FILTERS.map((f) => (
               <Button
                 key={f}

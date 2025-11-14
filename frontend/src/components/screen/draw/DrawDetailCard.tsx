@@ -16,11 +16,7 @@ export const DrawDetailCard = () => {
   }
 
   return (
-    <Card
-      onPress={() => router.push('/draw/draw-details')}
-      padded
-      rounded="$4"
-      animation={'bouncy'}>
+    <Card onPress={() => router.push(`/draw/${draw?.id}`)} padded rounded="$4" animation={'bouncy'}>
       <YStack gap="$5">
         <XStack justify="space-between" paddingInlineEnd="$2" gap="$1" items="center">
           <YStack gap="$1">
