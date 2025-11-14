@@ -1,29 +1,7 @@
 import { DRAW_ENDPOINTS } from '@/src/lib/endpoints/draw';
-import { MetaT } from '@/src/types/meta';
+import { DrawT } from '@/src/types/draw';
 import http from '@/src/utils/http';
-import { createDrawSchema } from '@/src/utils/validation/draw';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
-import z from 'zod';
-
-type WinnerT = {
-  id: string;
-  userId: string;
-  name: string;
-  number: number;
-  isPaid: boolean;
-  imageUrl: string;
-  purchaseAt: string;
-  email: string;
-  phone: string;
-};
-
-type DrawT = z.infer<typeof createDrawSchema> & {
-  createdAt: string;
-  isWinnerDecleared: boolean;
-  endDate: string;
-  winner: WinnerT | null;
-};
 
 type Props = {
   id: string;

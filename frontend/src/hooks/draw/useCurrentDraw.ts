@@ -2,27 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import http from '@/src/utils/http';
 import { DRAW_ENDPOINTS } from '@/src/lib/endpoints/draw';
-import z from 'zod';
-import { createDrawSchema } from '@/src/utils/validation/draw';
-
-type WinnerT = {
-  id: string;
-  userId: string;
-  name: string;
-  number: number;
-  isPaid: boolean;
-  imageUrl: string;
-  purchaseAt: string;
-  email: string;
-  phone: string;
-};
-
-type DrawT = z.infer<typeof createDrawSchema> & {
-  createdAt: string;
-  isWinnerDecleared: boolean;
-  endDate: string;
-  winner: WinnerT | null;
-};
+import { DrawT } from '@/src/types/draw';
 
 export function useCurrentDraw() {
   const query = useQuery({

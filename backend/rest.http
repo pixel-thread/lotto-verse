@@ -80,6 +80,15 @@ Authorization: Bearer {{TOKEN}}
 
 ### 
 
+# @name Get all in active draw
+
+GET {{NEXT_PUBLIC_API_BASE_URL}}/draw HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+
+### 
+
 # @name Get current active draw
 
 GET {{NEXT_PUBLIC_API_BASE_URL}}/draw/current HTTP/1.1
