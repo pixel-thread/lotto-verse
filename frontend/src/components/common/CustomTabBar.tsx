@@ -10,7 +10,8 @@ export const CustomTabBar = ({ state, descriptors, navigation }: BottomTabBarPro
   const isIos = Platform.OS === 'ios';
   return (
     <View
-      height={isIos ? 'auto' : '$7'}
+      width="100%"
+      paddingBlock={isIos ? '$2' : '$3'}
       borderTopWidth={0.5}
       borderTopColor="$borderColor"
       bg={'$background'}
@@ -83,7 +84,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     shadowOffset: { width: 0, height: 0 },
-    paddingTop: 10,
   },
   tab: {
     flex: 1,

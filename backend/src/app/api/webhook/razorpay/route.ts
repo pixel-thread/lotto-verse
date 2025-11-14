@@ -5,19 +5,12 @@ import crypto from "crypto";
 import { NextResponse } from "next/server";
 import { logger } from "@/src/utils/logger";
 
-export const config = {
-  api: {
-    bodyParser: false, // IMPORTANT for raw body
-  },
-};
-
 export async function POST(req: Request) {
   try {
     console.log("Webhook triggered");
-
     // 1. Read raw body as text
     const rawBody = await req.text();
-
+    console.log(rawBody);
     // 2. Validate signature
     const signature = req.headers.get("x-razorpay-signature");
     if (!signature) {
@@ -45,26 +38,34 @@ export async function POST(req: Request) {
     switch (event.event) {
       case "payment.captured":
         console.log("payment.captured");
-        console.log(
-          "Event payload",
-          JSON.stringify(event.payload.payment, null, 2),
-        );
         await updatePurchase({
-          where: { razorpayPaymentId: event.payload.payment.entity.id },
-          data: { status: "SUCCESS" },
+          where: { razorpayId: event.payload.payment.entity.order_id },
+          data: {
+            status: "SUCCESS",
+            paymentId: event.payload.payment.entity.id,
+          },
         });
         break;
 
       case "payment.failed":
         console.log("payment.failed");
         await updatePurchase({
-          where: { razorpayPaymentId: event.payload.payment.entity.id },
-          data: { status: "FAILED" },
+          where: { razorpayId: event.payload.payment.entity.order_id },
+          data: {
+            status: "FAILED",
+            paymentId: event.payload.payment.entity.id,
+          },
         });
         break;
 
       default:
-        console.log("Unhandled event");
+        await updatePurchase({
+          where: { razorpayId: event.payload.payment.entity.order_id },
+          data: {
+            status: "PENDING",
+            paymentId: event.payload.payment.entity.id,
+          },
+        });
         break;
     }
 

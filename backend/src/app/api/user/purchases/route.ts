@@ -5,15 +5,11 @@ import { requireAuth } from "@/src/utils/middleware/requiredAuth";
 import { ErrorResponse, SuccessResponse } from "@/src/utils/next-response";
 import { NextRequest } from "next/server";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function GET(req: NextRequest) {
   try {
-    await requireAuth(req);
+    const user = await requireAuth(req);
 
-    const userId = (await params).id;
-    const user = await getUniqueUser({ where: { id: userId } });
+    const userId = user.id;
 
     if (!user) {
       return ErrorResponse({

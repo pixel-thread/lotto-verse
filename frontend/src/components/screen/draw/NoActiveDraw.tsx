@@ -1,15 +1,16 @@
 import React from 'react';
-import { YStack, XStack, Text, Card, Button, ScrollView, Circle, Avatar } from 'tamagui';
+import { YStack, XStack, Text, Card, Button, ScrollView, Avatar } from 'tamagui';
 import { router, Stack } from 'expo-router';
 import { CustomHeader } from '../../common/CustomHeader';
 import { useQuery } from '@tanstack/react-query';
 import http from '@/src/utils/http';
 import { DRAW_ENDPOINTS } from '@/src/lib/endpoints/draw';
-import z from 'zod';
-import { createDrawSchema } from '@/src/utils/validation/draw';
 import { DrawT } from '@/src/types/draw';
+import { useCurrentDraw } from '@/src/hooks/draw/useCurrentDraw';
+import { RefreshControl } from 'react-native-gesture-handler';
 
 export const NoActiveDraw = () => {
+  const { refetch, isFetching } = useCurrentDraw();
   const { data: prevDraws } = useQuery({
     queryKey: ['draws', 'prev'],
     queryFn: () => http.get<DrawT[]>(DRAW_ENDPOINTS.GET_DRAWS),
@@ -31,6 +32,7 @@ export const NoActiveDraw = () => {
         items="center"
         paddingInline={10}
         paddingBlock={10}
+        paddingBlockStart={40}
         gap="$6">
         <Text fontSize={24} fontWeight="bold">
           No Active Draw Currently
@@ -39,7 +41,14 @@ export const NoActiveDraw = () => {
           There are no active draws at the moment. Please check back later or view previous draws
           and winners below.
         </Text>
-        <ScrollView borderTopWidth={1} borderColor={'$borderColor'} style={{ width: '100%' }}>
+        <Button themeInverse onPress={() => refetch()}>
+          <Button.Text>Refresh</Button.Text>
+        </Button>
+        <ScrollView
+          refreshControl={<RefreshControl refreshing={isFetching} onRefresh={refetch} />}
+          borderTopWidth={1}
+          borderColor={'$borderColor'}
+          style={{ width: '100%' }}>
           <YStack gap="$4" paddingBlock="$4">
             {prevDraws &&
               prevDraws?.map((draw) => {

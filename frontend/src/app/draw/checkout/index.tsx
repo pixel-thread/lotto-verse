@@ -5,7 +5,7 @@ import { useSearchParams } from 'expo-router/build/hooks';
 export default function page() {
   const searchParams = useSearchParams();
   const number = searchParams.get('number');
-  const id = searchParams.get('id');
+  const id = searchParams.get('numberId');
 
   if (!id || !number) {
     return <Redirect href="/" />;

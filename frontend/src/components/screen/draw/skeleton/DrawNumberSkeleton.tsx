@@ -44,7 +44,7 @@ export const DrawNumberSectionSkeleton = () => {
 };
 export const DrawNumberSkeleton = () => {
   return (
-    <XStack flexWrap="wrap" justify="center" gap={12}>
+    <XStack flexWrap="wrap" justify="center" gap={10}>
       {skeletonNumbers.map((_, i) => (
         <SkeletonPulse
           key={i}

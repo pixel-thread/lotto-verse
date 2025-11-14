@@ -2,6 +2,7 @@ import { getUniqueDraw } from "@/src/services/draw/getUniqueDraw";
 import { getUniqueLuckyNumber } from "@/src/services/lucky-number/getUniqueLuckyNumber";
 import { createPurchaseAtomic } from "@/src/services/purchase/createPurchase";
 import { getPurchaseByLuckyNumber } from "@/src/services/purchase/getPurchaseByLuckyNumber";
+import { getUserPurchase } from "@/src/services/user/getUserPurchase";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
 import { logger } from "@/src/utils/logger";
 import { requireAuth } from "@/src/utils/middleware/requiredAuth";
@@ -55,6 +56,20 @@ export async function POST(req: NextRequest) {
     if (isLuckyNumberPurchase.some((val) => val.status === "SUCCESS")) {
       return ErrorResponse({
         message: "This Number already purchase by someone",
+        status: 400,
+      });
+    }
+
+    const hasUserPurchaseInThisDraw = await getUserPurchase({
+      where: {
+        userId: user.id,
+        drawId: isDrawExist.id,
+      },
+    });
+
+    if (hasUserPurchaseInThisDraw.some((val) => val.status === "SUCCESS")) {
+      return ErrorResponse({
+        message: "You have already made a purchase in this draw",
         status: 400,
       });
     }

@@ -10,18 +10,12 @@ import { useMutation } from '@tanstack/react-query';
 import http from '@/src/utils/http';
 import { PAYMENT_ENDPOINTS } from '@/src/lib/endpoints/payment';
 import { toast } from 'sonner-native';
-import RazorpayCheckout, { CheckoutOptions } from 'react-native-razorpay';
+import RazorpayCheckout, { CheckoutOptions, SuccessResponse } from 'react-native-razorpay';
 type CheckoutPageProps = {
   selectedNumber: string;
   id: string;
 };
 
-type PaymentVerifyValueT = {
-  razorpay_order_id: string;
-  razorpay_payment_id: string;
-  razorpay_signature: string;
-  luckyNumberId: string;
-};
 export function CheckoutPage({ selectedNumber, id }: CheckoutPageProps) {
   const router = useRouter();
   const { data: draw } = useCurrentDraw();
@@ -33,12 +27,15 @@ export function CheckoutPage({ selectedNumber, id }: CheckoutPageProps) {
   const totalCost = (entryFee + parseFloat(platformFee)).toFixed(2);
 
   const { isPending: isVerifyFetching, mutate: mutateVerify } = useMutation({
-    mutationFn: async (data: PaymentVerifyValueT) =>
-      http.post(PAYMENT_ENDPOINTS.POST_VERYFY_PAYMENT, data),
+    mutationFn: async (data: SuccessResponse) =>
+      http.post<{ id: string }>(PAYMENT_ENDPOINTS.POST_VERYFY_PAYMENT, data),
     onSuccess: (data) => {
       if (data.success) {
-        toast.success(data.message);
-        // TODO: Redirect to success page
+        toast.success(`${data.message}, Redirecting`, {
+          duration: 10000,
+        });
+        const id = data?.data?.id;
+        router.push(`/draw/purchase/${id}`);
         return data;
       }
       toast.error(data.message);
@@ -63,15 +60,18 @@ export function CheckoutPage({ selectedNumber, id }: CheckoutPageProps) {
 
         RazorpayCheckout.open(options)
           .then((data) => {
-            mutateVerify({ ...data, luckyNumberId: id });
+            mutateVerify(data);
+            return data;
           })
           .catch((error) => {
-            toast.error("Payment didn't go through");
+            toast.error("Payment didn't go through", {
+              duration: 10000,
+            });
           });
-        return data;
+        return data.data;
       }
       toast.error(data.message);
-      return data;
+      return data.data;
     },
   });
 
@@ -186,7 +186,7 @@ export function CheckoutPage({ selectedNumber, id }: CheckoutPageProps) {
                 </Avatar>
                 <YStack flex={1}>
                   <Text fontSize={15} fontWeight="600">
-                    {user?.fullName || 'User'}
+                    {user?.fullName || user?.firstName + ' ' + user?.lastName || 'User'}
                   </Text>
                   <Text fontSize={13}>Account Holder</Text>
                 </YStack>
@@ -199,10 +199,10 @@ export function CheckoutPage({ selectedNumber, id }: CheckoutPageProps) {
                 <Text fontSize={14}>{user?.primaryEmailAddress?.emailAddress || 'No email'}</Text>
               </XStack>
 
-              {user?.phoneNumbers?.[0] && (
+              {user?.primaryPhoneNumber?.phoneNumber && (
                 <XStack gap="$3" items="center">
-                  {/* <Phone size={18} /> */}
-                  <Text fontSize={14}>{user.phoneNumbers[0].phoneNumber}</Text>
+                  <Ionicons name="call-outline" size={20} />
+                  <Text fontSize={14}>{user.primaryPhoneNumber.phoneNumber}</Text>
                 </XStack>
               )}
             </YStack>
@@ -275,7 +275,11 @@ export function CheckoutPage({ selectedNumber, id }: CheckoutPageProps) {
               opacity={!agreeToTerms ? 0.5 : 1}
               onPress={handleCheckout}>
               <Text fontSize={16} fontWeight="700" color="white">
-                {isOptionFetching ? 'Processing...' : `Pay ₹${totalCost}`}
+                {isOptionFetching
+                  ? 'Processing...'
+                  : isVerifyFetching
+                    ? 'Redirecting...'
+                    : `Pay ₹${totalCost}`}
               </Text>
             </Button>
 

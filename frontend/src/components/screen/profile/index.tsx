@@ -1,23 +1,67 @@
 import React, { useCallback } from 'react';
 import { RefreshControl } from 'react-native';
-import { YStack, XStack, Text, ScrollView, Card, H1, Paragraph, Button, Circle } from 'tamagui';
-import { router, Stack } from 'expo-router';
+import { YStack, XStack, Text, ScrollView, Card, H1, Paragraph, Button, Avatar } from 'tamagui';
+import { Link, Route, Stack } from 'expo-router';
 import { CustomHeader } from '../../common/CustomHeader';
-import { useUser } from '@clerk/clerk-expo';
+import { useAuth, useUser } from '@clerk/clerk-expo';
+import { Ionicons } from '@expo/vector-icons';
+import { useQuery } from '@tanstack/react-query';
+import http from '@/src/utils/http';
+import { USER_ENDPOINTS } from '@/src/lib/endpoints/user';
+
+type Items = {
+  href: Route;
+  label: string;
+};
+
+const items: Items[] = [
+  {
+    href: '/',
+    label: 'Profile',
+  },
+  {
+    href: '/',
+    label: 'Billing',
+  },
+  {
+    href: '/',
+    label: 'Rules',
+  },
+  {
+    href: '/',
+    label: 'Help',
+  },
+  {
+    href: '/',
+    label: 'Settings',
+  },
+  {
+    href: '/',
+    label: 'About',
+  },
+];
+
+type UserT = {
+  memberSince: string;
+  totalDrawParticipate: string;
+  totalWin: string;
+  totalDrawSpend: string;
+};
 
 export function ProfileScreen() {
   const [isLoading, setIsLoading] = React.useState(false);
   const { user } = useUser();
+  const { signOut } = useAuth();
 
-  const onRefresh = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-  if (!user) {
+  const { data: userData, refetch } = useQuery({
+    queryKey: ['user', user?.id],
+    queryFn: () => http.get<UserT>(USER_ENDPOINTS.GET_USER),
+    select: (data) => data.data,
+  });
+
+  const onRefresh = () => refetch();
+
+  if (!user || !userData) {
     return null;
   }
 
@@ -33,14 +77,14 @@ export function ProfileScreen() {
       <ScrollView
         flex={1}
         refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefresh} />}
-        style={{ padding: 20 }}>
-        <YStack gap="$6" items="center">
-          <Circle size={120} bg="$background" borderWidth={2} borderColor="$borderColor">
-            <Text fontSize={48} fontWeight="900" color="$green10">
-              A
-            </Text>
-          </Circle>
-
+        paddingInline={10}
+        style={{ paddingVertical: 10 }}>
+        <YStack gap="$3" items="center">
+          <Card padding={'$2'} borderColor={'$borderColor'} elevate bordered rounded="$6">
+            <Avatar rounded="$6" size={'$20'}>
+              <Avatar.Image src={user.imageUrl} alt="avatar" />
+            </Avatar>
+          </Card>
           <H1 fontWeight="900" fontSize={36} color="$green10">
             {user?.username || user?.firstName}
           </H1>
@@ -49,32 +93,50 @@ export function ProfileScreen() {
             {user?.primaryEmailAddress?.emailAddress}
           </Paragraph>
 
+          <Paragraph size="$6" color="gray" maxW={280}>
+            {user?.primaryPhoneNumber?.phoneNumber || 'N/A'}
+          </Paragraph>
+
           <Card padding="$4" rounded="$6" borderWidth={1} borderColor="$borderColor" width="100%">
             <YStack gap="$2" items="center">
               <Text fontSize={12} color="gray" textTransform="uppercase" fontWeight="700">
                 Member Since
               </Text>
               <Text fontSize={20} fontWeight="700">
-                {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
+                {userData.memberSince
+                  ? new Date(userData?.memberSince).toLocaleDateString()
+                  : 'N/A'}
               </Text>
             </YStack>
           </Card>
 
           <XStack justify="space-between" gap="$4" width="100%">
             <Card flex={1} padding="$4" rounded="$6" borderWidth={1} borderColor="$borderColor">
-              <Text fontSize={12} color="gray" textTransform="uppercase" fontWeight="700" mb={4}>
+              <Text
+                fontSize={12}
+                color="gray"
+                textTransform="uppercase"
+                style={{ textAlign: 'center' }}
+                fontWeight="700"
+                mb={4}>
                 Draws Participated
               </Text>
-              <Text fontSize={24} fontWeight="900">
-                00
+              <Text fontSize={24} fontWeight="900" style={{ textAlign: 'center' }}>
+                {userData.totalDrawParticipate}
               </Text>
             </Card>
             <Card flex={1} padding="$4" rounded="$6" borderWidth={1} borderColor="$borderColor">
-              <Text fontSize={12} color="gray" textTransform="uppercase" fontWeight="700" mb={4}>
+              <Text
+                style={{ textAlign: 'center' }}
+                fontSize={12}
+                color="gray"
+                textTransform="uppercase"
+                fontWeight="700"
+                mb={4}>
                 Total Wins
               </Text>
-              <Text fontSize={24} fontWeight="900">
-                00
+              <Text fontSize={24} fontWeight="900" style={{ textAlign: 'center' }}>
+                {userData.totalWin}
               </Text>
             </Card>
           </XStack>
@@ -82,51 +144,31 @@ export function ProfileScreen() {
           <Card padding="$4" rounded="$6" borderWidth={1} borderColor="$borderColor" width="100%">
             <YStack gap="$2" items="center">
               <Text fontSize={12} color="gray" textTransform="uppercase" fontWeight="700">
-                Total Billing
+                Total Spent
               </Text>
               <H1 fontWeight="900" fontSize={36} color="$green10">
-                ₹ {user.billingAmount}
+                ₹ {userData.totalDrawSpend}
               </H1>
             </YStack>
           </Card>
 
           {/* Buttons in rows - two per row */}
           <YStack width="100%" gap="$3">
-            <XStack justify="space-between" gap="$3">
-              <Button onPress={() => router.push('/profile/edit')} themeInverse size="$6" flex={1}>
-                <Button.Text fontWeight={'bold'}>Edit Profile</Button.Text>
-              </Button>
-              <Button onPress={() => router.push('/profile/wins')} themeInverse size="$6" flex={1}>
-                <Button.Text fontWeight={'bold'}>Draw Wins</Button.Text>
-              </Button>
-            </XStack>
+            {items.map((item, i) => (
+              <Link key={i} href={item.href}>
+                <Card padded borderWidth={1} borderColor="$borderColor">
+                  <XStack width="100%" gap="$2" justify={'space-between'} items={'center'}>
+                    <Text fontSize={16} fontWeight="700">
+                      {item.label}
+                    </Text>
+                    <Ionicons name="chevron-forward" size={24} color="black" />
+                  </XStack>
+                </Card>
+              </Link>
+            ))}
 
             <XStack justify="space-between" gap="$3">
-              <Button
-                onPress={() => router.push('/settings/account')}
-                themeInverse
-                size="$6"
-                flex={1}>
-                <Button.Text fontWeight={'bold'}>Account Settings</Button.Text>
-              </Button>
-              <Button
-                onPress={() => router.push('/settings/notifications')}
-                themeInverse
-                size="$6"
-                flex={1}>
-                <Button.Text fontWeight={'bold'}>Notification Settings</Button.Text>
-              </Button>
-            </XStack>
-
-            <XStack justify="space-between" gap="$3">
-              <Button
-                onPress={() => router.push('/settings/privacy')}
-                themeInverse
-                size="$6"
-                flex={1}>
-                <Button.Text fontWeight={'bold'}>Privacy Settings</Button.Text>
-              </Button>
-              <Button onPress={() => alert('Logout pressed')} size="$6" flex={1}>
+              <Button themeInverse onPress={() => signOut()} size="$6" flex={1}>
                 <Button.Text fontWeight={'bold'}>Logout</Button.Text>
               </Button>
             </XStack>

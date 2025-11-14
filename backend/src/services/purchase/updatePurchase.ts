@@ -7,5 +7,24 @@ type Props = {
 };
 
 export async function updatePurchase({ where, data }: Props) {
-  return await prisma.purchase.update({ where, data });
+  return prisma.$transaction(async (tx) => {
+    const purchase = await tx.purchase.update({ where, data });
+
+    if (data.status === "SUCCESS") {
+      await tx.luckyNumber.update({
+        where: { id: purchase.luckyNumberId },
+        data: { isPurchased: data.status === "SUCCESS" ? true : false },
+      });
+      await tx.transaction.create({
+        data: {
+          user: { connect: { id: purchase.userId } },
+          amount: purchase.amount,
+          status: purchase.status,
+          paymentMethod: "RAZORPAY",
+          purchase: { connect: { id: purchase.id } },
+        },
+      });
+    }
+    return purchase;
+  });
 }

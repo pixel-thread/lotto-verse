@@ -6,5 +6,8 @@ type Props = {
 };
 
 export async function getUniquePurchase({ where }: Props) {
-  return prisma.purchase.findUnique({ where, include: { luckyNumber: true } });
+  return prisma.purchase.findUnique({
+    where,
+    include: { luckyNumber: true, transactions: true },
+  });
 }
