@@ -9,23 +9,27 @@ import { logger } from "@/src/utils/logger";
 export async function POST(req: Request) {
   try {
     // Get raw request body for signature verification
+    console.log("web hook trigger");
     // @ts-ignore
     const rawBody = await getRawBody(req);
 
     // Read signature from headers
     const signature = req.headers.get("x-razorpay-signature");
+    console.log("1");
     if (!signature) {
       return NextResponse.json({ error: "Missing signature" }, { status: 400 });
     }
 
     // Compute expected signature HMAC SHA256
     const secret = env.RAZORPAY_WEBHOOK_SECRET;
+    console.log("2");
     const expectedSignature = crypto
       .createHmac("sha256", secret)
       // @ts-ignore
       .update(rawBody)
       .digest("hex");
 
+    console.log("3");
     // Compare signatures securely
     if (
       !crypto.timingSafeEqual(
@@ -33,12 +37,14 @@ export async function POST(req: Request) {
         Buffer.from(expectedSignature),
       )
     ) {
+      console.log("4");
       return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
     }
 
     // Parse JSON event from raw body
     const event = JSON.parse(rawBody.toString());
 
+    console.log("5");
     // Handle event types
     switch (event.event) {
       case "payment.captured":
@@ -68,6 +74,7 @@ export async function POST(req: Request) {
         });
     }
 
+    console.log("6");
     return NextResponse.json({ status: "ok" }, { status: 200 });
   } catch (error) {
     logger.error({ "Error processing Razorpay webhook:": error });
