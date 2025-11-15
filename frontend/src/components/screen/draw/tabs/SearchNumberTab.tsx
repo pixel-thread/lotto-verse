@@ -1,6 +1,5 @@
 import React, { useState, useCallback, memo, useMemo } from 'react';
 import { Button, Card, Input, Paragraph, Text, XStack, YStack } from 'tamagui';
-import { useCurrentDraw } from '@/src/hooks/draw/useCurrentDraw';
 import { toast } from 'sonner-native';
 import { useMutation } from '@tanstack/react-query';
 import http from '@/src/utils/http';
