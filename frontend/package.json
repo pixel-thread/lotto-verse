@@ -8,6 +8,7 @@
     "local:dev:android": "eas build --profile development --platform android --local",
     "local:dev:ios": "eas build --profile development --platform ios --local",
     "local:dev:all": "eas build --profile development --platform all --local",
+    "local:prod:android": "eas build --profile production --platform android --local",
     "build:preview": "eas build --profile preview --platform all",
     "build:prod": "eas build --profile production --platform all",
     "build:ios:dev": "eas build --profile development --platform ios",

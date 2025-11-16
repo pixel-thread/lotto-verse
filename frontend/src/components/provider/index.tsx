@@ -13,7 +13,9 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 export const Wrapper = () => {
   return (
     <GestureHandlerRootView>
-      <ClerkProvider tokenCache={tokenCache}>
+      <ClerkProvider
+        publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
+        tokenCache={tokenCache}>
         <StatusBar style="auto" />
         <ClerkLoaded>
           <PortalProvider>

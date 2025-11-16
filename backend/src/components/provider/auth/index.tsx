@@ -1,69 +1,45 @@
 "use client";
 import { AUTH_TOKEN_KEY } from "@/src/lib/constant/jwt-key";
-import { AuthContext } from "@lib/context/auth";
+import { AuthContext } from "@/src/lib/context/auth";
 import { UserT } from "@/src/types/context/auth";
 import http from "@/src/utils/http";
 import { useAuth } from "@clerk/clerk-react";
-import { useMutation } from "@tanstack/react-query";
-import { useCallback, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useCallback, useEffect, useMemo } from "react";
 import { useCookies } from "react-cookie";
-import { toast } from "sonner";
-import { AUTH_ENDPOINTS } from "@/src/lib/endpoints/auth";
 
 type Props = { children: React.ReactNode };
 
 export const AuthProvider = ({ children }: Props) => {
-  const { isSignedIn, getToken, signOut } = useAuth();
-  const [user, setUser] = useState<UserT | null>(null);
+  const { isSignedIn, getToken } = useAuth();
   const [cookies, setCookies, removeCookies] = useCookies([AUTH_TOKEN_KEY]);
 
-  // Get user mutation
-  const { mutate, isPending } = useMutation({
-    mutationFn: () => http.get<UserT>(AUTH_ENDPOINTS.GET_ME),
-    onSuccess: (data) => {
-      if (data.success) {
-        setUser(data.data);
-        return data.data;
-      }
-      toast.error(data.message);
-      setUser(null);
-      return data;
-    },
+  const { data, isFetching, isLoading } = useQuery({
+    queryKey: ["user"],
+    queryFn: async () => http.get<UserT>("/auth"),
+    enabled: isSignedIn && !!cookies.AUTH_TOKEN_KEY,
+    select: (data) => data.data,
   });
 
   const getUser = useCallback(async () => {
-    if (isSignedIn || isPending === false) {
+    if (isSignedIn) {
       const token = await getToken({ template: "jwt" });
-      console.log("Here");
       if (token) {
-        console.log("Here 1");
         setCookies(AUTH_TOKEN_KEY, token, {
           path: "/",
           sameSite: true,
           secure: true,
         });
-        if (cookies.AUTH_TOKEN_KEY) {
-          mutate();
-        }
       }
     }
-  }, [isSignedIn, getToken, cookies.AUTH_TOKEN_KEY, mutate]);
-  // logout
-  const onLogout = async () => {
-    removeCookies(AUTH_TOKEN_KEY);
-    setUser(null);
-    await signOut({
-      redirectUrl: "/",
-      sessionId: "",
-    });
-  };
+  }, [isSignedIn, getToken, cookies.AUTH_TOKEN_KEY]);
 
   // get user when signed in
   useEffect(() => {
-    if (isSignedIn && user === null && isPending === false) {
+    if (isSignedIn) {
       getUser();
     }
-  }, [isSignedIn, user]);
+  }, [isSignedIn]);
 
   // remove token when user is logout from clerk if token still exist
   useEffect(() => {
@@ -72,15 +48,16 @@ export const AuthProvider = ({ children }: Props) => {
     }
   }, [isSignedIn]);
 
+  const isAdmin = useMemo(() => {
+    return data?.role === "SUPER_ADMIN" || data?.role === "ADMIN";
+  }, [data]);
+
   return (
     <AuthContext.Provider
       value={{
-        user: user,
-        isAuthLoading: isPending,
-        isSignedIn: isSignedIn || false,
-        refreshAuth: () => mutate(),
-        logout: () => onLogout(),
-        isSuperAdmin: user?.role === "SUPER_ADMIN",
+        user: data,
+        isLoadingAuth: isFetching || isLoading,
+        isAdmin: isAdmin,
       }}
     >
       {children}
