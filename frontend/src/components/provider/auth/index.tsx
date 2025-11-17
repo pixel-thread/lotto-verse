@@ -1,8 +1,9 @@
 import axiosInstance from '@/src/utils/api';
 import { logger } from '@/src/utils/logger';
-import { useAuth, useSession } from '@clerk/clerk-expo';
+import { useAuth } from '@clerk/clerk-expo';
 import { useCallback, useEffect, useState } from 'react';
 import { LoadingScreen } from '../../common/LoadingScreen';
+import { toast } from 'sonner-native';
 
 type AuthProviderProps = Readonly<{ children: React.ReactNode }>;
 
@@ -13,16 +14,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // Get Token from Clerk
   const getClerkToken = useCallback(async () => {
     if (isSignedIn) {
-      logger.log('Getting Token..');
+      logger.info('Getting Token..');
       const token = await getToken({ template: 'jwt' });
       if (token) {
-        logger.log('Setting Token..');
+        logger.info('Setting Token..');
         axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         setIsTokenSet(true);
         logger.log('Token Set');
         return token;
       }
-      logger.log('No Token Set');
+      logger.info('No Token Set');
+      toast.error('Failed to get token from Clerk');
       axiosInstance.defaults.headers.common['Authorization'] = '';
       return;
     }
@@ -30,7 +32,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   // Clear token if user is logout
   const clearToken = useCallback(() => {
-    logger.log('Clearing Token..');
+    logger.info('Clearing Token..');
     axiosInstance.defaults.headers.common['Authorization'] = '';
   }, [isSignedIn, isTokenSet]);
 
@@ -46,6 +48,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }, [isSignedIn, isTokenSet]);
 
+  // BUG: Token Not Loaded
   if (isSignedIn && !isTokenSet) {
     return <LoadingScreen />;
   }

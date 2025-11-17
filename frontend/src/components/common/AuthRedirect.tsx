@@ -20,7 +20,7 @@ export const AuthRedirect = () => {
   }, [isSignedIn, pathName]);
 
   // BUG: Clerk does not load after login in android
-  // if (!isLoaded) return <LoadingScreen />;
+  if (!isLoaded) return <LoadingScreen />;
 
   return (
     <View flex={1}>
