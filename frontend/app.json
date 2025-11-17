@@ -45,19 +45,14 @@
       }
     },
     "owner": "pixel-thread",
+    "updates": {
+      "url": "https://u.expo.dev/902c84ad-eca6-4545-8235-b3bd9ace3129",
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0
+    },
     "runtimeVersion": {
       "policy": "appVersion"
-    },
-    "updates": {
-      "url": "https://u.expo.dev/902c84ad-eca6-4545-8235-b3bd9ace3129"
     }
-  },
-  "updates": {
-    "enabled": true,
-    "checkAutomatically": "ON_LOAD",
-    "fallbackToCacheTimeout": 0
-  },
-  "runtimeVersion": {
-    "policy": "appVersion"
   }
 }
