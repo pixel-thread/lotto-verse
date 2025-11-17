@@ -1,4 +1,4 @@
-import { Card, H4, Paragraph, XStack, View, YStack } from 'tamagui';
+import { Card, H4, Paragraph, XStack, YStack } from 'tamagui';
 import { DrawDetailSkeleton } from './skeleton/DrawDetailSkeleton';
 import { useCurrentDraw } from '@/src/hooks/draw/useCurrentDraw';
 import { router } from 'expo-router';

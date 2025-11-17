@@ -12,7 +12,6 @@ export async function requireAuth(req: NextRequest) {
   if (!token) {
     throw new UnauthorizedError("Unauthorized");
   }
-
   // Parse the Clerk session JWT and get claims
   let claims;
 

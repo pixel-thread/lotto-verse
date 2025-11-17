@@ -8,7 +8,7 @@ import { Route, usePathname, useRouter } from 'expo-router';
 import { useColorScheme } from 'nativewind';
 import React from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Button, View, Text } from 'tamagui';
+import { Button, View, Text, useTheme } from 'tamagui';
 
 export type MenuItemsT = {
   id: number;
@@ -27,8 +27,17 @@ export function CustomDrawerContent(props: DrawerContentComponentProps) {
   const router = useRouter();
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
+  const theme = useTheme();
   return (
-    <DrawerContentScrollView {...props} contentContainerStyle={{ paddingTop: insets.top, flex: 1 }}>
+    <DrawerContentScrollView
+      {...props}
+      style={{
+        backgroundColor: theme.background.val,
+      }}
+      contentContainerStyle={{
+        paddingTop: insets.top,
+        flex: 1,
+      }}>
       <View paddingBlockEnd={'$2'}>
         <Text
           textTransform="uppercase"
