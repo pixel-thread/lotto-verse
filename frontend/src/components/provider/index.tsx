@@ -9,6 +9,7 @@ import { RNTamaguiProvider } from './tamagui';
 import { PortalProvider } from 'tamagui';
 import { Toaster } from 'sonner-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import EASUpdateProvider from './update';
 
 export const Wrapper = () => {
   return (
@@ -20,14 +21,16 @@ export const Wrapper = () => {
         <ClerkLoaded>
           <PortalProvider>
             <RNTamaguiProvider>
-              <AuthProvider>
-                <SafeAreaProvider className="flex-1">
-                  <RNQueryProvider>
-                    <AuthRedirect />
-                    <Toaster />
-                  </RNQueryProvider>
-                </SafeAreaProvider>
-              </AuthProvider>
+              <EASUpdateProvider>
+                <AuthProvider>
+                  <SafeAreaProvider className="flex-1">
+                    <RNQueryProvider>
+                      <AuthRedirect />
+                      <Toaster />
+                    </RNQueryProvider>
+                  </SafeAreaProvider>
+                </AuthProvider>
+              </EASUpdateProvider>
             </RNTamaguiProvider>
           </PortalProvider>
         </ClerkLoaded>
