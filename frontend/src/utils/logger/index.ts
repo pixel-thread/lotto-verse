@@ -1,6 +1,7 @@
 import http from '../http';
 
 type ErrorType = 'ERROR' | 'INFO' | 'WARN' | 'LOG';
+
 const sendLogToServer = async <T>(type: ErrorType, data: T) => {
   const logEntry = {
     type,
@@ -15,65 +16,48 @@ const sendLogToServer = async <T>(type: ErrorType, data: T) => {
   }
 };
 
-const formatData = <T>(type: ErrorType, data: T): string => {
+const formatData = (type: ErrorType, ...args: any[]): string => {
   const timestamp = new Date().toISOString();
-  const content = typeof data === 'string' ? data : JSON.stringify(data, null, 3); // 2 -  indentation, null - no spaces
-  return `[${timestamp}] [${type.toUpperCase()}]: ${content}`;
+  let content: string;
+  if (args.length === 1) {
+    content = typeof args[0] === 'string' ? args[0] : JSON.stringify(args[0], null, 3);
+  } else {
+    const [message, data] = args;
+    content =
+      typeof message === 'string'
+        ? `${message} ${data ? JSON.stringify(data, null, 3) : ''}`
+        : JSON.stringify(message, null, 3);
+  }
+  return `[${timestamp}] [${type}]: ${content}`;
+};
+
+const logMethod = async (type: ErrorType, ...args: any[]): Promise<void> => {
+  if (process.env.NODE_ENV === 'development') {
+    console.log(formatData(type, ...args));
+  }
+  if (process.env.NODE_ENV === 'production') {
+    try {
+      // Compose content combining string message and optional object argument
+      let content: string;
+      if (args.length === 1) {
+        content = typeof args[0] === 'string' ? args[0] : JSON.stringify(args[0]);
+      } else {
+        const [message, data] = args;
+        content =
+          typeof message === 'string'
+            ? `${message} ${data ? JSON.stringify(data) : ''}`
+            : JSON.stringify(message);
+      }
+      await sendLogToServer(type, content);
+    } catch {
+      console.error(`Failed to send ${type.toLowerCase()} logs to server`);
+    }
+  }
 };
 
 export const logger = {
-  error: async <T>(data: T): Promise<void> => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log(formatData('ERROR', data));
-    }
-
-    if (process.env.NODE_ENV === 'production') {
-      try {
-        await sendLogToServer('ERROR', data);
-      } catch (error) {
-        console.error('Failed to send error logs to server');
-      }
-    }
-  },
-
-  info: async <T>(data: T): Promise<void> => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log(formatData('INFO', data));
-    }
-
-    if (process.env.NODE_ENV === 'production') {
-      try {
-        await sendLogToServer('INFO', data);
-      } catch (error) {
-        console.error('Failed to send info logs to server');
-      }
-    }
-  },
-
-  warn: async <T>(data: T): Promise<void> => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log(formatData('INFO', data));
-    }
-
-    if (process.env.NODE_ENV === 'production') {
-      try {
-        await sendLogToServer('INFO', data);
-      } catch (error) {
-        console.error('Failed to send info logs to server');
-      }
-    }
-  },
-
-  log: async <T>(data: T): Promise<void> => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log(formatData('LOG', data));
-    }
-    if (process.env.NODE_ENV === 'production') {
-      try {
-        await sendLogToServer('LOG', data);
-      } catch (error) {
-        console.error('Failed to send info logs to server');
-      }
-    }
-  },
+  error: (...args: any[]) => logMethod('ERROR', ...args),
+  info: (...args: any[]) => logMethod('INFO', ...args),
+  warn: (...args: any[]) => logMethod('WARN', ...args),
+  log: (...args: any[]) => logMethod('LOG', ...args),
 };

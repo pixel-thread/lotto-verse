@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { RefreshControl } from 'react-native';
 import { YStack, XStack, Text, ScrollView, Card, H1, Paragraph, Button, Avatar } from 'tamagui';
 import { Link, Route, Stack } from 'expo-router';
@@ -8,6 +8,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
 import http from '@/src/utils/http';
 import { USER_ENDPOINTS } from '@/src/lib/endpoints/user';
+import { LoadingScreen } from '../../common/LoadingScreen';
+import { logger } from '@/src/utils/logger';
 
 type Items = {
   href: Route;
@@ -49,11 +51,14 @@ type UserT = {
 };
 
 export function ProfileScreen() {
-  const [isLoading, setIsLoading] = React.useState(false);
   const { user } = useUser();
   const { signOut } = useAuth();
 
-  const { data: userData, refetch } = useQuery({
+  const {
+    data: userData,
+    refetch,
+    isFetching: isLoading,
+  } = useQuery({
     queryKey: ['user', user?.id],
     queryFn: () => http.get<UserT>(USER_ENDPOINTS.GET_USER),
     select: (data) => data.data,
@@ -62,8 +67,9 @@ export function ProfileScreen() {
   const onRefresh = () => refetch();
 
   if (!user || !userData) {
-    return null;
+    return <LoadingScreen />;
   }
+  const onLogout = () => {};
 
   return (
     <>

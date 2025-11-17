@@ -1,4 +1,4 @@
-import { prisma } from "@/src/lib/db/prisma";
+import { addLogsToDB } from "@/src/services/logs/addLogsToDB";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
 import { SuccessResponse } from "@/src/utils/next-response";
 import { NextRequest } from "next/server";
@@ -13,20 +13,9 @@ const logSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  // Validate request body using Lado
-  const parseResult = logSchema.parse(await req.json());
-
-  const { type, content, timestamp } = parseResult;
-
+  const body = logSchema.parse(await req.json());
   try {
-    await prisma.log.create({
-      data: {
-        type,
-        content,
-        timestamp: new Date(timestamp),
-      },
-    });
-
+    await addLogsToDB(body);
     return SuccessResponse({ message: "Log saved successfully" });
   } catch (error) {
     return handleApiErrors(error);

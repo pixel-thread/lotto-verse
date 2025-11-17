@@ -1,31 +1,73 @@
-const formatData = <T>(type: 'error' | 'info' | 'warn' | 'log', data: T): string => {
+import { addLogsToDB } from "@/src/services/logs/addLogsToDB";
+import http from "../http";
+
+type ErrorType = "ERROR" | "INFO" | "WARN" | "LOG";
+
+const sendLogToServer = async <T>(type: ErrorType, data: T) => {
+  const logEntry = {
+    type,
+    content: typeof data === "string" ? data : JSON.stringify(data),
+    timestamp: new Date().toISOString(),
+  };
+
+  try {
+    await http.post("/logs", logEntry); // send object; HTTP client converts to JSON
+  } catch (error) {
+    console.error("Failed to send logs to server", error);
+  }
+};
+
+const formatData = (type: ErrorType, ...args: any[]): string => {
   const timestamp = new Date().toISOString();
-  const content = typeof data === 'string' ? data : JSON.stringify(data, null, 3); // 2 -  indentation, null - no spaces
-  return `[${timestamp}] [${type.toUpperCase()}]: ${content}`;
+  let content: string;
+  if (args.length === 1) {
+    content =
+      typeof args[0] === "string" ? args[0] : JSON.stringify(args[0], null, 3);
+  } else {
+    const [message, data] = args;
+    content =
+      typeof message === "string"
+        ? `${message} ${data ? JSON.stringify(data, null, 3) : ""}`
+        : JSON.stringify(message, null, 3);
+  }
+  return `[${timestamp}] [${type}]: ${content}`;
+};
+
+const logMethod = async (type: ErrorType, ...args: any[]): Promise<void> => {
+  if (process.env.NODE_ENV === "development") {
+    console.log(formatData(type, ...args));
+  }
+  if (process.env.NODE_ENV === "production") {
+    try {
+      // Compose content combining string message and optional object argument
+      let content: string;
+      if (args.length === 1) {
+        content =
+          typeof args[0] === "string" ? args[0] : JSON.stringify(args[0]);
+      } else {
+        const [message, data] = args;
+        content =
+          typeof message === "string"
+            ? `${message} ${data ? JSON.stringify(data) : ""}`
+            : JSON.stringify(message);
+      }
+      await addLogsToDB({
+        type,
+        content,
+        isBackend: true,
+        timestamp: new Date().toISOString(),
+      });
+    } catch {
+      console.error("Failed to save logs to database", {
+        type: type,
+      });
+    }
+  }
 };
 
 export const logger = {
-  error: <T>(data: T): void => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log(formatData('error', data));
-    }
-  },
-
-  info: <T>(data: T): void => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log(formatData('info', data));
-    }
-  },
-
-  warn: <T>(data: T): void => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log(formatData('warn', data));
-    }
-  },
-
-  log: <T>(data: T): void => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log(formatData('log', data));
-    }
-  },
+  error: (...args: any[]) => logMethod("ERROR", ...args),
+  info: (...args: any[]) => logMethod("INFO", ...args),
+  warn: (...args: any[]) => logMethod("WARN", ...args),
+  log: (...args: any[]) => logMethod("LOG", ...args),
 };

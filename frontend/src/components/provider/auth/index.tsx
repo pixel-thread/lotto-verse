@@ -20,12 +20,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         logger.info('Setting Token..');
         axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         setIsTokenSet(true);
-        logger.log('Token Set');
+        logger.info('Token Set');
         return token;
       }
-      logger.info('No Token Set');
-      toast.error('Failed to get token from Clerk');
       axiosInstance.defaults.headers.common['Authorization'] = '';
+      toast.error('Failed to get token from Clerk');
       return;
     }
   }, [isSignedIn]);
