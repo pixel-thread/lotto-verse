@@ -18,7 +18,8 @@ export const AuthRedirect = () => {
   useEffect(() => {
     if (!isSignedIn && pathName !== '/auth') router.replace('/auth');
   }, [isSignedIn, pathName]);
-  //BUG: Clerk does not load after login in android
+
+  // BUG: Clerk does not load after login in android
   // if (!isLoaded) return <LoadingScreen />;
 
   return (
