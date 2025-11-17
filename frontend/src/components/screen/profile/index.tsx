@@ -10,6 +10,7 @@ import http from '@/src/utils/http';
 import { USER_ENDPOINTS } from '@/src/lib/endpoints/user';
 import { LoadingScreen } from '../../common/LoadingScreen';
 import { logger } from '@/src/utils/logger';
+import { useLottoVerseUser } from '@/src/hooks/user/useLottoVerseUser';
 
 type Items = {
   href: Route;
@@ -43,33 +44,16 @@ const items: Items[] = [
   },
 ];
 
-type UserT = {
-  memberSince: string;
-  totalDrawParticipate: string;
-  totalWin: string;
-  totalDrawSpend: string;
-};
-
 export function ProfileScreen() {
   const { user } = useUser();
   const { signOut } = useAuth();
 
-  const {
-    data: userData,
-    refetch,
-    isFetching: isLoading,
-  } = useQuery({
-    queryKey: ['user', user?.id],
-    queryFn: () => http.get<UserT>(USER_ENDPOINTS.GET_USER),
-    select: (data) => data.data,
-  });
-
+  const { data: userData, refetch, isFetching: isLoading } = useLottoVerseUser();
   const onRefresh = () => refetch();
 
   if (!user || !userData) {
     return <LoadingScreen />;
   }
-  const onLogout = () => {};
 
   return (
     <>

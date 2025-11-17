@@ -3,7 +3,8 @@ import http from "../http";
 
 type ErrorType = "ERROR" | "INFO" | "WARN" | "LOG";
 
-const sendLogToServer = async <T>(type: ErrorType, data: T) => {
+// Send logs to server for frontend usage
+export const sendLogToServer = async <T>(type: ErrorType, data: T) => {
   const logEntry = {
     type,
     content: typeof data === "string" ? data : JSON.stringify(data),
@@ -17,6 +18,7 @@ const sendLogToServer = async <T>(type: ErrorType, data: T) => {
   }
 };
 
+// Compose content combining string message and optional object argument
 const formatData = (type: ErrorType, ...args: any[]): string => {
   const timestamp = new Date().toISOString();
   let content: string;

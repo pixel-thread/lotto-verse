@@ -22,6 +22,7 @@ export async function GET(req: NextRequest) {
       totalWin: userWinning.length,
       totalDrawSpend: totalDrawAmountSpend,
       memberSince: user.createdAt,
+      role: user.role,
     };
     return SuccessResponse({
       data: data,

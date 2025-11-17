@@ -4,9 +4,12 @@ import { Platform, TouchableOpacity } from 'react-native';
 import colors from 'tailwindcss/colors';
 import type { ReactNode } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { View, Card } from 'tamagui';
+import { View, Card, useTheme } from 'tamagui';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { DrawerToggleButton } from '@react-navigation/drawer';
+import { useLottoVerseUser } from '@/src/hooks/user/useLottoVerseUser';
+import { useAuth } from '@clerk/clerk-expo';
 
 type Props = {
   back?: boolean;
@@ -21,8 +24,10 @@ export const CustomHeader: React.FC<Props> = ({ back, headerRight }) => {
   const { colorScheme } = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
   const insets = useSafeAreaInsets();
+  const { data: user } = useLottoVerseUser();
+  const { isSignedIn } = useAuth();
   const onPressBackButton = () => router.back();
-
+  const isShowDrawerButton = user?.role === 'SUPER_ADMIN' ? isSignedIn : false;
   return (
     <View
       flexDirection="row"
@@ -36,7 +41,7 @@ export const CustomHeader: React.FC<Props> = ({ back, headerRight }) => {
         paddingRight: insets.right + 9,
       }}>
       <View flexDirection="row" justify={'flex-start'} items="center" flex={1} height="100%">
-        {back && (
+        {back ? (
           <Card padding={'$2'} themeInverse>
             <TouchableOpacity
               onPress={onPressBackButton}
@@ -56,7 +61,13 @@ export const CustomHeader: React.FC<Props> = ({ back, headerRight }) => {
               )}
             </TouchableOpacity>
           </Card>
-        )}
+        ) : isShowDrawerButton ? (
+          <>
+            <Card padding={'$1'} themeInverse>
+              <DrawerToggleButton tintColor={isDarkMode ? colors.black : colors.white} />
+            </Card>
+          </>
+        ) : null}
       </View>
 
       <View flexDirection="row" gap="$2" items="center" justify="flex-end" flex={1}>
