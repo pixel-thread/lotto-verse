@@ -4,12 +4,10 @@ import { Platform, TouchableOpacity } from 'react-native';
 import colors from 'tailwindcss/colors';
 import type { ReactNode } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { View, Card, useTheme } from 'tamagui';
+import { View, Card } from 'tamagui';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DrawerToggleButton } from '@react-navigation/drawer';
-import { useLottoVerseUser } from '@/src/hooks/user/useLottoVerseUser';
-import { useAuth } from '@clerk/clerk-expo';
 
 type Props = {
   back?: boolean;
@@ -24,10 +22,8 @@ export const CustomHeader: React.FC<Props> = ({ back, headerRight }) => {
   const { colorScheme } = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
   const insets = useSafeAreaInsets();
-  const { data: user } = useLottoVerseUser();
-  const { isSignedIn } = useAuth();
   const onPressBackButton = () => router.back();
-  const isShowDrawerButton = user?.role === 'SUPER_ADMIN' ? isSignedIn : false;
+  const isShowDrawerButton = pathName === '/';
   return (
     <View
       flexDirection="row"
@@ -44,6 +40,7 @@ export const CustomHeader: React.FC<Props> = ({ back, headerRight }) => {
         {back ? (
           <Card padding={'$2'} themeInverse>
             <TouchableOpacity
+              hitSlop={4}
               onPress={onPressBackButton}
               style={{ alignItems: 'center', justifyContent: 'center' }}>
               {Platform.OS === 'ios' ? (

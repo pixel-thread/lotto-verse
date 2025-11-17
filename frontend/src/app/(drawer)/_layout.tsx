@@ -13,14 +13,14 @@ const DrawerLayout = () => {
       drawerContent={CustomDrawerContent}
       screenOptions={{
         headerShown: false,
-        header: ({ options }) => <CustomHeader />,
+        header: () => <CustomHeader />,
         drawerStyle: {
           width: 300,
           backgroundColor: isDarkMode ? colors.gray[950] : colors.gray[200],
         },
       }}>
       <Drawer.Screen
-        name="(tabs)"
+        name="(home)"
         options={{
           drawerLabel: 'Home',
           drawerIcon: ({ color, size }) => <Ionicons name="home" size={size} color={color} />,

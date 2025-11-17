@@ -35,7 +35,7 @@ const logMethod = async (type: ErrorType, ...args: any[]): Promise<void> => {
   if (process.env.NODE_ENV === 'development') {
     console.log(formatData(type, ...args));
   }
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === 'production' && type !== 'LOG') {
     try {
       // Compose content combining string message and optional object argument
       let content: string;

@@ -53,12 +53,14 @@ const logMethod = async (type: ErrorType, ...args: any[]): Promise<void> => {
             ? `${message} ${data ? JSON.stringify(data) : ""}`
             : JSON.stringify(message);
       }
-      await addLogsToDB({
-        type,
-        content,
-        isBackend: true,
-        timestamp: new Date().toISOString(),
-      });
+      if (type !== "LOG") {
+        await addLogsToDB({
+          type,
+          content,
+          isBackend: true,
+          timestamp: new Date().toISOString(),
+        });
+      }
     } catch {
       console.error("Failed to save logs to database", {
         type: type,

@@ -1,15 +1,14 @@
+import { Ionicons } from '@expo/vector-icons';
 import {
   DrawerContentComponentProps,
   DrawerContentScrollView,
-  DrawerItem,
   DrawerItemList,
 } from '@react-navigation/drawer';
 import { Route, usePathname, useRouter } from 'expo-router';
-import { Image, View } from 'react-native';
 import { useColorScheme } from 'nativewind';
-import colors from 'tailwindcss/colors';
 import React from 'react';
-import { Text } from 'tamagui';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Button, View, Text } from 'tamagui';
 
 export type MenuItemsT = {
   id: number;
@@ -19,12 +18,7 @@ export type MenuItemsT = {
 
 const menuItems: MenuItemsT[] = [
   { id: 1, title: 'Home', herf: '/' },
-  { id: 2, title: 'Apostle Creed', herf: '/' },
-  { id: 6, title: 'Tynrai Jingrwai', herf: '/' },
-  { id: 3, title: 'Contact', herf: '/' },
-  { id: 4, title: 'Report', herf: '/' },
-  { id: 5, title: 'Settings', herf: '/' },
-  { id: 7, title: 'Shaphang Jongngi', herf: '/' },
+  { id: 2, title: 'Draws', herf: '/draw' },
 ];
 
 export function CustomDrawerContent(props: DrawerContentComponentProps) {
@@ -32,45 +26,55 @@ export function CustomDrawerContent(props: DrawerContentComponentProps) {
   const isDarkMode = colorScheme === 'dark';
   const router = useRouter();
   const pathname = usePathname();
-
+  const insets = useSafeAreaInsets();
   return (
-    <DrawerContentScrollView {...props} contentContainerStyle={{ paddingTop: 0, flex: 1 }}>
-      <View className="items-center p-4">
-        {/* <Image */}
-        {/*   source={require('~/assets/images/splashscreen/splashscreen.png')} */}
-        {/*   style={{ width: 100, height: 100, borderRadius: 50 }} */}
-        {/* /> */}
-        <Text className="mt-5 uppercase" fontWeight={'bold'} fontSize={'$4'}>
+    <DrawerContentScrollView {...props} contentContainerStyle={{ paddingTop: insets.top, flex: 1 }}>
+      <View paddingBlockEnd={'$2'}>
+        <Text
+          textTransform="uppercase"
+          style={{ textAlign: 'center' }}
+          fontWeight={'bold'}
+          fontSize={'$8'}>
           {process.env.EXPO_PUBLIC_APP_NAME}
         </Text>
       </View>
 
       <DrawerItemList {...props} />
-      <>
+      <View gap="$2" flex={1} paddingBlockStart={'$5'} flexDirection="column">
         {menuItems.map((item) => {
           // Decide which item should carry the badge.
           // Here I’m showing it on the “Settings” item as an example:
-          const showDot = item.title === 'Settings';
-          return (
-            <View key={item.id} className="relative">
-              <DrawerItem
-                focused={pathname === item.herf}
-                label={item.title}
-                onPress={() => router.push(item.herf)}
-                labelStyle={{
-                  textTransform: 'capitalize',
-                  color: isDarkMode ? colors.gray[200] : colors.gray[950],
-                  fontWeight: 'bold',
-                }}
-              />
+          const isFocused = pathname === item.herf;
+          const iconColors = isFocused
+            ? isDarkMode
+              ? 'black'
+              : 'white'
+            : isDarkMode
+              ? 'white'
+              : 'black';
 
-              {showDot && (
-                <View className="absolute right-4 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-red-500" />
-              )}
+          return (
+            <View key={item.id} gap="$2" className="relative">
+              <Button
+                size={'$4'}
+                variant={isFocused ? undefined : 'outlined'}
+                iconAfter={<Ionicons name="chevron-forward" size={16} color={iconColors} />}
+                themeInverse={pathname === item.herf}
+                onPress={() => router.push(item.herf)}>
+                <Button.Text
+                  width={'100%'}
+                  fontSize={'$3'}
+                  fontWeight={'bold'}
+                  style={{
+                    textAlign: 'start',
+                  }}>
+                  {item.title}
+                </Button.Text>
+              </Button>
             </View>
           );
         })}
-      </>
+      </View>
     </DrawerContentScrollView>
   );
 }
