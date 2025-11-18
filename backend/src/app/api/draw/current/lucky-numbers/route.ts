@@ -7,7 +7,17 @@ import { getActiveDraw } from "@/src/services/draw/getActiveDraw";
 import { NextRequest } from "next/server";
 import { getMeta } from "@/src/utils/pagination/getMeta";
 import { logger } from "@/src/utils/logger";
-
+const addZeros = (num: number, endRange: number) => {
+  const endRangLength = endRange.toString().length;
+  const numLength = num.toString().length;
+  if (numLength < endRangLength) {
+    const zeros = endRangLength - numLength;
+    for (let i = 0; i < zeros; i++) {
+      num = parseInt("0" + num.toString());
+    }
+  }
+  return num;
+};
 export async function GET(req: NextRequest) {
   try {
     await requireAuth(req);
@@ -49,7 +59,12 @@ export async function GET(req: NextRequest) {
 
     return SuccessResponse({
       message: "Successfully fetched lucky numbers",
-      data: numbers,
+      data: numbers.map((number) => {
+        return {
+          ...number,
+          number: addZeros(number.number, draw.endRange),
+        };
+      }),
       status: 200,
       meta: getMeta({ total, currentPage: page }),
     });
