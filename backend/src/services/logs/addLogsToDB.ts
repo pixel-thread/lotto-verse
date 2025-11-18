@@ -8,6 +8,7 @@ const logSchema = z.object({
     message: "Invalid ISO date string",
   }),
   isBackend: z.boolean().default(false).optional(),
+  message: z.string().optional(),
 });
 type Log = z.infer<typeof logSchema>;
 
@@ -15,12 +16,15 @@ export async function addLogsToDB({
   type,
   content,
   timestamp,
+
   isBackend,
+  message,
 }: Log) {
   return await prisma.log.create({
     data: {
       type,
       content,
+      message,
       isBackend,
       timestamp: new Date(timestamp),
     },

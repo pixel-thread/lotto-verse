@@ -144,9 +144,10 @@ model Transaction {
 }
 
 model Log {
-  id         String   @id @default(uuid())
-  type       String   // 'ERROR', 'INFO', 'WARN', or 'LOG'
-  content    String   // The log message; can store stringified JSON
-  isBackend  Boolean  @default(false)
-  timestamp  DateTime // When the log was created
+  id        String   @id @default(uuid())
+  type      String // 'ERROR', 'INFO', 'WARN', or 'LOG'
+  content   String // The log message; can store stringified JSON
+  isBackend Boolean  @default(false)
+  message   String
+  timestamp DateTime // When the log was created
 }

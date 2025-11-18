@@ -43,11 +43,15 @@ const logMethod = async (type: ErrorType, ...args: any[]): Promise<void> => {
     try {
       // Compose content combining string message and optional object argument
       let content: string;
+      let messAge: string;
       if (args.length === 1) {
         content =
           typeof args[0] === "string" ? args[0] : JSON.stringify(args[0]);
+        messAge = content;
       } else {
         const [message, data] = args;
+        messAge =
+          typeof message === "string" ? message : JSON.stringify(message);
         content =
           typeof message === "string"
             ? `${message} ${data ? JSON.stringify(data) : ""}`
@@ -57,6 +61,7 @@ const logMethod = async (type: ErrorType, ...args: any[]): Promise<void> => {
         await addLogsToDB({
           type,
           content,
+          message: messAge,
           isBackend: true,
           timestamp: new Date().toISOString(),
         });

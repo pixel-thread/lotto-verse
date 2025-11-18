@@ -2,15 +2,16 @@ import http from '../http';
 
 type ErrorType = 'ERROR' | 'INFO' | 'WARN' | 'LOG';
 
-const sendLogToServer = async <T>(type: ErrorType, data: T) => {
+const sendLogToServer = async (type: ErrorType, content: string, message?: string) => {
   const logEntry = {
     type,
-    content: typeof data === 'string' ? data : JSON.stringify(data),
+    content,
+    message: message || '',
     timestamp: new Date().toISOString(),
   };
 
   try {
-    await http.post('/logs', logEntry); // send object; HTTP client converts to JSON
+    await http.post('/logs', logEntry); // HTTP client converts to JSON
   } catch (error) {
     console.error('Failed to send logs to server', error);
   }
@@ -37,18 +38,21 @@ const logMethod = async (type: ErrorType, ...args: any[]): Promise<void> => {
   }
   if (process.env.NODE_ENV === 'production' && type !== 'LOG') {
     try {
-      // Compose content combining string message and optional object argument
       let content: string;
+      let message: string | undefined;
+
       if (args.length === 1) {
         content = typeof args[0] === 'string' ? args[0] : JSON.stringify(args[0]);
       } else {
-        const [message, data] = args;
+        const [msg, data] = args;
+        message = typeof msg === 'string' ? msg : JSON.stringify(msg);
         content =
-          typeof message === 'string'
-            ? `${message} ${data ? JSON.stringify(data) : ''}`
-            : JSON.stringify(message);
+          typeof msg === 'string'
+            ? `${msg} ${data ? JSON.stringify(data) : ''}`
+            : JSON.stringify(msg);
       }
-      await sendLogToServer(type, content);
+
+      await sendLogToServer(type, content, message);
     } catch {
       console.error(`Failed to send ${type.toLowerCase()} logs to server`);
     }

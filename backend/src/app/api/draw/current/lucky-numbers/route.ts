@@ -69,7 +69,6 @@ export async function GET(req: NextRequest) {
       meta: getMeta({ total, currentPage: page }),
     });
   } catch (error) {
-    logger.log(error);
     return handleApiErrors(error);
   }
 }

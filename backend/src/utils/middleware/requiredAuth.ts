@@ -4,6 +4,7 @@ import { verifyToken } from "@clerk/backend";
 import { clerk } from "@/src/lib/clerk";
 import { getUniqueUser } from "@/src/services/user/getUserByClerkId";
 import { createUser } from "@/src/services/user/createUser";
+import { logger } from "../logger";
 
 export async function requireAuth(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
@@ -21,12 +22,14 @@ export async function requireAuth(req: NextRequest) {
     });
   } catch (err: any) {
     if (err.reason === "token-expired") {
+      logger.error(err.message, err);
       throw new UnauthorizedError("Unauthorized");
     }
     throw err;
   }
 
   if (!claims.sub) {
+    logger.error("Claims not found", claims);
     throw new UnauthorizedError("Unauthorized");
   }
 
@@ -35,15 +38,22 @@ export async function requireAuth(req: NextRequest) {
 
   if (!user) {
     // When user is not found, create a new user
+    logger.info("User not found, creating a new user", {
+      sub: claims.sub,
+    });
+
     const user = await createUser({ id: claims.sub });
 
     if (user) {
+      logger.info("User created", { id: user.id });
       return user;
     }
     // Just in case if user is not found after creation revoke the session
     if (claims.sid) {
+      logger.info("Revoke session", { sid: claims.sid });
       await clerk.sessions.revokeSession(claims.sid);
     }
+
     throw new UnauthorizedError("Unauthorized");
   }
 
