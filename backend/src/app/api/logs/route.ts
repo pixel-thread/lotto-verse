@@ -10,6 +10,7 @@ const logSchema = z.object({
   timestamp: z.string().refine((val) => !isNaN(Date.parse(val)), {
     message: "Invalid ISO date string",
   }),
+  message: z.string().default("Unknown message"),
 });
 
 export async function POST(req: NextRequest) {
