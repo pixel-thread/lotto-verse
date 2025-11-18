@@ -1,7 +1,7 @@
 import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo';
 import { AuthRedirect } from '@/src/components/common/AuthRedirect';
 import { tokenCache } from '@clerk/clerk-expo/token-cache';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { AuthProvider } from './auth';
 import { RNQueryProvider } from './query';

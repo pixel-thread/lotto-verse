@@ -107,7 +107,7 @@ Authorization: Bearer {{TOKEN}}
 
 ### 
 
-# @name Get current active draw
+# @name Get current active number
 
 GET {{NEXT_PUBLIC_API_BASE_URL}}/draw/current/lucky-numbers HTTP/1.1
 Content-Type: application/json

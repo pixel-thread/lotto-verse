@@ -42,7 +42,6 @@ export function HomeScreen() {
     }
   }, [refetchDraw, refetchLuckyNumbers]);
 
-  console.log(draw);
   if (!draw) {
     return <NoActiveDraw />;
   }

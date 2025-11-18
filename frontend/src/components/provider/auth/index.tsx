@@ -47,7 +47,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }, [isSignedIn, isTokenSet]);
 
-  // BUG: Token Not Loaded
   if (isSignedIn && !isTokenSet) {
     return <LoadingScreen />;
   }
