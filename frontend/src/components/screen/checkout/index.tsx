@@ -8,9 +8,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { CustomHeader } from '../../common/CustomHeader';
 import { useMutation } from '@tanstack/react-query';
 import http from '@/src/utils/http';
+import { useQueryClient } from '@tanstack/react-query';
 import { PAYMENT_ENDPOINTS } from '@/src/lib/endpoints/payment';
 import { toast } from 'sonner-native';
 import RazorpayCheckout, { CheckoutOptions, SuccessResponse } from 'react-native-razorpay';
+import { logger } from '@/src/utils/logger';
 type CheckoutPageProps = {
   selectedNumber: string;
   id: string;
@@ -20,6 +22,7 @@ export function CheckoutPage({ selectedNumber, id }: CheckoutPageProps) {
   const router = useRouter();
   const { data: draw } = useCurrentDraw();
   const { user } = useUser();
+  const queryClient = useQueryClient();
   const [agreeToTerms, setAgreeToTerms] = useState(false);
 
   const entryFee = draw?.entryFee || 0;
@@ -31,10 +34,14 @@ export function CheckoutPage({ selectedNumber, id }: CheckoutPageProps) {
       http.post<{ id: string }>(PAYMENT_ENDPOINTS.POST_VERYFY_PAYMENT, data),
     onSuccess: (data) => {
       if (data.success) {
+        logger.log('Payment verified', { userId: user?.id });
         toast.success(`${data.message}, Redirecting`, {
           duration: 10000,
         });
         const id = data?.data?.id;
+        queryClient.invalidateQueries({
+          queryKey: ['current', 'luckyNumbers', 1],
+        });
         router.push(`/draw/purchase/${id}`);
         return data;
       }
@@ -49,6 +56,7 @@ export function CheckoutPage({ selectedNumber, id }: CheckoutPageProps) {
       http.post<CheckoutOptions>(PAYMENT_ENDPOINTS.POST_CREATE_PAYMENT, { luckyNumberId: id }),
     onSuccess: (data) => {
       if (data?.success && data.data) {
+        logger.log('Creating payment options', { userId: user?.id, luckyNumberId: id });
         const options: CheckoutOptions = {
           description: data.data.description,
           name: data.data.name,
@@ -58,16 +66,20 @@ export function CheckoutPage({ selectedNumber, id }: CheckoutPageProps) {
           key: data.data.key,
         };
 
+        logger.log('Opening Razorpay', { userId: user?.id, luckyNumberId: id });
         RazorpayCheckout.open(options)
           .then((data) => {
+            logger.log('Payment went through', { userId: user?.id, luckyNumberId: id });
             mutateVerify(data);
             return data;
           })
           .catch((error) => {
+            logger.error("Payment didn't go through", error);
             toast.error("Payment didn't go through", {
               duration: 10000,
             });
           });
+        logger.log('Closing Razorpay', { userId: user?.id, luckyNumberId: id });
         return data.data;
       }
       toast.error(data.message);
