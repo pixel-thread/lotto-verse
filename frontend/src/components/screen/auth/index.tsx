@@ -1,6 +1,6 @@
 import { useAuth, useSSO } from '@clerk/clerk-expo';
 import React, { useState } from 'react';
-import { Platform, useColorScheme } from 'react-native';
+import { useColorScheme } from 'react-native';
 import { Button, H1, View, Paragraph, Text, Spinner, useTheme } from 'tamagui';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Ternary } from '@components/common/Ternary';
@@ -22,7 +22,6 @@ export function LoginScreen() {
     try {
       startSSOFlow({
         strategy: 'oauth_google',
-        redirectUrl: Platform.OS === 'android' ? '/' : '/',
       }).then(({ createdSessionId, setActive }) => {
         if (!!createdSessionId && setActive) {
           setActive({ session: createdSessionId });
