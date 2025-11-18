@@ -1,11 +1,7 @@
+import { logger } from '@/src/utils/logger';
 import * as Updates from 'expo-updates';
 
-export async function checkForAndHandleUpdates(
-  onUpdateAvailable: () => void,
-  onNoUpdate: () => void,
-  onUpdateReady: () => void,
-  onError: (err: Error) => void
-) {
+export async function checkForAndHandleUpdates() {
   try {
     const isOnline = await checkInternet();
     if (!isOnline) {
@@ -15,27 +11,14 @@ export async function checkForAndHandleUpdates(
     const update = await Updates.checkForUpdateAsync();
 
     if (update.isAvailable) {
-      onUpdateAvailable();
-
       const fetched = await Updates.fetchUpdateAsync();
+
       if (fetched.isNew) {
-        onUpdateReady();
-      } else {
-        onNoUpdate();
+        await Updates.reloadAsync();
       }
-    } else {
-      onNoUpdate();
     }
   } catch (error: any) {
-    onError(error instanceof Error ? error : new Error('Update failed.'));
-  }
-}
-
-export async function applyUpdateNow() {
-  try {
-    await Updates.reloadAsync();
-  } catch (err) {
-    console.error('Failed to reload app:', err);
+    logger.error('Failed to check for updates', error);
   }
 }
 
