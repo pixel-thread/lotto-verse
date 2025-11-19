@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.test-class {
-  color: red;
-  border: 1px solid red;
+* {
+  font-family: 'inter', sans-serif;
 }

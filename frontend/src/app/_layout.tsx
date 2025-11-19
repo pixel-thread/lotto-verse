@@ -6,10 +6,7 @@ import { Wrapper } from '../components/provider';
 import * as SplashScreen from 'expo-splash-screen';
 import '@/src/styles/global.css';
 
-SplashScreen.setOptions({
-  duration: 1000,
-  fade: true,
-});
+SplashScreen.setOptions({ duration: 1000, fade: true });
 
 export default function Layout() {
   const [loaded] = useFonts({
