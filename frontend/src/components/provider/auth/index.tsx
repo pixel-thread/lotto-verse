@@ -13,26 +13,31 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   // Get Token from Clerk
   const getClerkToken = useCallback(async () => {
-    if (isSignedIn) {
-      logger.info('Getting Token..', { userId });
-      const token = await getToken({ template: 'jwt' });
-      if (token) {
-        logger.info('Setting Token..');
-        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        setIsTokenSet(true);
-        logger.info('Token Set');
-        return token;
+    try {
+      if (isSignedIn) {
+        logger.info('Getting Token..', { userId });
+        const token = await getToken({ template: 'jwt' });
+        if (token) {
+          logger.info('Setting Token', { userId });
+          axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          logger.info('Token Set', { userId });
+          setIsTokenSet(true);
+          return token;
+        }
+        axiosInstance.defaults.headers.common['Authorization'] = '';
+        return;
       }
-      axiosInstance.defaults.headers.common['Authorization'] = '';
+    } catch (error) {
       toast.error('Failed to get token from Clerk');
-      return;
+      logger.error('Failed to get token from Clerk', { error, userId: userId });
     }
   }, [isSignedIn]);
 
   // Clear token if user is logout
   const clearToken = useCallback(() => {
-    logger.info('Clearing Token..');
+    logger.info('Clearing Token..', { userId });
     axiosInstance.defaults.headers.common['Authorization'] = '';
+    setIsTokenSet(false);
   }, [isSignedIn, isTokenSet]);
 
   useEffect(() => {
@@ -48,6 +53,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, [isSignedIn, isTokenSet]);
 
   if (isSignedIn && !isTokenSet) {
+    logger.info('Failed to set token: Rendering Loading Screen', { userId });
     return <LoadingScreen />;
   }
 
