@@ -8,7 +8,10 @@ import { logger } from "../logger";
 
 export async function requireAuth(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
-  logger.log("API ROUTE =>", pathname);
+  logger.log("API ROUTE =>", {
+    path: pathname,
+    method: req.method,
+  });
   const authHeader = req.headers.get("authorization");
   const token = authHeader?.split(" ")[1];
 

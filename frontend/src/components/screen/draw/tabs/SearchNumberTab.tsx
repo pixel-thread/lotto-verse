@@ -1,5 +1,5 @@
 import React, { useState, useCallback, memo, useMemo } from 'react';
-import { Button, Card, Input, Paragraph, Text, XStack, YStack } from 'tamagui';
+import { Button, Card, Input, Paragraph, Spinner, Text, XStack, YStack } from 'tamagui';
 import { toast } from 'sonner-native';
 import { useMutation } from '@tanstack/react-query';
 import http from '@/src/utils/http';
@@ -7,10 +7,11 @@ import { LUCKY_NUMBER_ENDPOINTS } from '@/src/lib/endpoints/lucky-number';
 import { LuckyNumbersT } from '@/src/types/lucky-number';
 import { Ionicons } from '@expo/vector-icons';
 import { DrawT } from '@/src/types/draw';
+import { Ternary } from '@/src/components/common/Ternary';
 
 type Props = {
   onNumberChange: (number: LuckyNumbersT | null) => void;
-  draw?: DrawT;
+  draw?: DrawT | null;
 };
 
 export const SearchNumberTab = memo(({ onNumberChange, draw }: Props) => {
@@ -99,9 +100,15 @@ export const SearchNumberTab = memo(({ onNumberChange, draw }: Props) => {
           onPress={handleCheck}
           disabled={!searchNumber || isChecking}
           icon={<Ionicons name="search" size={20} color="white" />}>
-          <Text fontWeight="700" color="white">
-            Check
-          </Text>
+          <Ternary
+            condition={isChecking}
+            ifTrue={<Spinner size="small" color="white" />}
+            ifFalse={
+              <Text fontWeight="700" color="white">
+                Check
+              </Text>
+            }
+          />
         </Button>
       </XStack>
 
