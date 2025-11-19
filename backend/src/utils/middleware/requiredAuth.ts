@@ -7,6 +7,8 @@ import { createUser } from "@/src/services/user/createUser";
 import { logger } from "../logger";
 
 export async function requireAuth(req: NextRequest) {
+  const pathname = req.nextUrl.pathname;
+  logger.log("API ROUTE =>", pathname);
   const authHeader = req.headers.get("authorization");
   const token = authHeader?.split(" ")[1];
 

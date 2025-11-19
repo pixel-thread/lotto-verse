@@ -8,13 +8,13 @@ import { toast } from 'sonner-native';
 type AuthProviderProps = Readonly<{ children: React.ReactNode }>;
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const { getToken, isSignedIn } = useAuth();
+  const { getToken, isSignedIn, userId } = useAuth();
   const [isTokenSet, setIsTokenSet] = useState(false);
 
   // Get Token from Clerk
   const getClerkToken = useCallback(async () => {
     if (isSignedIn) {
-      logger.info('Getting Token..');
+      logger.info('Getting Token..', { userId });
       const token = await getToken({ template: 'jwt' });
       if (token) {
         logger.info('Setting Token..');

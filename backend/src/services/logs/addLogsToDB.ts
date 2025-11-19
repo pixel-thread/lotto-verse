@@ -22,8 +22,8 @@ export async function addLogsToDB({
   return await prisma.log.create({
     data: {
       type,
-      content,
-      message: message.split(",")[0],
+      content: content.split(",")[1] ? content.split(",")[1] : content,
+      message: message.split(",")[0] ? message.split(",")[0] : message,
       isBackend,
       timestamp: new Date(timestamp),
     },
