@@ -19,11 +19,10 @@ export const AuthRedirect = () => {
     if (!isSignedIn && pathName !== '/auth') router.replace('/auth');
   }, [isSignedIn, pathName]);
 
-  // BUG: Clerk does not load after login in android
   if (!isLoaded) return <LoadingScreen />;
 
   return (
-    <View flex={1}>
+    <View flex={1} style={{ fontFamily: 'Inter' }}>
       <SafeAreaView className={cn('flex-1')}>
         <Stack screenOptions={{ headerShown: false }} />
       </SafeAreaView>

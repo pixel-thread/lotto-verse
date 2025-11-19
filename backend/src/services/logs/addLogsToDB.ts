@@ -23,7 +23,7 @@ export async function addLogsToDB({
     data: {
       type,
       content,
-      message,
+      message: message.split(",")[0],
       isBackend,
       timestamp: new Date(timestamp),
     },
