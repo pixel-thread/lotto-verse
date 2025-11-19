@@ -19,13 +19,11 @@ export async function addLogsToDB({
   isBackend,
   message,
 }: Log) {
-  const contentParts = content.split(",");
-  const contentPart = contentParts.length > 1 ? contentParts[1] : content; // part after first comma or whole
   return await prisma.log.create({
     data: {
       type,
-      content: contentPart,
-      message: message,
+      content,
+      message,
       isBackend,
       timestamp: new Date(timestamp),
     },
