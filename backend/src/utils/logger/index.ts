@@ -36,39 +36,40 @@ const formatData = (type: ErrorType, ...args: any[]): string => {
 };
 
 const logMethod = async (type: ErrorType, ...args: any[]): Promise<void> => {
+  const now = new Date().toISOString();
+
   if (process.env.NODE_ENV === "development") {
     console.log(formatData(type, ...args));
   }
+
   if (process.env.NODE_ENV === "production") {
     try {
-      // Compose content combining string message and optional object argument
+      let message: string;
       let content: string;
-      let messAge: string;
+
       if (args.length === 1) {
-        content =
+        message =
           typeof args[0] === "string" ? args[0] : JSON.stringify(args[0]);
-        messAge = content;
+        content = message; // if no extra data, content = message
       } else {
-        const [message, data] = args;
-        messAge =
-          typeof message === "string" ? message : JSON.stringify(message);
-        content =
-          typeof message === "string"
-            ? `${message} ${data ? JSON.stringify(data) : ""}`
-            : JSON.stringify(message);
+        const [msg, data] = args;
+        message = typeof msg === "string" ? msg : JSON.stringify(msg);
+        content = data ? JSON.stringify(data) : message; // content is just the extra data or fallback
       }
+
       if (type !== "LOG") {
         await addLogsToDB({
           type,
           content,
-          message: messAge,
+          message,
           isBackend: true,
-          timestamp: new Date().toISOString(),
+          timestamp: now,
         });
       }
-    } catch {
+    } catch (error) {
       console.error("Failed to save logs to database", {
-        type: type,
+        type,
+        error,
       });
     }
   }

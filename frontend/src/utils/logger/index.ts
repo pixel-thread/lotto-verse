@@ -2,16 +2,16 @@ import http from '../http';
 
 type ErrorType = 'ERROR' | 'INFO' | 'WARN' | 'LOG';
 
-const sendLogToServer = async (type: ErrorType, content: string, message?: string) => {
+const sendLogToServer = async (type: ErrorType, message: string, content: string) => {
   const logEntry = {
     type,
+    message,
     content,
-    message: message || '',
     timestamp: new Date().toISOString(),
   };
 
   try {
-    await http.post('/logs', logEntry); // HTTP client converts to JSON
+    await http.post('/logs', logEntry);
   } catch (error) {
     console.error('Failed to send logs to server', error);
   }
@@ -36,23 +36,34 @@ const logMethod = async (type: ErrorType, ...args: any[]): Promise<void> => {
   if (process.env.NODE_ENV === 'development') {
     console.log(formatData(type, ...args));
   }
+
   if (process.env.NODE_ENV === 'production' && type !== 'LOG') {
     try {
+      let message: string;
       let content: string;
-      let message: string | undefined;
 
-      if (args.length === 1) {
-        content = typeof args[0] === 'string' ? args[0] : JSON.stringify(args[0]);
+      if (args.length === 0) {
+        // nothing passed
+        message = '';
+        content = '';
+      } else if (args.length === 1) {
+        // logger.log("Message") OR logger.log(obj)
+        if (typeof args[0] === 'string') {
+          message = args[0];
+          content = args[0]; // fall back to message
+        } else {
+          const json = JSON.stringify(args[0]);
+          message = json; // or some default like 'Log'
+          content = json;
+        }
       } else {
+        // logger.log("Message", data)
         const [msg, data] = args;
         message = typeof msg === 'string' ? msg : JSON.stringify(msg);
-        content =
-          typeof msg === 'string'
-            ? `${msg} ${data ? JSON.stringify(data) : ''}`
-            : JSON.stringify(msg);
+        content = JSON.stringify(data);
       }
 
-      await sendLogToServer(type, content, message);
+      await sendLogToServer(type, message, content);
     } catch {
       console.error(`Failed to send ${type.toLowerCase()} logs to server`);
     }

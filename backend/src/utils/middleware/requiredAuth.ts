@@ -7,7 +7,7 @@ import { createUser } from "@/src/services/user/createUser";
 import { logger } from "../logger";
 
 export async function requireAuth(req: NextRequest) {
-  const pathname = req.nextUrl.pathname;
+  const pathname = req.nextUrl;
   logger.info("API ROUTE =>", {
     path: pathname,
     method: req.method,
