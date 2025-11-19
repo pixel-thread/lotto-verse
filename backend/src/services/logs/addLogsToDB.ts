@@ -21,9 +21,7 @@ export async function addLogsToDB({
 }: Log) {
   const [messagePart] = message.split(","); // part before first comma
   const contentParts = content.split(",");
-  const contentPart =
-    contentParts.length > 1 ? contentParts[1] : contentParts[0]; // part after first comma or whole
-
+  const contentPart = contentParts.length > 1 ? contentParts[1] : content; // part after first comma or whole
   return await prisma.log.create({
     data: {
       type,
