@@ -2,11 +2,14 @@ import http from '../http';
 
 type ErrorType = 'ERROR' | 'INFO' | 'WARN' | 'LOG';
 
-const sendLogToServer = async (type: ErrorType, content: string, message?: string) => {
+const sendLogToServer = async (type: ErrorType, content: string) => {
+  const [messagePart] = content.split(','); // part before first comma
+  const contentParts = content.split(',');
+  const contentPart = contentParts.length > 1 ? contentParts[1] : contentParts[0]; // part after first comma or whole
   const logEntry = {
     type,
-    content,
-    message: message || '',
+    content: contentPart,
+    message: messagePart || '',
     timestamp: new Date().toISOString(),
   };
 
@@ -52,7 +55,7 @@ const logMethod = async (type: ErrorType, ...args: any[]): Promise<void> => {
             : JSON.stringify(msg);
       }
 
-      await sendLogToServer(type, content, message);
+      await sendLogToServer(type, content);
     } catch {
       console.error(`Failed to send ${type.toLowerCase()} logs to server`);
     }

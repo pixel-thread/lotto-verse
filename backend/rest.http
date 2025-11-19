@@ -7,6 +7,20 @@
 
 ### 
 
+# @name Deploy to uat
+
+POST https://api.vercel.com/v1/integrations/deploy/prj_ZgPbV8jaj1APBwydFMWW8elPKX9V/0eVQJVgHSt HTTP/1.1
+
+
+### 
+
+# @name Deploy to prod
+
+POST https://api.vercel.com/v1/integrations/deploy/prj_ZgPbV8jaj1APBwydFMWW8elPKX9V/ehRJ1ihUwm HTTP/1.1
+
+
+### 
+
 # @name me
 
 GET {{NEXT_PUBLIC_API_BASE_URL}}/auth HTTP/1.1
