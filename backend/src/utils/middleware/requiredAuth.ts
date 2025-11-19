@@ -8,7 +8,7 @@ import { logger } from "../logger";
 
 export async function requireAuth(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
-  logger.log("API ROUTE =>", {
+  logger.info("API ROUTE =>", {
     path: pathname,
     method: req.method,
   });
