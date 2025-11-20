@@ -9,6 +9,7 @@ import { DrawT } from '@/src/types/draw';
 import { RefreshControl } from 'react-native-gesture-handler';
 import { Ternary } from '../../common/Ternary';
 import { EmptyCard } from '../../common/EmptyCard';
+import { formatMonth } from '@/src/utils/helper/formatMonth';
 
 export const DrawsScreen = () => {
   const {
@@ -46,11 +47,7 @@ export const DrawsScreen = () => {
             <YStack gap="$4" paddingBlock="$4">
               {prevDraws &&
                 prevDraws?.map((draw) => {
-                  const displayMonth = new Date(draw.month + '-01').toLocaleString('default', {
-                    month: 'long',
-                    year: 'numeric',
-                  });
-
+                  const displayMonth = formatMonth(draw.month || '');
                   return (
                     <Card
                       key={draw.id}

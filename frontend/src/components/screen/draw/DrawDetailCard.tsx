@@ -2,14 +2,12 @@ import { Card, H4, Paragraph, XStack, YStack } from 'tamagui';
 import { DrawDetailSkeleton } from './skeleton/DrawDetailSkeleton';
 import { useCurrentDraw } from '@/src/hooks/draw/useCurrentDraw';
 import { router } from 'expo-router';
+import { formatMonth } from '@/src/utils/helper/formatMonth';
 
 export const DrawDetailCard = () => {
   const { isFetching: isDrawFetching, data: draw } = useCurrentDraw();
 
-  const displayMonth = new Date(draw?.month + '-01').toLocaleString('default', {
-    month: 'long',
-    year: 'numeric',
-  });
+  const displayMonth = formatMonth(draw?.month || '');
 
   if (isDrawFetching) {
     return <DrawDetailSkeleton />;

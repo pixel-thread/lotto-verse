@@ -21,6 +21,7 @@ import { drawRule } from '@/src/lib/constant/draw/drawRule';
 import { router, Stack } from 'expo-router';
 import { CustomHeader } from '../../common/CustomHeader';
 import useGetDraw from '@/src/hooks/draw/useGetDraw';
+import { formatMonth, formatMonthWithTime } from '@/src/utils/helper/formatMonth';
 
 type Props = {
   id: string;
@@ -77,19 +78,9 @@ export function DrawDetailScreen({ id }: Props) {
     );
   }
 
-  const displayMonth = new Date(draw.month + '-01').toLocaleString('default', {
-    month: 'long',
-    year: 'numeric',
-  });
+  const displayMonth = formatMonth(draw.month || '');
 
-  const declarationDate = draw.endDate
-    ? new Date(draw.endDate).toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
-    : 'Date to be announced';
+  const declarationDate = formatMonthWithTime(draw.endDate || 'To be announced');
 
   const declarationTime = '6:00 PM';
 

@@ -10,6 +10,7 @@ import { RefreshControl } from 'react-native';
 import { Ternary } from '../../common/Ternary';
 import { WinnerCard } from './WinnerCard';
 import { NoActiveDraw } from '../draw/NoActiveDraw';
+import { formatMonth, formatMonthWithTime } from '@/src/utils/helper/formatMonth';
 
 export function HomeScreen() {
   const { data: draw, refetch: refetchDraw, isFetching: isDrawLoading } = useCurrentDraw();
@@ -19,19 +20,9 @@ export function HomeScreen() {
     refetch: refetchLuckyNumbers,
   } = useCurrentDrawNumbers();
 
-  const displayMonth = new Date(draw?.month + '-01').toLocaleString('default', {
-    month: 'long',
-    year: 'numeric',
-  });
+  const displayMonth = formatMonth(draw?.month || '');
 
-  const declarationDate = draw?.endDate
-    ? new Date(draw?.endDate).toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
-    : 'Date to be announced';
+  const declarationDate = formatMonthWithTime(draw?.endDate || 'To be announced');
 
   const declarationTime = '6:00 PM';
 

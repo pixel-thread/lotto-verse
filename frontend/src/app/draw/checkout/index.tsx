@@ -4,12 +4,11 @@ import { useSearchParams } from 'expo-router/build/hooks';
 
 export default function page() {
   const searchParams = useSearchParams();
-  const number = searchParams.get('number');
   const id = searchParams.get('numberId');
 
-  if (!id || !number) {
+  if (!id) {
     return <Redirect href="/" />;
   }
 
-  return <CheckoutPage selectedNumber={number} id={id} />;
+  return <CheckoutPage id={id} />;
 }

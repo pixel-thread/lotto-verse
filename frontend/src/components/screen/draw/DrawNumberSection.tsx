@@ -23,7 +23,7 @@ export const DrawNumberSection = () => {
   // Also wrap handleBuyNumbers
   const handleBuyNumbers = useCallback(() => {
     if (selectedNumber) {
-      router.push(`/draw/checkout?number=${selectedNumber.number}&numberId=${selectedNumber.id}`);
+      router.push(`/draw/checkout?numberId=${selectedNumber.id}`);
     }
   }, [selectedNumber]);
 

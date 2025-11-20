@@ -38,6 +38,8 @@ export async function GET(
       orderId: purchase?.razorpayId,
       currency: "INR",
       method: "RAZORPAY",
+      luckyNumbers: purchase?.luckyNumber,
+      luckyNumberId: purchase?.luckyNumberId,
     };
 
     return SuccessResponse({

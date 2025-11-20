@@ -8,6 +8,7 @@ import { DRAW_ENDPOINTS } from '@/src/lib/endpoints/draw';
 import { DrawT } from '@/src/types/draw';
 import { useCurrentDraw } from '@/src/hooks/draw/useCurrentDraw';
 import { RefreshControl } from 'react-native-gesture-handler';
+import { formatMonth } from '@/src/utils/helper/formatMonth';
 
 export const NoActiveDraw = () => {
   const { refetch, isFetching } = useCurrentDraw();
@@ -52,11 +53,7 @@ export const NoActiveDraw = () => {
           <YStack gap="$4" paddingBlock="$4">
             {prevDraws &&
               prevDraws?.map((draw) => {
-                const displayMonth = new Date(draw.month + '-01').toLocaleString('default', {
-                  month: 'long',
-                  year: 'numeric',
-                });
-
+                const displayMonth = formatMonth(draw.month || '');
                 return (
                   <Card
                     key={draw.id}
@@ -79,10 +76,11 @@ export const NoActiveDraw = () => {
                             <Avatar.Image src={draw.winner.imageUrl} alt={draw.winner.name} />
                           ) : (
                             <Text fontSize={18} fontWeight="bold">
-                              {draw.winner?.name
-                                .split(' ')
-                                .map((n) => n[0])
-                                .join('')}
+                              {draw?.winner?.name &&
+                                draw.winner?.name
+                                  .split(' ')
+                                  .map((n) => n[0])
+                                  .join('')}
                             </Text>
                           )}
                         </Avatar>

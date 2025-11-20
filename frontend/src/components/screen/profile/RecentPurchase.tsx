@@ -7,8 +7,11 @@ import { useQuery } from '@tanstack/react-query';
 import { USER_ENDPOINTS } from '@/src/lib/endpoints/user';
 import http from '@/src/utils/http';
 import { RefreshControl } from 'react-native-gesture-handler';
-import { Link, router } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Link } from 'expo-router';
+import { getStatusColor } from '@/src/utils/helper/getStatusColor';
+import { getStatusIcon } from '@/src/utils/helper/getStatusIcon';
+import { formatDate } from '@/src/utils/helper/formatDate';
+import { formatTime } from '@/src/utils/helper/formatTime';
 
 type PurchaseT = {
   luckyNumber: {
@@ -29,56 +32,7 @@ type PurchaseT = {
   status: string;
 };
 
-type Props = {
-  purchases: PurchaseT[];
-  isLoading?: boolean;
-};
-
-// Mock Purchase Data
-
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'COMPLETED':
-      return 'green';
-    case 'PENDING':
-      return 'orange';
-    case 'FAILED':
-      return 'red';
-    default:
-      return 'gray';
-  }
-};
-
-const getStatusIcon = (status: string) => {
-  switch (status) {
-    case 'COMPLETED':
-      return 'checkmark-circle';
-    case 'PENDING':
-      return 'time';
-    case 'FAILED':
-      return 'close-circle';
-    default:
-      return 'help-circle';
-  }
-};
-
-const formatDate = (date: Date) => {
-  return new Date(date).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-};
-
-const formatTime = (date: Date) => {
-  return new Date(date).toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-};
-
 export function RecentPurchases() {
-  const inset = useSafeAreaInsets();
   const {
     isFetching: isLoading,
     data: purchases,
@@ -109,7 +63,13 @@ export function RecentPurchases() {
   return (
     <ScrollView refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />}>
       <YStack gap="$3" paddingBlock={10} paddingInline={5}>
-        <XStack justify="space-between" paddingInline={20} flexDirection="column" items="center">
+        <XStack
+          justify="center"
+          gap={'$3'}
+          paddingInline={20}
+          paddingBlock={5}
+          flexDirection="column"
+          items="center">
           <H2 fontWeight="700">Recent Purchases</H2>
           <Text fontSize={12} color="gray" fontWeight="600">
             {purchases.length} {purchases.length === 1 ? 'Purchase' : 'Purchases'}
@@ -162,14 +122,38 @@ export function RecentPurchases() {
                               key={num.id}
                               padding="$3"
                               rounded="$5"
-                              backgroundColor={num.winnerId ? '$green10' : '$blue5'}
+                              backgroundColor={
+                                purchase.status === 'SUCCESS'
+                                  ? '$green10'
+                                  : purchase.status === 'PENDING'
+                                    ? '$yellow10'
+                                    : purchase.status === 'FAILED'
+                                      ? '$red10'
+                                      : '$blue5'
+                              }
                               borderWidth={1}
-                              borderColor={num.winnerId ? '$green8' : '$blue8'}>
+                              borderColor={
+                                purchase.status === 'SUCCESS'
+                                  ? '$green8'
+                                  : purchase.status === 'PENDING'
+                                    ? '$yellow8'
+                                    : purchase.status === 'FAILED'
+                                      ? '$red8'
+                                      : '$blue8'
+                              }>
                               <XStack items="center" gap="$2">
                                 <Text
                                   fontSize={20}
                                   fontWeight="900"
-                                  color={num.winnerId ? 'white' : '$blue11'}>
+                                  color={
+                                    purchase.status === 'SUCCESS'
+                                      ? 'white'
+                                      : purchase.status === 'PENDING'
+                                        ? 'white'
+                                        : purchase.status === 'FAILED'
+                                          ? 'white'
+                                          : '$blue11'
+                                  }>
                                   {num.number}
                                 </Text>
                                 {num.winnerId && <Ionicons name="trophy" size={16} color="white" />}

@@ -5,42 +5,48 @@ import { Link, Route, Stack } from 'expo-router';
 import { CustomHeader } from '../../common/CustomHeader';
 import { useAuth, useUser } from '@clerk/clerk-expo';
 import { Ionicons } from '@expo/vector-icons';
-import { useQuery } from '@tanstack/react-query';
-import http from '@/src/utils/http';
-import { USER_ENDPOINTS } from '@/src/lib/endpoints/user';
 import { LoadingScreen } from '../../common/LoadingScreen';
-import { logger } from '@/src/utils/logger';
 import { useLottoVerseUser } from '@/src/hooks/user/useLottoVerseUser';
 
 type Items = {
   href: Route;
   label: string;
+  isDisabled?: boolean;
 };
 
 const items: Items[] = [
   {
     href: '/',
     label: 'Profile',
+    isDisabled: true,
   },
   {
     href: '/profile/recent-purchase',
     label: 'Recent Purchases',
   },
   {
+    href: '/billing',
+    label: 'Billing',
+  },
+  {
     href: '/',
     label: 'Rules',
+    isDisabled: true,
   },
   {
     href: '/',
     label: 'Help',
+    isDisabled: true,
   },
   {
     href: '/',
     label: 'Settings',
+    isDisabled: true,
   },
   {
     href: '/',
     label: 'About',
+    isDisabled: true,
   },
 ];
 
@@ -145,7 +151,7 @@ export function ProfileScreen() {
           {/* Buttons in rows - two per row */}
           <YStack width="100%" gap="$3">
             {items.map((item, i) => (
-              <Link key={i} href={item.href}>
+              <Link disabled={item.isDisabled} key={i} href={item.href}>
                 <Card padded borderWidth={1} borderColor="$borderColor">
                   <XStack width="100%" gap="$2" justify={'space-between'} items={'center'}>
                     <Text fontSize={16} fontWeight="700">

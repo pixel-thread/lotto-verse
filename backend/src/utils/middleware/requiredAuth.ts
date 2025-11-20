@@ -7,14 +7,8 @@ import { createUser } from "@/src/services/user/createUser";
 import { logger } from "../logger";
 
 export async function requireAuth(req: NextRequest) {
-  const pathname = req.nextUrl;
-  logger.info("API ROUTE =>", {
-    path: pathname,
-    method: req.method,
-  });
   const authHeader = req.headers.get("authorization");
   const token = authHeader?.split(" ")[1];
-
   if (!token) {
     throw new UnauthorizedError("Unauthorized");
   }
