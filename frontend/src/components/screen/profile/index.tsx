@@ -23,8 +23,8 @@ const items: Items[] = [
     label: 'Profile',
   },
   {
-    href: '/',
-    label: 'Billing',
+    href: '/profile/recent-purchase',
+    label: 'Recent Purchases',
   },
   {
     href: '/',

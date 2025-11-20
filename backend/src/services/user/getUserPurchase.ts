@@ -6,5 +6,9 @@ type Props = {
 };
 
 export async function getUserPurchase({ where }: Props) {
-  return prisma.purchase.findMany({ where });
+  return prisma.purchase.findMany({
+    where,
+    orderBy: { createdAt: "desc" }, // newest first
+    include: { luckyNumber: true },
+  });
 }

@@ -149,5 +149,5 @@ model Log {
   content   String // The log message; can store stringified JSON
   isBackend Boolean  @default(false)
   message   String
-  timestamp DateTime // When the log was created
+  timestamp DateTime @default(now()) // When the log was created
 }

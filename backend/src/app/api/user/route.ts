@@ -17,6 +17,7 @@ export async function GET(req: NextRequest) {
       (total, purchase) => total + purchase.amount,
       0, // initial value for total accumulator
     );
+
     const data = {
       totalDrawParticipate: userPurchases.length,
       totalWin: userWinning.length,
@@ -24,6 +25,7 @@ export async function GET(req: NextRequest) {
       memberSince: user.createdAt,
       role: user.role,
     };
+
     return SuccessResponse({
       data: data,
       status: 200,

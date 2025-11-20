@@ -203,7 +203,11 @@ export function DrawDetailScreen({ id }: Props) {
 
           {/* Action Buttons */}
           <XStack justify="space-evenly" gap="$3">
-            <Button onPress={() => router.push('/(home)/(draw)')} themeInverse size="$6" flex={1}>
+            <Button
+              onPress={() => router.push('/(drawer)/(home)/(draw)')}
+              themeInverse
+              size="$6"
+              flex={1}>
               <Button.Text fontWeight={'bold'}>Buy Number</Button.Text>
             </Button>
           </XStack>

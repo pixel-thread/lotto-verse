@@ -14,14 +14,16 @@ export const EmptyCard = ({
   isFetching,
 }: Props) => {
   return (
-    <View paddingInline={20} marginBlockStart={20}>
-      <Card bg="$background" padded bordered>
+    <View flex={1} paddingInline={20} marginBlockStart={20}>
+      <Card bg="$background" padded bordered height={'100%'}>
         <View flex={1} items="center" justify="center" gap="$5">
           <View>
             <Ionicons name="notifications-outline" size={100} color="black" />
           </View>
           <View gap="$3">
-            <H2 text={'center'}>{title}</H2>
+            <H2 text={'center'} fontWeight={'bold'}>
+              {title}
+            </H2>
             <Paragraph text="center">{message}</Paragraph>
             <Button themeInverse size="$6" disabled={isFetching} onPress={onRefresh}>
               {isFetching ? <Spinner size="small" /> : 'Refresh'}
