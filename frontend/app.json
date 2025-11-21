@@ -8,7 +8,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/icons/web/favicon.ico"
     },
     "plugins": ["expo-router", "expo-font"],
     "experiments": {
@@ -16,10 +16,10 @@
       "tsconfigPaths": true
     },
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icons/android-icon/play_store_512.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/icons/android-icon/play_store_512.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -33,7 +33,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icons/android-icon/play_store_512.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.jyrwaboys.frontend"

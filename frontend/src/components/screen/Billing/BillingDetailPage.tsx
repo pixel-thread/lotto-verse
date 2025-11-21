@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ScrollView, Share, Alert } from 'react-native';
 import { YStack, XStack, Text, Button, Card, H2, Spinner, Circle, Separator } from 'tamagui';
-import { useRouter, Stack, useLocalSearchParams } from 'expo-router';
+import { useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
 import http from '@/src/utils/http';
@@ -10,30 +10,27 @@ import { CustomHeader } from '../../common/CustomHeader';
 import { formatDate } from '@/src/utils/helper/formatDate';
 import { formatMonthWithTime } from '@/src/utils/helper/formatMonth';
 import { EmptyCard } from '../../common/EmptyCard';
+import { LuckyNumbersT } from '@/src/types/lucky-number';
+import { DrawT } from '@/src/types/draw';
 
-type BillingDetailScreenProps = {
-  id: string;
-};
+type BillingDetailScreenProps = { id: string };
 
 export type BillingDetailT = {
   // Purchase Information
   purchase: {
     id: string;
     createdAt: Date;
-    updatedAt: Date;
     userId: string;
     drawId: string;
     status: string;
     amount: number;
-    quantity: number;
   };
 
   // Payment Information
   payment: {
-    paymentId: string;
-    orderId: string;
+    paymentId: string | null;
     razorpayId: string;
-    transactionId: string;
+    transactionId: string | null;
     method: string;
     status: string;
     currency: string;
@@ -47,34 +44,15 @@ export type BillingDetailT = {
   user: {
     id: string;
     name: string;
-    email: string;
-    phone: string;
+    email: string | null;
+    phone: string | null;
   };
 
   // Draw Information
-  draw: {
-    id: string;
-    month: string;
-    prize: {
-      amount: number;
-      description: string;
-    };
-    entryFee: number;
-    startRange: number;
-    endRange: number;
-    endDate: Date;
-    isWinnerDecleared: boolean;
-  };
+  draw: DrawT;
 
   // Lucky Numbers
-  luckyNumbers: {
-    number: number;
-    id: string;
-    drawId: string;
-    isPurchased: boolean;
-    winnerId: string | null;
-    isWinner: boolean;
-  }[];
+  luckyNumbers: LuckyNumbersT[];
 
   // Winner Information (if applicable)
   winner?: {
@@ -83,8 +61,9 @@ export type BillingDetailT = {
     winningNumber: number;
     prizeAmount: number;
     declaredAt: Date;
-  };
+  } | null;
 };
+
 export function BillingDetailScreen({ id }: BillingDetailScreenProps) {
   const router = useRouter();
   const [isSharing, setIsSharing] = useState(false);
@@ -173,8 +152,9 @@ Transaction ID: ${data.payment.transactionId}
     );
   }
 
-  const hasWinner = data.winner && data.luckyNumbers.some((n) => n.isWinner);
-
+  const hasWinner = data.winner && data.luckyNumbers.some((n) => n.winnerId);
+  const entryFee = data?.draw?.entryFee || 0;
+  const breakDownAmount = data?.luckyNumbers?.length * entryFee;
   return (
     <>
       <Stack.Screen
@@ -291,16 +271,16 @@ Transaction ID: ${data.payment.transactionId}
                     padding="$4"
                     paddingHorizontal="$5"
                     borderRadius="$6"
-                    backgroundColor={num.isWinner ? '$green10' : '$blue6'}
-                    borderWidth={num.isWinner ? 3 : 2}
-                    borderColor={num.isWinner ? '$green8' : '$blue8'}
+                    backgroundColor={num.winnerId ? '$green10' : '$blue6'}
+                    borderWidth={num.winnerId ? 3 : 2}
+                    borderColor={num.winnerId ? '$green8' : '$blue8'}
                     minWidth={90}
                     items="center">
                     <XStack items="center" gap="$2">
                       <Text fontSize={32} fontWeight="900" color="white">
                         {num.number}
                       </Text>
-                      {num.isWinner && <Ionicons name="trophy" size={24} color="white" />}
+                      {num.winnerId && <Ionicons name="trophy" size={24} color="white" />}
                     </XStack>
                   </Card>
                 ))}
@@ -381,12 +361,14 @@ Transaction ID: ${data.payment.transactionId}
               <YStack gap="$3">
                 <XStack justify="space-between">
                   <Text fontSize={14} color="gray">
-                    Entry Fee ({data.purchase.quantity} × {data.payment.currency}
+                    Entry Fee ({data.luckyNumbers.length} × {data.payment.currency}
+                    {` `}
                     {data.draw.entryFee})
                   </Text>
                   <Text fontSize={14} fontWeight="600">
                     {data.payment.currency}
-                    {data.purchase.quantity * data.draw.entryFee}
+                    {` `}
+                    {breakDownAmount}
                   </Text>
                 </XStack>
 
@@ -397,6 +379,7 @@ Transaction ID: ${data.payment.transactionId}
                     </Text>
                     <Text fontSize={14} fontWeight="600">
                       {data.payment.currency}
+                      {` `}
                       {data.payment.fee}
                     </Text>
                   </XStack>
@@ -409,6 +392,7 @@ Transaction ID: ${data.payment.transactionId}
                     </Text>
                     <Text fontSize={14} fontWeight="600">
                       {data.payment.currency}
+                      {` `}
                       {data.payment.tax}
                     </Text>
                   </XStack>
@@ -451,10 +435,10 @@ Transaction ID: ${data.payment.transactionId}
 
                 <YStack gap="$2">
                   <Text fontSize={12} color="gray" textTransform="uppercase">
-                    Order ID
+                    Razorpay ID
                   </Text>
                   <Text fontSize={14} fontWeight="600">
-                    {data.payment.orderId}
+                    {data.payment.razorpayId}
                   </Text>
                 </YStack>
 
@@ -522,7 +506,7 @@ Transaction ID: ${data.payment.transactionId}
                     Phone
                   </Text>
                   <Text fontSize={14} fontWeight="600">
-                    {data.user.phone}
+                    {data.user.phone || 'N/A'}
                   </Text>
                 </YStack>
               </YStack>
@@ -535,7 +519,7 @@ Transaction ID: ${data.payment.transactionId}
               size="$5"
               themeInverse
               onPress={handleShare}
-              disabled={isSharing}
+              disabled={true}
               icon={isSharing ? <Spinner size="small" color="white" /> : undefined}>
               <XStack items="center" gap="$2">
                 {!isSharing && <Ionicons name="share-outline" size={20} color="white" />}
@@ -549,6 +533,7 @@ Transaction ID: ${data.payment.transactionId}
               size="$5"
               variant="outlined"
               borderColor="$borderColor"
+              disabled
               onPress={handleDownload}>
               <XStack items="center" gap="$2">
                 <Ionicons name="download-outline" size={20} color="$blue10" />

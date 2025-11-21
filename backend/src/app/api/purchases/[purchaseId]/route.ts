@@ -22,12 +22,6 @@ export async function GET(
 
     const purchase = await getUniquePurchase({ where: { id: purchaseId } });
 
-    if (!purchase) {
-      return ErrorResponse({
-        status: 404,
-        message: "Purchase not found",
-      });
-    }
     const data = {
       id: purchase?.id,
       amount: purchase?.amount,

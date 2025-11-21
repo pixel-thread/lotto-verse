@@ -12,20 +12,7 @@ import { getStatusIcon } from '@/src/utils/helper/getStatusIcon';
 import { getStatusColor } from '@/src/utils/helper/getStatusColor';
 import { getStatusText } from '@/src/utils/helper/getStatusText';
 import { formatDate } from '@/src/utils/helper/formatDate';
-
-type DataT = {
-  id: string;
-  paymentId: string;
-  orderId: string;
-  status: 'SUCCESS' | 'PENDING' | 'FAILED';
-  amount?: number;
-  currency?: string;
-  method?: string;
-  transactionId: string;
-  luckyNumberId: string;
-  number: number;
-  createdAt?: Date;
-};
+import { PurchaseT } from '@/src/types/purchase';
 
 type PaymentVerificationProps = {
   id: string;
@@ -37,7 +24,7 @@ export function PaymentVerificationScreen({ id }: PaymentVerificationProps) {
 
   const { data, refetch, isFetching } = useQuery({
     queryKey: ['check payment', id],
-    queryFn: () => http.get<DataT>(PAYMENT_ENDPOINTS.GET_USER_PAYMENT.replace(':id', id)),
+    queryFn: () => http.get<PurchaseT>(PAYMENT_ENDPOINTS.GET_USER_PAYMENT.replace(':id', id)),
     select: (data) => data.data,
     enabled: !!id,
     refetchInterval: status === 'PENDING' ? 3000 : false, // Auto-refresh for pending

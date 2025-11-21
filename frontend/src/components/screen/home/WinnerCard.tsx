@@ -15,11 +15,9 @@ export function WinnerCard() {
       margin="$4"
       borderWidth={0}
       rounded="$8"
-      elevation="$8"
       alignSelf="center"
       overflow="hidden"
       bg="$background"
-      themeInverse
       bordered
       borderColor="$borderColor">
       {/* Gradient Accent Bar at top */}
@@ -62,8 +60,7 @@ export function WinnerCard() {
           items="center"
           gap="$1"
           minW={100}
-          justify="center"
-          elevation="$2">
+          justify="center">
           <H1 fontWeight="900" letterSpacing={1}>
             {winner.number}
           </H1>

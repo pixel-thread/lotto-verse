@@ -11,25 +11,7 @@ import { formatDate } from '@/src/utils/helper/formatDate';
 import { router } from 'expo-router';
 import { Pressable } from 'react-native';
 import { EmptyCard } from '../../common/EmptyCard';
-
-type PurchaseT = {
-  luckyNumber: {
-    number: number;
-    id: string;
-    drawId: string;
-    isPurchased: boolean;
-    winnerId: string | null;
-  }[];
-  id: string;
-  createdAt: Date;
-  userId: string;
-  luckyNumberId: string;
-  razorpayId: string;
-  paymentId: string | null;
-  amount: number;
-  drawId: string;
-  status: string;
-};
+import { PurchaseT } from '@/src/types/purchase';
 
 type Props = {
   purchase: PurchaseT;
@@ -38,7 +20,8 @@ type Props = {
 
 // Compact version for lists
 export function BillingComponent({ purchase }: Props) {
-  const hasWinningNumber = purchase.luckyNumber.some((num) => num.winnerId);
+  const hasWinningNumber =
+    purchase.luckyNumber.some((num) => num.winnerId) && purchase.status === 'SUCCESS';
 
   return (
     <Pressable key={purchase.id} onPress={() => router.push(`/billing/${purchase.id}`)}>
@@ -49,9 +32,6 @@ export function BillingComponent({ purchase }: Props) {
           borderWidth={hasWinningNumber ? 2 : 1}
           borderColor={hasWinningNumber ? '$green10' : getStatusColor(purchase.status)}
           backgroundColor={hasWinningNumber ? '$green2' : 'white'}
-          pressStyle={{ scale: 0.98 }}
-          animation="quick"
-          opacity={pressed ? 0.8 : 1}
           scale={pressed ? 0.98 : 1}>
           <YStack gap="$3">
             {/* Winner Badge */}
@@ -62,9 +42,7 @@ export function BillingComponent({ purchase }: Props) {
                 bg="$green10"
                 paddingBlock="$3"
                 paddingInline="$5"
-                rounded="$4"
-                // items="flex-start"
-              >
+                rounded="$4">
                 <Ionicons name="trophy" size={16} color="white" />
                 <Text fontSize={12} fontWeight="700" color="white">
                   WINNER!
@@ -102,7 +80,7 @@ export function BillingComponent({ purchase }: Props) {
               </YStack>
             </XStack>
 
-            <Separator borderColor="$borderColor" />
+            <Separator borderColor={getStatusColor(purchase.status)} />
 
             {/* Numbers Preview */}
             <YStack gap="$2">

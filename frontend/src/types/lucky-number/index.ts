@@ -3,4 +3,5 @@ export type LuckyNumbersT = {
   id: string;
   isPurchased: boolean;
   createAt: string;
+  winnerId: string;
 };

@@ -74,10 +74,10 @@ export function ProfileScreen() {
         flex={1}
         refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefresh} />}
         paddingInline={10}
-        style={{ paddingVertical: 10 }}>
-        <YStack gap="$3" items="center">
+        paddingBlockEnd={200}>
+        <YStack gap="$1" items="center">
           <Card padding={'$2'} borderColor={'$borderColor'} elevate bordered rounded="$6">
-            <Avatar rounded="$6" size={'$20'}>
+            <Avatar rounded="$6" size={'$10'}>
               <Avatar.Image src={user.imageUrl} alt="avatar" />
             </Avatar>
           </Card>
@@ -151,7 +151,7 @@ export function ProfileScreen() {
           {/* Buttons in rows - two per row */}
           <YStack width="100%" gap="$3">
             {items.map((item, i) => (
-              <Link disabled={item.isDisabled} key={i} href={item.href}>
+              <Link disabled={item.isDisabled} key={i} href={item.href} asChild>
                 <Card padded borderWidth={1} borderColor="$borderColor">
                   <XStack width="100%" gap="$2" justify={'space-between'} items={'center'}>
                     <Text fontSize={16} fontWeight="700">

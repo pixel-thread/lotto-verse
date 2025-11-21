@@ -1,4 +1,6 @@
-export const getStatusIcon = (status: string) => {
+import { PaymentStatusT } from '@/src/types/purchase';
+
+export const getStatusIcon = (status: PaymentStatusT) => {
   switch (status) {
     case 'SUCCESS':
       return 'checkmark-circle';

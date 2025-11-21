@@ -1,4 +1,6 @@
-export const getStatusColor = (status: string) => {
+import { PaymentStatusT } from '@/src/types/purchase';
+
+export const getStatusColor = (status: PaymentStatusT) => {
   switch (status) {
     case 'SUCCESS':
       return 'green';

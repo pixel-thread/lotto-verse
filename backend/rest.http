@@ -1,6 +1,6 @@
 ### 
 
-@drawId = 6a2e58de-1eae-4fff-a675-89ffdd204878
+@drawId = 867342cf-812a-4f8b-bb53-60417dccf729
 @luckyNumberId = 02b1eb0d-570c-4f33-a67a-91abda43fc8d
 @userId = d8bb68ec-6c30-49c5-87f4-f41c471a78b0
 
@@ -47,7 +47,8 @@ Authorization: Bearer {{TOKEN}}
 
 {
   "digitsCount": 5,
-  "endRange": 200,
+  "endRange": 100,
+  "month": "2023-07",
   "prize": {
     "amount": 1000,
     "description": "This is a test draw"

@@ -51,7 +51,7 @@ model User {
 
 model Draw {
   id                String        @id @default(uuid())
-  month             String        @unique // Format: "YYYY-MM"
+  month             String // Format: "YYYY-MM"
   startRange        Int
   isWinnerDecleared Boolean       @default(false)
   entryFee          Float         @default(30)
@@ -64,6 +64,9 @@ model Draw {
   winner            Winner?
   prize             Prize?
   createdBy         String
+
+  @@index([id])
+  @@index([month])
 }
 
 model Prize {
@@ -76,7 +79,7 @@ model Prize {
 
 model LuckyNumber {
   id          String     @id @default(uuid())
-  number      Int
+  number      String
   isPurchased Boolean    @default(false)
   drawId      String
   draw        Draw       @relation(fields: [drawId], references: [id])
@@ -85,6 +88,8 @@ model LuckyNumber {
   winner      Winner?
 
   @@unique([number, drawId])
+  @@index([id])
+  @@index([drawId])
 }
 
 enum PurchaseStatus {
@@ -106,10 +111,11 @@ model Purchase {
   draw          Draw           @relation(fields: [drawId], references: [id])
   status        PurchaseStatus @default(PENDING)
   createdAt     DateTime       @default(now())
-  transactions  Transaction[]
+  transactionId String?
+  transactions  Transaction?
 
   @@index([userId, drawId])
-  @@index([luckyNumberId, status])
+  @@index([luckyNumberId, status]) // To get all purchases for a particular lucky number
 }
 
 model Winner {
@@ -122,6 +128,8 @@ model Winner {
   paidAt        DateTime?
   draw          Draw        @relation(fields: [drawId], references: [id])
   user          User        @relation(fields: [userId], references: [id])
+
+  @@index([drawId, userId, luckyNumberId])
 }
 
 enum TransactionStatus {
@@ -133,14 +141,16 @@ enum TransactionStatus {
 model Transaction {
   id            String            @id @default(uuid())
   userId        String
-  purchaseId    String?
   amount        Float
   status        TransactionStatus @default(PENDING) // e.g. 'pending', 'success', 'failed'
   paymentMethod String // e.g. 'razorpay'
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
   user          User              @relation(fields: [userId], references: [id])
+  purchaseId    String?           @unique
   purchase      Purchase?         @relation(fields: [purchaseId], references: [id])
+
+  @@index([userId, purchaseId, status, id])
 }
 
 model Log {
@@ -150,4 +160,7 @@ model Log {
   isBackend Boolean  @default(false)
   message   String
   timestamp DateTime @default(now()) // When the log was created
+
+  @@index([isBackend, timestamp])
+  @@index([type, timestamp])
 }

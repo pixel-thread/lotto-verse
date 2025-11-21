@@ -6,7 +6,7 @@ const drawPrizeSchema = z.object({
 });
 
 export const createDrawSchema = z.object({
-  month: z.coerce.string("Month is Required").optional(),
+  month: z.coerce.string("Month is Required"),
   startRange: z.number("Start Range is Required").min(1).default(1000),
   endRange: z.number().min(1).default(9999),
   digitsCount: z.number("Digits Count is Required").min(1).default(4),

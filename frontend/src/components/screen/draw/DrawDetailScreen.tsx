@@ -193,15 +193,18 @@ export function DrawDetailScreen({ id }: Props) {
           {/* Recent Participants */}
 
           {/* Action Buttons */}
-          <XStack justify="space-evenly" gap="$3">
-            <Button
-              onPress={() => router.push('/(drawer)/(home)/(draw)')}
-              themeInverse
-              size="$6"
-              flex={1}>
-              <Button.Text fontWeight={'bold'}>Buy Number</Button.Text>
-            </Button>
-          </XStack>
+          {!draw.isWinnerDecleared && (
+            <XStack justify="space-evenly" gap="$3">
+              <Button
+                onPress={() => router.push('/(drawer)/(home)/(draw)')}
+                disabled={isDrawLoading || isLuckyLoading}
+                themeInverse
+                size="$6"
+                flex={1}>
+                <Button.Text fontWeight={'bold'}>Buy Number</Button.Text>
+              </Button>
+            </XStack>
+          )}
           <RecentDrawParticipants />
           <HowItWorkSection options={drawRule} title="Draw Rules" />
         </YStack>
