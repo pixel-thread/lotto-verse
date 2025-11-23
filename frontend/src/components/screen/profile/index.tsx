@@ -57,7 +57,7 @@ export function ProfileScreen() {
   const { data: userData, refetch, isFetching: isLoading } = useLottoVerseUser();
   const onRefresh = () => refetch();
 
-  if (!user || !userData) {
+  if (!user || !userData || isLoading) {
     return <LoadingScreen />;
   }
 

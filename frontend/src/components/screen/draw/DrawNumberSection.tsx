@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Paragraph, Button, Text, YStack, Card, Tabs, SizableText, Separator } from 'tamagui';
+import { Paragraph, YStack, Card, Tabs, SizableText, Separator } from 'tamagui';
 import { DrawNumberSectionSkeleton } from './skeleton/DrawNumberSkeleton';
 import { useCurrentDraw } from '@/src/hooks/draw/useCurrentDraw';
 import { router } from 'expo-router';
@@ -9,23 +9,20 @@ import { BrowseNumbersTab } from './tabs/BrowseNumberTab';
 
 export const DrawNumberSection = () => {
   const [selectedNumber, setSelectedNumber] = useState<LuckyNumbersT | null>(null);
-  const [userPurchasedNumber, setUserPurchasedNumber] = useState<number | null>(null);
+  const [userPurchasedNumber, _] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState('tab1');
 
   const { isFetching: isDrawFetching, data: draw } = useCurrentDraw();
 
-  const totalCost = selectedNumber ? draw?.entryFee : 0;
-
-  const handleNumberChange = useCallback((number: LuckyNumbersT | null) => {
-    setSelectedNumber(number);
-  }, []);
-
-  // Also wrap handleBuyNumbers
-  const handleBuyNumbers = useCallback(() => {
-    if (selectedNumber) {
-      router.push(`/draw/checkout?numberId=${selectedNumber.id}`);
-    }
-  }, [selectedNumber]);
+  const handleNumberChange = useCallback(
+    (number: LuckyNumbersT | null) => {
+      setSelectedNumber(number);
+      if (selectedNumber) {
+        router.push(`/draw/checkout?numberId=${selectedNumber.id}`);
+      }
+    },
+    [selectedNumber]
+  );
 
   // Wrap tab change handler to clear selection
   const handleTabChange = useCallback((value: string) => {
@@ -105,26 +102,6 @@ export const DrawNumberSection = () => {
             <SearchNumberTab draw={draw} onNumberChange={handleNumberChange} />
           </TabsContent>
         </Tabs>
-
-        {/* Buy Button */}
-        <Button
-          size="$5"
-          rounded="$6"
-          themeInverse={!!selectedNumber?.id}
-          width="100%"
-          fontWeight="700"
-          height={56}
-          marginBlockStart="$4"
-          onPress={handleBuyNumbers}
-          disabled={!selectedNumber || userPurchasedNumber !== null}>
-          <Text fontSize="$5" fontWeight="700">
-            {!selectedNumber
-              ? 'Select a Number'
-              : userPurchasedNumber
-                ? 'Already Purchased'
-                : `Buy #${selectedNumber.number} for ₹${totalCost}`}
-          </Text>
-        </Button>
       </YStack>
     </Card>
   );

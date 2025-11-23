@@ -46,7 +46,6 @@ Content-Type: application/json
 Authorization: Bearer {{TOKEN}}
 
 {
-  "digitsCount": 5,
   "endRange": 100,
   "month": "2023-07",
   "prize": {

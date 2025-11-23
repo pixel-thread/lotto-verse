@@ -1,4 +1,12 @@
+type Role = 'USER' | 'ADMIN' | 'SUPER_ADMIN';
+
+export type AuthUserT = {
+  id: string;
+  role: Role;
+};
+
 export type AuthContextT = {
-  oneTapLogin: () => void;
-  signOut: () => void;
+  isAuthLoading: boolean;
+  user: AuthUserT | null | undefined;
+  isSuperAdmin: boolean;
 };

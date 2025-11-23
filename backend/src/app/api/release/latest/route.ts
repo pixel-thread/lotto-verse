@@ -134,7 +134,7 @@ export const MOCK_DATA_FOR_TESTING = {
 export async function GET(req: NextRequest) {
   try {
     return SuccessResponse({
-      data: MOCK_DATA_FOR_TESTING.major,
+      data: null,
       message: "Success fetching update info",
     });
   } catch (error) {

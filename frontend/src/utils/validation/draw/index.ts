@@ -1,16 +1,29 @@
 import z from 'zod';
 
 const drawPrizeSchema = z.object({
-  description: z.string('Prize Description is Required').min(1),
-  amount: z.number('Prize Amount is Required').min(1),
+  description: z
+    .string({ message: 'Prize Description is Required' })
+    .min(1, 'Prize Description is Required')
+    .trim(),
+  amount: z.number({ message: 'Prize Amount is Required' }).min(1, 'Prize Amount is Required'),
 });
 
-export const createDrawSchema = z.object({
-  id: z.string().optional(),
-  month: z.coerce.string('Month is Required').optional(),
-  startRange: z.number('Start Range is Required').min(1).default(1000),
-  endRange: z.number().min(1).default(9999),
-  digitsCount: z.number('Digits Count is Required').min(1).default(4),
-  prize: drawPrizeSchema,
-  entryFee: z.number('Entry Fee is Required').min(1).default(10).optional(),
-});
+export const createDrawSchema = z
+  .object({
+    month: z.coerce.string({ message: 'Month is Required' }).trim(),
+    startRange: z.coerce.number({ message: 'Start Range is Required' }),
+    endRange: z.coerce.number({ message: 'End Range is Required' }),
+    entryFee: z.coerce.number({ message: 'Entry Fee is Required' }),
+    prize: drawPrizeSchema,
+  })
+  .superRefine(({ startRange, endRange }, ctx) => {
+    if (startRange > endRange) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Start Range must be less than End Range',
+        path: ['startRange'],
+      });
+    }
+  });
+
+export type CreateDrawSchemaT = z.infer<typeof createDrawSchema>;

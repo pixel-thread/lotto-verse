@@ -1,7 +1,7 @@
 import { useAuth, useSSO } from '@clerk/clerk-expo';
 import React, { useState } from 'react';
 import { useColorScheme } from 'react-native';
-import { Button, H1, View, Paragraph, Text, Spinner, useTheme, Image } from 'tamagui';
+import { Button, H1, View, Paragraph, Text, Spinner, useTheme } from 'tamagui';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Ternary } from '@components/common/Ternary';
 import { toast } from 'sonner-native';
@@ -22,6 +22,7 @@ export function LoginScreen() {
     try {
       startSSOFlow({
         strategy: 'oauth_google',
+        redirectUrl: '/',
       }).then(({ createdSessionId, setActive }) => {
         if (!!createdSessionId && setActive) {
           setActive({ session: createdSessionId });
@@ -47,11 +48,6 @@ export function LoginScreen() {
         items={'flex-start'}
         justify={'center'}
         gap={2}>
-        <Image
-          src={'../../../../assets/icons/android-icon/play_store_512.png'}
-          width={100}
-          height={100}
-        />
         <H1 fontWeight={'bold'}>Your</H1>
         <H1 fontWeight={'bold'}>Fortune</H1>
         <H1 fontWeight={'bold'}>Lucky Draw</H1>
