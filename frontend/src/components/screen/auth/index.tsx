@@ -22,7 +22,6 @@ export function LoginScreen() {
     try {
       startSSOFlow({
         strategy: 'oauth_google',
-        redirectUrl: '/',
       }).then(({ createdSessionId, setActive }) => {
         if (!!createdSessionId && setActive) {
           setActive({ session: createdSessionId });

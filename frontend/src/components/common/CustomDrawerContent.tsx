@@ -21,24 +21,24 @@ const menuItems: MenuItemsT[] = [
   { id: 1, title: 'Home', herf: '/' },
   { id: 2, title: 'Draws', herf: '/draw' },
 ];
+
 const adminDrawerMenuItems: MenuItemsT[] = [
   { id: 1, title: 'Home', herf: '/' },
   { id: 2, title: 'Draws', herf: '/admin/draws' },
-  { id: 3, title: 'Transaction', herf: '/draw' },
-  { id: 4, title: 'Winner', herf: '/draw' },
-  { id: 5, title: 'User', herf: '/draw' },
-  { id: 6, title: 'Prize', herf: '/draw' },
+  { id: 3, title: 'Transaction', herf: '/admin/transactions' },
+  { id: 4, title: 'Winner', herf: '/admin/winners' },
+  { id: 5, title: 'User', herf: '/admin/users' },
 ];
 
 export function CustomDrawerContent(props: DrawerContentComponentProps) {
   const { colorScheme } = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
-  const { user } = useAuth();
+  const { isSuperAdmin } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
   const theme = useTheme();
-  let items: MenuItemsT[] = user?.role === 'SUPER_ADMIN' ? adminDrawerMenuItems : menuItems;
+  let items: MenuItemsT[] = isSuperAdmin ? adminDrawerMenuItems : menuItems;
   return (
     <DrawerContentScrollView
       {...props}
