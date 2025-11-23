@@ -5,6 +5,13 @@ type Props = {
   where: Prisma.WinnerWhereInput;
 };
 
-export async function getWinners({ where }: Props) {
-  return await prisma.winner.findMany({ where });
+export async function getWinners({ where }: Props = { where: {} }) {
+  return await prisma.winner.findMany({
+    where,
+    include: {
+      draw: { include: { prize: true } },
+      user: true,
+      luckyNumber: true,
+    },
+  });
 }
