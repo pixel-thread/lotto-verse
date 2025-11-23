@@ -6,35 +6,35 @@ import { StatusBar } from 'expo-status-bar';
 import { AuthProvider } from './auth';
 import { RNQueryProvider } from './query';
 import { RNTamaguiProvider } from './tamagui';
-import { PortalProvider } from 'tamagui';
+import { PortalProvider } from '@tamagui/portal';
 import { Toaster } from 'sonner-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import EASUpdateProvider from './update';
 
 export const Wrapper = () => {
   return (
-    <GestureHandlerRootView>
-      <ClerkProvider
-        publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
-        tokenCache={tokenCache}>
-        <StatusBar style="auto" />
-        <ClerkLoaded>
-          <PortalProvider>
-            <RNTamaguiProvider>
-              <EASUpdateProvider>
-                <AuthProvider>
-                  <SafeAreaProvider className="flex-1">
-                    <RNQueryProvider>
+    <PortalProvider>
+      <GestureHandlerRootView>
+        <ClerkProvider
+          publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
+          tokenCache={tokenCache}>
+          <StatusBar style="auto" />
+          <ClerkLoaded>
+            <RNQueryProvider>
+              <RNTamaguiProvider>
+                <EASUpdateProvider>
+                  <AuthProvider>
+                    <SafeAreaProvider className="flex-1">
                       <AuthRedirect />
                       <Toaster />
-                    </RNQueryProvider>
-                  </SafeAreaProvider>
-                </AuthProvider>
-              </EASUpdateProvider>
-            </RNTamaguiProvider>
-          </PortalProvider>
-        </ClerkLoaded>
-      </ClerkProvider>
-    </GestureHandlerRootView>
+                    </SafeAreaProvider>
+                  </AuthProvider>
+                </EASUpdateProvider>
+              </RNTamaguiProvider>
+            </RNQueryProvider>
+          </ClerkLoaded>
+        </ClerkProvider>
+      </GestureHandlerRootView>
+    </PortalProvider>
   );
 };

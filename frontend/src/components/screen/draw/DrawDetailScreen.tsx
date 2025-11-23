@@ -21,6 +21,7 @@ import { drawRule } from '@/src/lib/constant/draw/drawRule';
 import { router, Stack } from 'expo-router';
 import { CustomHeader } from '../../common/CustomHeader';
 import useGetDraw from '@/src/hooks/draw/useGetDraw';
+import { formatMonth, formatMonthWithTime } from '@/src/utils/helper/formatMonth';
 
 type Props = {
   id: string;
@@ -77,19 +78,9 @@ export function DrawDetailScreen({ id }: Props) {
     );
   }
 
-  const displayMonth = new Date(draw.month + '-01').toLocaleString('default', {
-    month: 'long',
-    year: 'numeric',
-  });
+  const displayMonth = formatMonth(draw.month || '');
 
-  const declarationDate = draw.endDate
-    ? new Date(draw.endDate).toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
-    : 'Date to be announced';
+  const declarationDate = formatMonthWithTime(draw.endDate || 'To be announced');
 
   const declarationTime = '6:00 PM';
 
@@ -202,11 +193,18 @@ export function DrawDetailScreen({ id }: Props) {
           {/* Recent Participants */}
 
           {/* Action Buttons */}
-          <XStack justify="space-evenly" gap="$3">
-            <Button onPress={() => router.push('/(home)/(draw)')} themeInverse size="$6" flex={1}>
-              <Button.Text fontWeight={'bold'}>Buy Number</Button.Text>
-            </Button>
-          </XStack>
+          {!draw.isWinnerDecleared && (
+            <XStack justify="space-evenly" gap="$3">
+              <Button
+                onPress={() => router.push('/(drawer)/(home)/(draw)')}
+                disabled={isDrawLoading || isLuckyLoading}
+                themeInverse
+                size="$6"
+                flex={1}>
+                <Button.Text fontWeight={'bold'}>Buy Number</Button.Text>
+              </Button>
+            </XStack>
+          )}
           <RecentDrawParticipants />
           <HowItWorkSection options={drawRule} title="Draw Rules" />
         </YStack>

@@ -22,22 +22,24 @@ export async function GET(
 
     const purchase = await getUniquePurchase({ where: { id: purchaseId } });
 
-    const transaction = purchase?.transactions?.find(
-      (transaction) =>
-        transaction.purchaseId === purchase.id &&
-        transaction.status === purchase.status,
-    );
-
+    if (!purchase) {
+      return ErrorResponse({
+        status: 404,
+        message: "Purchase not found",
+      });
+    }
     const data = {
       id: purchase?.id,
       amount: purchase?.amount,
       purchaseAt: purchase?.createdAt,
       status: purchase?.status,
-      transactionId: transaction?.id,
+      transactionId: purchase?.transactionId,
       paymentId: purchase?.paymentId,
       orderId: purchase?.razorpayId,
       currency: "INR",
       method: "RAZORPAY",
+      luckyNumbers: purchase?.luckyNumber,
+      luckyNumberId: purchase?.luckyNumberId,
     };
 
     return SuccessResponse({

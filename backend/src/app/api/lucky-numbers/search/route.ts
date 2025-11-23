@@ -6,7 +6,7 @@ import { SuccessResponse } from "@/src/utils/next-response";
 import { NextRequest } from "next/server";
 import z from "zod";
 
-const searchSchema = z.object({ query: z.coerce.number() });
+const searchSchema = z.object({ query: z.coerce.string() });
 
 export async function POST(req: NextRequest) {
   try {

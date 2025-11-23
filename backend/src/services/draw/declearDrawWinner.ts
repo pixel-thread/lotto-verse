@@ -66,7 +66,11 @@ export async function pickAndDeclareRandomWinner({
 
       await tx.draw.update({
         where: { id: drawId },
-        data: { winner: { connect: { id: newWinner.id } } },
+        data: {
+          isActive: true,
+          isWinnerDecleared: true,
+          winner: { connect: { id: newWinner.id } },
+        },
         include: { luckyNumbers: true },
       });
       return newWinner;

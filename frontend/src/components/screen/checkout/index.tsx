@@ -13,15 +13,17 @@ import { PAYMENT_ENDPOINTS } from '@/src/lib/endpoints/payment';
 import { toast } from 'sonner-native';
 import RazorpayCheckout, { CheckoutOptions, SuccessResponse } from 'react-native-razorpay';
 import { logger } from '@/src/utils/logger';
-type CheckoutPageProps = {
-  selectedNumber: string;
-  id: string;
-};
+import { formatMonth, formatMonthWithTime } from '@/src/utils/helper/formatMonth';
+import { useLuckyNumber } from '@/src/hooks/lucky-number/useLuckyNumber';
+import { LoadingScreen } from '../../common/LoadingScreen';
 
-export function CheckoutPage({ selectedNumber, id }: CheckoutPageProps) {
+type CheckoutPageProps = { id: string };
+
+export function CheckoutPage({ id }: CheckoutPageProps) {
   const router = useRouter();
-  const { data: draw } = useCurrentDraw();
+  const { data: draw, isFetching: isDrawFetching } = useCurrentDraw();
   const { user } = useUser();
+  const { data: number, isFetching: isLuckyNumberFetching } = useLuckyNumber({ id });
   const queryClient = useQueryClient();
   const [agreeToTerms, setAgreeToTerms] = useState(false);
 
@@ -87,23 +89,19 @@ export function CheckoutPage({ selectedNumber, id }: CheckoutPageProps) {
     },
   });
 
-  const displayMonth = draw?.month
-    ? new Date(draw.month + '-01').toLocaleString('default', {
-        month: 'long',
-        year: 'numeric',
-      })
-    : '';
+  const displayMonth = formatMonth(draw?.month || '');
 
-  const declarationDate = draw?.endDate
-    ? new Date(draw.endDate).toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
-    : 'Date TBA';
+  const declarationDate = formatMonthWithTime(draw?.endDate || '');
 
   const handleCheckout = async () => mutate();
+
+  if (isDrawFetching || isLuckyNumberFetching) {
+    return (
+      <>
+        <LoadingScreen />
+      </>
+    );
+  }
 
   return (
     <>
@@ -139,7 +137,7 @@ export function CheckoutPage({ selectedNumber, id }: CheckoutPageProps) {
                 </Text>
               </XStack>
               <Text fontSize={56} fontWeight="900" letterSpacing={-2}>
-                {selectedNumber}
+                {number?.number}
               </Text>
               <Text fontSize={13}>This number is reserved for you during checkout</Text>
             </YStack>

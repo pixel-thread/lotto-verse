@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (!isLuckyNumberExist) {
-      return ErrorResponse({ error: "Lucky Numeber not found", status: 404 });
+      return ErrorResponse({ error: "Lucky Numebr not found", status: 404 });
     }
 
     const isDrawExist = await getUniqueDraw({

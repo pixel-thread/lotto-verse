@@ -15,8 +15,12 @@ export type WinnerT = {
 };
 
 export type DrawT = z.infer<typeof createDrawSchema> & {
+  id: string;
   createdAt: string;
+  entryFee: number;
+  month: string;
   isWinnerDecleared: boolean;
   endDate: string;
+  isActive: boolean;
   winner: WinnerT | null;
 };

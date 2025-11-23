@@ -3,23 +3,18 @@
     "name": "Lotto Verse",
     "slug": "lucky-draw",
     "version": "1.0.0",
-    "scheme": "frontend",
+    "scheme": "lotto_verse",
     "platforms": ["ios", "android"],
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/favicon.png"
-    },
     "plugins": ["expo-router", "expo-font"],
     "experiments": {
       "typedRoutes": true,
       "tsconfigPaths": true
     },
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "automatic",
+    "icon": "./src/assets/icons/android-icon/play_store_512.png",
+    "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./src/assets/icons/android-icon/play_store_512.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -33,7 +28,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./src/assets/icons/android-icon/play_store_512.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.jyrwaboys.frontend"

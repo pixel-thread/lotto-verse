@@ -41,6 +41,7 @@ export async function createPurchaseAtomic({ data }: Props) {
         amount: data.amount,
         status: "PENDING", // or SUCCESS based on flow
         luckyNumberId: data.luckyNumberId,
+        luckyNumber: { connect: { id: data.luckyNumberId } },
         drawId: data.drawId,
         userId: data.userId,
       },

@@ -1,4 +1,5 @@
 import { createDraw } from "@/src/services/draw/createDraw";
+import { getActiveDraw } from "@/src/services/draw/getActiveDraw";
 import { getAllDraw } from "@/src/services/draw/getAllDraw";
 import { getUniqueDraw } from "@/src/services/draw/getUniqueDraw";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
@@ -26,9 +27,7 @@ export async function POST(req: NextRequest) {
     const user = await requireSuperAdmin(req);
     const body = createDrawSchema.parse(await req.json());
 
-    const now = new Date();
-    const month = `${now.getFullYear()}-${now.getMonth()}`;
-    const monthDraw = await getUniqueDraw({ where: { month } });
+    const monthDraw = await getActiveDraw();
 
     if (monthDraw) {
       return ErrorResponse({
@@ -39,7 +38,7 @@ export async function POST(req: NextRequest) {
 
     const draw = await createDraw({
       data: {
-        digitsCount: body.digitsCount,
+        month: body.month,
         prize: {
           amount: body.prize.amount,
           description: body.prize.description,

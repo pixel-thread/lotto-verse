@@ -1,6 +1,11 @@
 import { prisma } from "@/src/lib/db/prisma";
 import { logger } from "@/src/utils/logger";
 
+const addZeros = (num: number, endRange: number) => {
+  const targetLength = endRange.toString().length;
+  return num.toString().padStart(targetLength, "0");
+};
+
 type PrizeT = {
   amount: number;
   description: string;
@@ -9,9 +14,9 @@ type PrizeT = {
 type DataT = {
   startRange: number;
   endRange: number;
-  digitsCount: number;
   prize: PrizeT;
   createdBy: string;
+  month: string;
 };
 
 type Props = {
@@ -31,13 +36,12 @@ export async function createDraw({ data }: Props) {
 
   // Step 1: Create the draw and prize without lucky numbers
   const now = new Date();
-  const month = `${now.getFullYear()}-${now.getMonth()}`;
   // 7 days from now
-  const endDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+  const endDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
   const draw = await prisma.draw.create({
     data: {
-      month,
+      month: data.month,
       startRange,
       endRange,
       endDate,
@@ -63,7 +67,6 @@ export async function createDraw({ data }: Props) {
   return draw;
 }
 
-// Async function to insert lucky numbers in batches
 async function insertLuckyNumbersInBackground(
   drawId: string,
   startRange: number,
@@ -72,14 +75,16 @@ async function insertLuckyNumbersInBackground(
   const batchSize = 1000;
   const totalCount = endRange - startRange + 1;
 
-  for (let i = 0; i < totalCount; i += batchSize) {
-    const batch = Array.from(
-      { length: Math.min(batchSize, totalCount - i) },
-      (_, j) => ({
-        number: startRange + i + j,
+  for (let offset = 0; offset < totalCount; offset += batchSize) {
+    const length = Math.min(batchSize, totalCount - offset);
+    const batch = Array.from({ length }, (_, j) => {
+      const value = startRange + offset + j;
+      return {
+        // store padded string to preserve zeros
+        number: addZeros(value, endRange), // <-- string
         drawId,
-      }),
-    );
+      };
+    });
 
     await prisma.luckyNumber.createMany({
       data: batch,
