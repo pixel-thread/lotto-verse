@@ -2,7 +2,7 @@ import React from 'react';
 import { ScrollView } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
-import { YStack, XStack, Avatar, Text, Card, Separator, Spinner } from 'tamagui';
+import { YStack, XStack, Avatar, Text, Card, Separator, Spinner, Button } from 'tamagui';
 import { RefreshControl } from 'react-native-gesture-handler';
 
 import http from '@/src/utils/http';
@@ -16,6 +16,8 @@ type UserT = {
   name: string;
   id: string;
   imageUrl: string | null;
+  isBanned: boolean;
+  isLocked: boolean;
 };
 
 export default function AdminUsersScreen() {
@@ -84,6 +86,17 @@ export default function AdminUsersScreen() {
                 <XStack justify="space-between">
                   <Text color="gray">Phone</Text>
                   <Text>{user.phone ?? 'N/A'}</Text>
+                </XStack>
+
+                <Separator />
+
+                <XStack items={'center'} justify={'center'} gap={'$2'}>
+                  <Button width={'50%'} themeInverse>
+                    <Button.Text>{user.isBanned ? 'Unban' : 'Ban'}</Button.Text>
+                  </Button>
+                  <Button width={'50%'}>
+                    <Button.Text>{user.isLocked ? 'Unlock' : 'Lock'}</Button.Text>
+                  </Button>
                 </XStack>
               </Card>
             );

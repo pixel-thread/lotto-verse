@@ -98,30 +98,11 @@ export default function AdminDrawsScreen() {
   };
 
   if (isFetching) {
-    return (
-      <>
-        <Stack.Screen
-          options={{
-            title: 'Admin Draws',
-            headerShown: true,
-            header: ({ back }) => <CustomHeader back={!!back} headerRight={<RightActions />} />,
-          }}
-        />
-        <LoadingScreen />
-      </>
-    );
+    return <LoadingScreen />;
   }
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          title: 'Admin Draws',
-          headerShown: true,
-          header: ({ back }) => <CustomHeader back={!!back} headerRight={<RightActions />} />,
-        }}
-      />
-
       <ScrollView
         refreshControl={<RefreshControl refreshing={isFetching} onRefresh={refetch} />}
         style={{ width: '100%' }}>
