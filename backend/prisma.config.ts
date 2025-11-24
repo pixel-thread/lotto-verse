@@ -5,7 +5,6 @@ export default defineConfig({
   schema: "./src/lib/db/prisma/schema.prisma",
   migrations: {
     path: "./src/lib/db/prisma/migrations",
-    seed: "./src/lib/db/prisma/seed.ts",
   },
 
   engine: "classic",

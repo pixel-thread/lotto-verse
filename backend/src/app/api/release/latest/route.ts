@@ -2,9 +2,14 @@ import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
 import { SuccessResponse } from "@/src/utils/next-response";
 import { NextRequest } from "next/server";
 
+type UpdateT = "OTA" | "PTA";
+// OTA: Over-The-Air update (JavaScript bundle update, no native code changes, no app store download)
+// PTA: Platform update requiring native code changes, user must download new version from app store
+
 type ReleaseT = {
   id: string;
   channel: string;
+  type: UpdateT;
   runtimeVersion: string;
   releaseName: string | null;
   publishedAt: Date;
@@ -21,6 +26,7 @@ export const MOCK_MANDATORY_UPDATE: ReleaseT = {
   id: "rel_mandatory_001",
   channel: "production",
   runtimeVersion: "2.1.0",
+  type: "PTA",
   releaseName: "v2.1.0",
   publishedAt: new Date("2025-11-18T14:30:00Z"),
   isMandatory: true,
@@ -41,6 +47,7 @@ export const MOCK_MANDATORY_UPDATE: ReleaseT = {
 };
 
 export const MOCK_OPTIONAL_UPDATE: ReleaseT = {
+  type: "OTA",
   id: "rel_optional_002",
   channel: "production",
   runtimeVersion: "2.0.5",
@@ -70,6 +77,7 @@ export const MOCK_OPTIONAL_UPDATE: ReleaseT = {
 
 export const MOCK_MINOR_UPDATE: ReleaseT = {
   id: "rel_minor_003",
+  type: "OTA",
   channel: "production",
   runtimeVersion: "2.0.1",
   releaseName: "v2.0.1",
@@ -91,8 +99,9 @@ export const MOCK_MINOR_UPDATE: ReleaseT = {
 
 export const MOCK_MAJOR_UPDATE: ReleaseT = {
   id: "rel_major_004",
+  type: "PTA",
   channel: "production",
-  runtimeVersion: "3.0.0",
+  runtimeVersion: "66.0.0",
   releaseName: "v3.0.0 - Major Update",
   publishedAt: new Date("2025-11-19T12:00:00Z"),
   isMandatory: true,
@@ -134,7 +143,7 @@ export const MOCK_DATA_FOR_TESTING = {
 export async function GET(req: NextRequest) {
   try {
     return SuccessResponse({
-      data: null,
+      data: MOCK_OPTIONAL_UPDATE,
       message: "Success fetching update info",
     });
   } catch (error) {

@@ -164,3 +164,31 @@ model Log {
   @@index([isBackend, timestamp])
   @@index([type, timestamp])
 }
+
+enum UpdateChannel {
+  PROD
+  UAT
+  DEV
+}
+
+enum UpdateType {
+  OTA // OTA: Over-The-Air update (JavaScript bundle update, no native code changes, no app store download)
+  PTA // PTA: Platform update requiring native code changes, user must download new version from app store
+}
+
+model AppUpdate {
+  id             String        @id @default(uuid())
+  channel        UpdateChannel @default(UAT)
+  type           UpdateType    @default(OTA)
+  runtimeVersion String        @default("1.0.0")
+  releaseName    String        @default("Monthly Release")
+  publishedAt    DateTime      @default(now())
+  isMandatory    Boolean       @default(false)
+  minAppVersion  String?       @default("1.0.1")
+  rolloutPercent Float         @default(100)
+  releaseNotes   String?
+  assetUrl       String?
+  createdBy      String?
+  metadata       String?
+  createdAt      DateTime      @default(now())
+}

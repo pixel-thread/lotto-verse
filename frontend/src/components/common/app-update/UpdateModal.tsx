@@ -7,109 +7,40 @@ import {
   TouchableWithoutFeedback,
   ActivityIndicator,
   ScrollView,
+  Linking,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useQuery } from '@tanstack/react-query';
 import * as Updates from 'expo-updates';
-import Constant from 'expo-constants';
-import http from '@/src/utils/http';
-import { RELEASE_ENDPOINTS } from '@/src/lib/endpoints/release';
-
-
-type ReleaseT = {
-  id: string;
-  channel: string;
-  runtimeVersion: string;
-  releaseName: string | null;
-  publishedAt: Date;
-  isMandatory: boolean;
-  minAppVersion: string | null;
-  rolloutPercent: number;
-  releaseNotes: string | null;
-  assetUrl: string | null;
-  createdBy: string | null;
-  metadata: any;
-};
+import { formatDate } from '@/src/utils/helper/formatDate';
+import { logger } from '@/src/utils/logger';
+import { useUpdateContext } from '@/src/hooks/update';
 
 type UpdateState = 'idle' | 'checking' | 'downloading' | 'ready' | 'error';
 
-const compareVersions = (v1: string, v2: string): number => {
-  const parts1 = v1.replace(/^v/, '').split('.').map(Number);
-  const parts2 = v2.replace(/^v/, '').split('.').map(Number);
-
-  for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
-    const part1 = parts1[i] || 0;
-    const part2 = parts2[i] || 0;
-
-    if (part1 > part2) return 1;
-    if (part1 < part2) return -1;
-  }
-
-  return 0;
-};
-
 export const UpdateModal: React.FC = () => {
+  const { release, isLoading, isNewReleaseAvailable, currentVersion } = useUpdateContext();
   const [updateState, setUpdateState] = useState<UpdateState>('idle');
   const [updateError, setUpdateError] = useState<string | null>(null);
-  const [isVisible, setIsVisible] = useState(true);
-  const [currentVersion, setCurrentVersion] = useState<string>('');
-
-  const { data: release, isLoading } = useQuery({
-    queryKey: ['latest', 'release'],
-    queryFn: () => http.get<ReleaseT>(RELEASE_ENDPOINTS.GET_LATEST_RELEASE),
-    select: (data) => data.data,
-    refetchInterval: 1000 * 60 * 5, // Check every 5 minutes
-  });
+  const [isVisible, setIsVisible] = useState(isNewReleaseAvailable);
 
   useEffect(() => {
-    const getCurrentVersion = async () => {
-      // Get current app version or runtime version
-      const appVersion = Constant.manifest?.version || '0.0.0';
-      const runtimeVer = Updates.runtimeVersion || appVersion;
-      setCurrentVersion(runtimeVer);
-    };
+    setIsVisible(isNewReleaseAvailable);
+  }, [isNewReleaseAvailable]);
 
-    getCurrentVersion();
-  }, []);
-
-  useEffect(() => {
-    if (!release || !currentVersion) return;
-
-    // Check if update is required based on version comparison
-    const shouldUpdate = compareVersions(release.runtimeVersion, currentVersion) > 0;
-
-    // Check if minimum app version requirement is met
-    let meetsMinVersion = true;
-    if (release.minAppVersion) {
-      const appVersion = '0.0.0';
-      meetsMinVersion = compareVersions(appVersion, release.minAppVersion) >= 0;
-    }
-
-    setIsVisible(shouldUpdate && meetsMinVersion);
-  }, [release, currentVersion]);
-
-  const handleUpdate = async () => {
+  const handleOtaUpdate = async () => {
     if (__DEV__) {
-      console.warn('Updates are not available in development mode');
+      setUpdateState('idle');
+      setUpdateError('Updates not available in development mode');
       return;
     }
-
     try {
       setUpdateState('checking');
       setUpdateError(null);
-
-      // Check for updates
       const update = await Updates.checkForUpdateAsync();
-
       if (update.isAvailable) {
         setUpdateState('downloading');
-
-        // Download the update
         await Updates.fetchUpdateAsync();
-
         setUpdateState('ready');
-
-        // Apply the update
         await Updates.reloadAsync();
       } else {
         setUpdateState('idle');
@@ -118,25 +49,45 @@ export const UpdateModal: React.FC = () => {
     } catch (error) {
       setUpdateState('error');
       setUpdateError(error instanceof Error ? error.message : 'Failed to update');
-      console.error('Update error:', error);
+      logger.error('Update error:', error);
+    }
+  };
+
+  const handleMandatoryUpdate = async () => {
+    try {
+      if (release?.assetUrl) {
+        Linking.openURL(release?.assetUrl);
+        console.log('Updating');
+      }
+    } catch (error) {
+      console.log('Unable to open assetUrl', error);
+      logger.error('Unable to open assetUrl', error);
+    }
+  };
+
+  const handleUpdate = async () => {
+    if (release) {
+      if (release.type === 'PTA') {
+        await handleMandatoryUpdate();
+        return;
+      } else {
+        setIsVisible(false);
+        await handleOtaUpdate();
+      }
     }
   };
 
   const handleRemindLater = () => {
     setIsVisible(false);
-    // You can add logic here to show the modal again after some time
-    // or store preference in AsyncStorage
   };
 
-  if (isLoading || !isVisible) return null;
-
-  const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  };
+  logger.log('AppUpdate', {
+    runtimeVersion: release?.runtimeVersion,
+    currentVersion: currentVersion,
+    isNewReleaseAvailable,
+    isVisible,
+    isLoading,
+  });
 
   const getUpdateButtonText = () => {
     switch (updateState) {
@@ -153,6 +104,7 @@ export const UpdateModal: React.FC = () => {
     }
   };
 
+  if (isLoading || !isVisible) return null;
   return (
     <Modal
       visible={isVisible}
@@ -164,7 +116,6 @@ export const UpdateModal: React.FC = () => {
         <View className="flex-1 items-center justify-center bg-black/60 px-6">
           <TouchableWithoutFeedback>
             <View className="w-full max-w-sm overflow-hidden rounded-3xl bg-white shadow-2xl dark:bg-neutral-900">
-              {/* Icon Header */}
               <View className="items-center bg-gradient-to-b from-black to-transparent pb-6 pt-8 dark:from-neutral-950/30">
                 <View className="mb-3 h-20 w-20 items-center justify-center rounded-full bg-blue-500/10 dark:bg-blue-500/20">
                   <Ionicons name="rocket" size={40} color="#3b82f6" />
@@ -176,10 +127,7 @@ export const UpdateModal: React.FC = () => {
                   Version {release?.releaseName || release?.runtimeVersion}
                 </Text>
               </View>
-
-              {/* Content */}
               <ScrollView className="max-h-96 px-6" showsVerticalScrollIndicator={false}>
-                {/* Version Info Grid */}
                 <View className="mb-5 gap-3">
                   <View className="flex-row items-center justify-between rounded-xl bg-neutral-50 px-4 py-3 dark:bg-neutral-800/50">
                     <View>
@@ -200,8 +148,6 @@ export const UpdateModal: React.FC = () => {
                       </Text>
                     </View>
                   </View>
-
-                  {/* Additional Details */}
                   <View className="flex-row gap-2">
                     {release?.publishedAt && (
                       <View className="flex-1 rounded-lg bg-neutral-50 px-3 py-2 dark:bg-neutral-800/50">
@@ -225,8 +171,6 @@ export const UpdateModal: React.FC = () => {
                     )}
                   </View>
                 </View>
-
-                {/* Release Notes */}
                 {release?.releaseNotes && (
                   <View className="mb-5">
                     <Text className="mb-2 text-xs font-bold uppercase tracking-wide text-neutral-400 dark:text-neutral-500">
@@ -237,8 +181,6 @@ export const UpdateModal: React.FC = () => {
                     </Text>
                   </View>
                 )}
-
-                {/* Mandatory Warning */}
                 {release?.isMandatory && (
                   <View className="mb-5 flex-row items-start gap-2 rounded-xl bg-amber-50 px-4 py-3 dark:bg-amber-900/20">
                     <Ionicons name="alert-circle" size={20} color="#f59e0b" />
@@ -247,8 +189,6 @@ export const UpdateModal: React.FC = () => {
                     </Text>
                   </View>
                 )}
-
-                {/* Error Message */}
                 {updateError && (
                   <View className="mb-5 flex-row items-start gap-2 rounded-xl bg-red-50 px-4 py-3 dark:bg-red-900/20">
                     <Ionicons name="close-circle" size={20} color="#ef4444" />
@@ -258,8 +198,6 @@ export const UpdateModal: React.FC = () => {
                   </View>
                 )}
               </ScrollView>
-
-              {/* Action Buttons */}
               <View className="gap-3 px-6 pb-6">
                 <TouchableOpacity
                   activeOpacity={0.8}
@@ -281,7 +219,6 @@ export const UpdateModal: React.FC = () => {
                     <Text className="text-base font-bold text-white">{getUpdateButtonText()}</Text>
                   )}
                 </TouchableOpacity>
-
                 {!release?.isMandatory && (
                   <TouchableOpacity
                     activeOpacity={0.7}

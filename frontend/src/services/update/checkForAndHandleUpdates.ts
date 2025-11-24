@@ -3,10 +3,8 @@ import * as Updates from 'expo-updates';
 
 export async function checkForAndHandleUpdates() {
   try {
-    if (process.env.NODE_ENV === 'development') {
-     return 
-    }
     const isOnline = await checkInternet();
+
     if (!isOnline) {
       return;
     }
