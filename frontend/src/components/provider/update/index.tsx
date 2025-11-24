@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { UpdateModal } from '../../common/app-update/UpdateModal';
 import { useQuery } from '@tanstack/react-query';
 import { RELEASE_ENDPOINTS } from '@/src/lib/endpoints/release';
@@ -11,7 +11,6 @@ import { getAppInfo } from '@/src/utils/update/getAppInfo';
 type Props = Readonly<{ children: React.ReactNode }>;
 
 export default function EASUpdateProvider({ children }: Props) {
-  const [isNewReleaseAvailable, setIsNewReleaseAvailable] = useState(false);
   const info = getAppInfo();
   const currentVersion = info.nativeVersion;
 
@@ -22,12 +21,6 @@ export default function EASUpdateProvider({ children }: Props) {
     refetchInterval: 1000 * 60 * 5, // Every 5 mins
   });
 
-  useEffect(() => {
-    if (data && currentVersion) {
-      setIsNewReleaseAvailable(compareVersions(data.runtimeVersion, currentVersion) > 0);
-    }
-  }, [data, currentVersion]);
-
   const value = useMemo(
     () => ({
       release: data,
@@ -37,9 +30,8 @@ export default function EASUpdateProvider({ children }: Props) {
       isLoading: isFetching || isLoading,
       currentVersion: currentVersion,
     }),
-    [data, isNewReleaseAvailable]
+    [data]
   );
-
   return (
     <UpdateContext.Provider value={value}>
       <UpdateModal />

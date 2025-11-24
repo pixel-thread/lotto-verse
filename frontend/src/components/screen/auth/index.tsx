@@ -1,15 +1,29 @@
 import { useAuth, useSSO } from '@clerk/clerk-expo';
-import React, { useState } from 'react';
-import { useColorScheme } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Platform, useColorScheme } from 'react-native';
 import { Button, H1, View, Paragraph, Text, Spinner, useTheme } from 'tamagui';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Ternary } from '@components/common/Ternary';
 import { toast } from 'sonner-native';
 import * as WebBrowser from 'expo-web-browser';
+import { logger } from '@/src/utils/logger';
+import { router } from 'expo-router';
+
+export const useWarmUpBrowser = () => {
+  useEffect(() => {
+    if (Platform.OS !== 'android') return;
+    void WebBrowser.warmUpAsync();
+    return () => {
+      // Cleanup: closes browser when component unmounts
+      void WebBrowser.coolDownAsync();
+    };
+  }, []);
+};
 
 WebBrowser.maybeCompleteAuthSession();
 
 export function LoginScreen() {
+  useWarmUpBrowser();
   const { isSignedIn, signOut } = useAuth();
   const { startSSOFlow } = useSSO();
   const [isLoading, setIsLoading] = useState(false);
@@ -19,18 +33,25 @@ export function LoginScreen() {
 
   const onClickGoogle = async () => {
     setIsLoading(true);
-    await WebBrowser.warmUpAsync();
     try {
-      startSSOFlow({ strategy: 'oauth_google' }).then(({ createdSessionId, setActive }) => {
+      await startSSOFlow({ strategy: 'oauth_google' }).then(({ createdSessionId, setActive }) => {
         if (!!createdSessionId && setActive) {
-          setActive({ session: createdSessionId });
+          toast.success('Login successful');
+          setActive({
+            session: createdSessionId,
+            navigate: () => {
+              router.replace('/');
+              return;
+            },
+          });
         }
       });
     } catch (error: any) {
-      toast.error(error.message);
+      toast.error(error.errors[0].message);
       if (error.status === 400) {
         signOut();
       }
+      logger.error('Login error', error);
     } finally {
       await WebBrowser.coolDownAsync();
       setIsLoading(false);

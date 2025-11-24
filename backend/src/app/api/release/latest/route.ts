@@ -20,7 +20,6 @@ type ReleaseT = {
   assetUrl: string | null;
   createdBy: string | null;
   metadata: any;
-  isNavailable?: boolean;
 };
 
 export const MOCK_MANDATORY_UPDATE: ReleaseT = {

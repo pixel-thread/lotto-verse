@@ -1,6 +1,8 @@
+type UpdateType = 'OTA' | 'PTA';
 export type UpdateReleaseT = {
   id: string;
   channel: string;
+  type: UpdateType;
   runtimeVersion: string;
   releaseName: string | null;
   publishedAt: Date;

@@ -14,7 +14,6 @@ import * as Updates from 'expo-updates';
 import { formatDate } from '@/src/utils/helper/formatDate';
 import { logger } from '@/src/utils/logger';
 import { useUpdateContext } from '@/src/hooks/update';
-import { compareVersions } from '@/src/utils/update';
 
 type UpdateState = 'idle' | 'checking' | 'downloading' | 'ready' | 'error';
 
@@ -25,19 +24,8 @@ export const UpdateModal: React.FC = () => {
   const [isVisible, setIsVisible] = useState(isNewReleaseAvailable);
 
   useEffect(() => {
-    // Reset visibility when new update becomes available
     setIsVisible(isNewReleaseAvailable);
   }, [isNewReleaseAvailable]);
-
-  useEffect(() => {
-    if (!release || !currentVersion) return;
-    const shouldUpdate = compareVersions(release.runtimeVersion, currentVersion) > 0;
-    let meetsMinVersion = true;
-    if (release.minAppVersion) {
-      meetsMinVersion = compareVersions(currentVersion, release.minAppVersion) >= 0;
-    }
-    setIsVisible(shouldUpdate && meetsMinVersion);
-  }, [release, currentVersion]);
 
   const handleOtaUpdate = async () => {
     if (__DEV__) {
@@ -68,28 +56,38 @@ export const UpdateModal: React.FC = () => {
   const handleMandatoryUpdate = async () => {
     try {
       if (release?.assetUrl) {
-        Linking.canOpenURL(release?.assetUrl);
+        Linking.openURL(release?.assetUrl);
+        console.log('Updating');
       }
     } catch (error) {
+      console.log('Unable to open assetUrl', error);
       logger.error('Unable to open assetUrl', error);
     }
   };
 
   const handleUpdate = async () => {
-    if (release?.isMandatory) {
-      await handleMandatoryUpdate();
-      return;
+    if (release) {
+      if (release.type === 'PTA') {
+        await handleMandatoryUpdate();
+        return;
+      } else {
+        setIsVisible(false);
+        await handleOtaUpdate();
+      }
     }
-    setIsVisible(false);
-    await handleOtaUpdate();
   };
 
   const handleRemindLater = () => {
     setIsVisible(false);
-    // Optionally persist this choice to avoid showing repeatedly
   };
 
-  if (isLoading || !isVisible) return null;
+  logger.log('AppUpdate', {
+    runtimeVersion: release?.runtimeVersion,
+    currentVersion: currentVersion,
+    isNewReleaseAvailable,
+    isVisible,
+    isLoading,
+  });
 
   const getUpdateButtonText = () => {
     switch (updateState) {
@@ -106,6 +104,7 @@ export const UpdateModal: React.FC = () => {
     }
   };
 
+  if (isLoading || !isVisible) return null;
   return (
     <Modal
       visible={isVisible}

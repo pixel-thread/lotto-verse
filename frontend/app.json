@@ -2,8 +2,8 @@
   "expo": {
     "name": "Lotto Verse",
     "slug": "lucky-draw",
-    "version": "0.0.1",
-    "scheme": "lotto_verse",
+    "version": "1.0.0",
+    "scheme": "lottoverse",
     "platforms": ["ios", "android"],
     "plugins": ["expo-router", "expo-font"],
     "experiments": {
