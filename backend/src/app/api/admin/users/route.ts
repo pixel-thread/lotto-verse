@@ -19,6 +19,10 @@ export async function GET(req: NextRequest) {
           imageUrl: clerkUser.imageUrl,
           email: clerkUser.primaryEmailAddress?.emailAddress,
           phone: clerkUser.primaryPhoneNumber?.phoneNumber,
+          clerkId: user.clerkId,
+          isBanned: clerkUser.banned,
+          isLocked: clerkUser.locked,
+          createdAt: user.createdAt,
         };
       }),
     );
