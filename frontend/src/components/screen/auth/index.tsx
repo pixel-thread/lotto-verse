@@ -8,6 +8,7 @@ import { toast } from 'sonner-native';
 import * as WebBrowser from 'expo-web-browser';
 
 WebBrowser.maybeCompleteAuthSession();
+
 export function LoginScreen() {
   const { isSignedIn, signOut } = useAuth();
   const { startSSOFlow } = useSSO();
@@ -20,9 +21,7 @@ export function LoginScreen() {
     setIsLoading(true);
     await WebBrowser.warmUpAsync();
     try {
-      startSSOFlow({
-        strategy: 'oauth_google',
-      }).then(({ createdSessionId, setActive }) => {
+      startSSOFlow({ strategy: 'oauth_google' }).then(({ createdSessionId, setActive }) => {
         if (!!createdSessionId && setActive) {
           setActive({ session: createdSessionId });
         }
