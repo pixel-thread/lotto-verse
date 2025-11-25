@@ -8,6 +8,7 @@ import { LuckyNumbersT } from '@/src/types/lucky-number';
 import { Ionicons } from '@expo/vector-icons';
 import { DrawT } from '@/src/types/draw';
 import { Ternary } from '@/src/components/common/Ternary';
+import { router } from 'expo-router';
 
 type Props = {
   onNumberChange: (number: LuckyNumbersT | null) => void;
@@ -17,7 +18,6 @@ type Props = {
 export const SearchNumberTab = memo(({ onNumberChange, draw }: Props) => {
   const [searchNumber, setSearchNumber] = useState('');
   const [searchedNumber, setSearchedNumber] = useState<LuckyNumbersT | null>(null);
-
   // Only get the data we need, don't track isFetching
   const endRange = draw?.endRange || 999;
   const startRange = draw?.startRange || 1;
@@ -27,28 +27,31 @@ export const SearchNumberTab = memo(({ onNumberChange, draw }: Props) => {
 
   // Memoize the success handler
   const handleSuccess = useCallback(
-    (data: any) => {
+    (data: { success: boolean; message: string; data: LuckyNumbersT[] | null }) => {
       if (data?.success) {
         if (data.data && data.data.length > 0) {
-          const number = data?.data[0];
-          setSearchedNumber(number);
-          if (!number?.isPurchased) {
-            onNumberChange(number);
+          const number = data.data[0];
+          if (!number.isPurchased) {
+            setSearchedNumber(number);
+            onNumberChange(number); // Keep parent synced
             return data;
           }
-          onNumberChange(null);
-          return data;
+          toast.success('Number is purchase by another user');
+          return number;
         }
+        toast.error('Number not found');
+        onNumberChange(null);
+        return;
       }
-      onNumberChange(null);
       toast.error(data.message);
+      onNumberChange(null);
       return data;
     },
     [onNumberChange]
   );
 
   const { mutate: check, isPending: isChecking } = useMutation({
-    mutationFn: () =>
+    mutationFn: (searchNumber: string) =>
       http.post<LuckyNumbersT[]>(LUCKY_NUMBER_ENDPOINTS.POST_SEARCH_LUCKY_NUMBER, {
         query: searchNumber,
       }),
@@ -67,8 +70,21 @@ export const SearchNumberTab = memo(({ onNumberChange, draw }: Props) => {
 
   // Memoize the check handler
   const handleCheck = useCallback(() => {
-    check();
-  }, [check]);
+    if (searchNumber.trim() !== '') {
+      check(searchNumber);
+    }
+  }, [check, searchNumber]);
+
+  const onConfirmSelection = useCallback(() => {
+    if (searchedNumber?.isPurchased) {
+      toast.error('This number has already been purchased');
+      return;
+    }
+
+    if (searchedNumber) {
+      onNumberChange(searchedNumber);
+    }
+  }, []);
 
   return (
     <YStack gap="$4" width="100%">
@@ -97,7 +113,7 @@ export const SearchNumberTab = memo(({ onNumberChange, draw }: Props) => {
         <Button
           size="$5"
           themeInverse={searchNumber !== ''}
-          onPress={handleCheck}
+          onPress={!!searchedNumber?.id ? onConfirmSelection : handleCheck}
           disabled={!searchNumber || isChecking}
           icon={<Ionicons name="search" size={20} color="white" />}>
           <Ternary
@@ -105,7 +121,7 @@ export const SearchNumberTab = memo(({ onNumberChange, draw }: Props) => {
             ifTrue={<Spinner size="small" color="white" />}
             ifFalse={
               <Text fontWeight="700" color="white">
-                Check
+                {!!searchedNumber?.id ? 'Confirm' : 'Check'}
               </Text>
             }
           />

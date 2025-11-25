@@ -29,8 +29,7 @@ export default function AdminUsersScreen() {
   } = useQuery({
     queryKey: ['admin-users'],
     queryFn: () => http.get<UserT[]>(ADMIN_USER_ENDPOINTS.GET_USERS),
-    select: (res) => res?.data,
-    retry: 1,
+    select: (data) => data?.data,
   });
 
   const onSuccess = (data: { success: boolean; message: string }) => {

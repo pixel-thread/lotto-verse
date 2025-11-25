@@ -16,9 +16,8 @@ export const DrawNumberSection = () => {
 
   const handleNumberChange = useCallback(
     (number: LuckyNumbersT | null) => {
-      setSelectedNumber(number);
-      if (selectedNumber) {
-        router.push(`/draw/checkout?numberId=${selectedNumber.id}`);
+      if (number) {
+        router.push(`/draw/checkout?numberId=${number?.id}`);
       }
     },
     [selectedNumber]

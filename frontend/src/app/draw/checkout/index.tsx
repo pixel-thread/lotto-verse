@@ -1,3 +1,4 @@
+import { CustomHeader } from '@/src/components/common/CustomHeader';
 import { CheckoutPage } from '@/src/components/screen/checkout';
 import { Redirect } from 'expo-router';
 import { useSearchParams } from 'expo-router/build/hooks';
@@ -10,5 +11,10 @@ export default function page() {
     return <Redirect href="/" />;
   }
 
-  return <CheckoutPage id={id} />;
+  return (
+    <>
+      <CustomHeader back={true} />
+      <CheckoutPage id={id.toString()} />
+    </>
+  );
 }

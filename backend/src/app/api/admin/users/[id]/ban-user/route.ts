@@ -37,7 +37,7 @@ export async function POST(
     } else {
       banned = await clerk.users.banUser(clerkUser.id);
       try {
-        revokedUserSessions({ id: clerkUser.id });
+        revokedUserSessions({ id: clerkUser.id, reason: "banned" });
       } catch (error) {
         throw error;
       }

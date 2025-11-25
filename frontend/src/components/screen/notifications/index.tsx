@@ -3,8 +3,6 @@ import { RefreshControl } from 'react-native';
 import { YStack, XStack, Text, ScrollView, Card, Button, Separator, Circle } from 'tamagui';
 import { Ionicons } from '@expo/vector-icons';
 import { useNotifications } from '@/src/hooks/notifications/useNotifications';
-import { Stack } from 'expo-router';
-import { CustomHeader } from '../../common/CustomHeader';
 import { Ternary } from '../../common/Ternary';
 import { NotificationCardSkeleton, NotificationSkeleton } from './NotificationSkeleton';
 
@@ -30,13 +28,6 @@ export function NotificationScreen() {
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          title: 'Notifications',
-          headerShown: true,
-          header: ({ back }) => <CustomHeader back={!!back} />,
-        }}
-      />
       <ScrollView
         flex={1}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}

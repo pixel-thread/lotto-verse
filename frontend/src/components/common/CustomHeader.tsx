@@ -70,7 +70,7 @@ export const CustomHeader: React.FC<Props> = ({ back, headerRight }) => {
       <View flexDirection="row" gap="$2" items="center" justify="flex-end" flex={1}>
         {headerRight}
         {!isNotification && !back && (
-          <Card rounded={'$true'} themeInverse padding={'$2'}>
+          <Card rounded={'$true'} themeInverse padding={'$3'}>
             <Link href="/notifications">
               <Ionicons
                 name="notifications-outline"
