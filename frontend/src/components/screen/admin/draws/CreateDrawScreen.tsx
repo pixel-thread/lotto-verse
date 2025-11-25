@@ -20,7 +20,7 @@ import { ADMIN_DRAW_ENDPOINTS } from '@/src/lib/endpoints/admin/draws';
 import { createDrawSchema, CreateDrawSchemaT } from '@/src/utils/validation/draw';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Ternary } from '../../common/Ternary';
+import { Ternary } from '../../../common/Ternary';
 import { toast } from 'sonner-native';
 
 export default function CreateDrawScreen() {

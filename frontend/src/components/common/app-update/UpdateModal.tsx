@@ -49,7 +49,7 @@ export const UpdateModal: React.FC = () => {
     } catch (error) {
       setUpdateState('error');
       setUpdateError(error instanceof Error ? error.message : 'Failed to update');
-      logger.error('Update error:', error);
+      logger.error('Update error: OTA', error);
     }
   };
 
@@ -57,11 +57,9 @@ export const UpdateModal: React.FC = () => {
     try {
       if (release?.assetUrl) {
         Linking.openURL(release?.assetUrl);
-        console.log('Updating');
       }
     } catch (error) {
-      console.log('Unable to open assetUrl', error);
-      logger.error('Unable to open assetUrl', error);
+      logger.error('Unable to open assetUrl: PTA', error);
     }
   };
 
@@ -80,14 +78,6 @@ export const UpdateModal: React.FC = () => {
   const handleRemindLater = () => {
     setIsVisible(false);
   };
-
-  logger.log('AppUpdate', {
-    runtimeVersion: release?.runtimeVersion,
-    currentVersion: currentVersion,
-    isNewReleaseAvailable,
-    isVisible,
-    isLoading,
-  });
 
   const getUpdateButtonText = () => {
     switch (updateState) {

@@ -6,7 +6,7 @@ import { YStack, XStack, Avatar, Text, Card, Separator, Spinner, Button } from '
 import { RefreshControl } from 'react-native-gesture-handler';
 
 import http from '@/src/utils/http';
-import { LoadingScreen } from '../../common/LoadingScreen';
+import { LoadingScreen } from '../../../common/LoadingScreen';
 
 const ENDPOINT = '/admin/users';
 

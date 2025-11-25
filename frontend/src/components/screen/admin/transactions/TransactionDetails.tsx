@@ -6,9 +6,9 @@ import { YStack, XStack, Text, Avatar, Separator, Button, Card, Spinner } from '
 
 import http from '@/src/utils/http';
 import { ADMIN_TRANSACTION_ENDPOINTS } from '@/src/lib/endpoints/admin/transactions';
-import { CustomHeader } from '../../common/CustomHeader';
+import { CustomHeader } from '../../../common/CustomHeader';
 import { getStatusColor } from '@/src/utils/helper/getStatusColor';
-import { LoadingScreen } from '../../common/LoadingScreen';
+import { LoadingScreen } from '../../../common/LoadingScreen';
 import { PaymentStatusT } from '@/src/types/purchase';
 
 type TransactionT = {

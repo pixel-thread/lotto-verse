@@ -1,4 +1,4 @@
-import AdminTransactionsScreen from '@/src/components/admin/transactions';
+import AdminTransactionsScreen from '@/src/components/screen/admin/transactions';
 import { CustomHeader } from '@/src/components/common/CustomHeader';
 
 export default function page() {

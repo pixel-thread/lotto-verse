@@ -10,6 +10,7 @@ import { PortalProvider } from '@tamagui/portal';
 import { Toaster } from 'sonner-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import EASUpdateProvider from './update';
+import ErrorBoundary from '../common/ErrorBoundary';
 
 export const Wrapper = () => {
   return (
@@ -18,20 +19,22 @@ export const Wrapper = () => {
         <ClerkProvider
           publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
           tokenCache={tokenCache}>
-          <StatusBar style="auto" />
           <ClerkLoaded>
-            <RNQueryProvider>
-              <RNTamaguiProvider>
-                <EASUpdateProvider>
-                  <AuthProvider>
-                    <SafeAreaProvider className="flex-1">
-                      <AuthRedirect />
-                      <Toaster />
-                    </SafeAreaProvider>
-                  </AuthProvider>
-                </EASUpdateProvider>
-              </RNTamaguiProvider>
-            </RNQueryProvider>
+            <RNTamaguiProvider>
+              <ErrorBoundary>
+                <StatusBar style="auto" />
+                <RNQueryProvider>
+                  <EASUpdateProvider>
+                    <AuthProvider>
+                      <SafeAreaProvider className="flex-1">
+                        <AuthRedirect />
+                        <Toaster position="bottom-center" />
+                      </SafeAreaProvider>
+                    </AuthProvider>
+                  </EASUpdateProvider>
+                </RNQueryProvider>
+              </ErrorBoundary>
+            </RNTamaguiProvider>
           </ClerkLoaded>
         </ClerkProvider>
       </GestureHandlerRootView>

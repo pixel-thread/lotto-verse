@@ -1,35 +1,18 @@
 import React from 'react';
-import { ScrollView, TouchableOpacity } from 'react-native';
+import { ScrollView } from 'react-native';
 import { YStack, XStack, Text, Card, Button, Separator } from 'tamagui';
-import { Link, Stack, router, useRouter } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import http from '@/src/utils/http';
 import { RefreshControl } from 'react-native-gesture-handler';
-import { CustomHeader } from '@components/common/CustomHeader';
 import { formatMonth } from '@/src/utils/helper/formatMonth';
 import { ADMIN_DRAW_ENDPOINTS } from '@/src/lib/endpoints/admin/draws';
 import { DrawT } from '@/src/types/draw';
 import { useAuth } from '@/src/hooks/auth/useAuth';
-import { LoadingScreen } from '../../common/LoadingScreen';
-import { Ionicons } from '@expo/vector-icons';
+import { LoadingScreen } from '../../../common/LoadingScreen';
 import { toast } from 'sonner-native';
+import { EmptyCard } from '../../../common/EmptyCard';
 
-const RightActions = () => {
-  const router = useRouter();
-
-  const onPressAddDraw = () => {
-    router.push('/admin/draws/create-draw');
-  };
-  return (
-    <>
-      <Card padding={'$2'} themeInverse>
-        <TouchableOpacity hitSlop={4} onPress={onPressAddDraw}>
-          <Ionicons name="add-outline" size={24} color="white" />
-        </TouchableOpacity>
-      </Card>
-    </>
-  );
-};
 export default function AdminDrawsScreen() {
   const { isSuperAdmin } = useAuth();
   const queryClient = useQueryClient();
@@ -101,6 +84,14 @@ export default function AdminDrawsScreen() {
     return <LoadingScreen />;
   }
 
+  if (draws?.length === 0) {
+    return (
+      <YStack paddingBlock="$4" paddingInline={'$4'} gap="$4">
+        <EmptyCard title="No Draws Found" message="You have not created any draws yet" />
+      </YStack>
+    );
+  }
+
   return (
     <>
       <ScrollView
@@ -108,8 +99,6 @@ export default function AdminDrawsScreen() {
         style={{ width: '100%' }}>
         <YStack paddingBlock="$4" paddingInline={'$4'} gap="$4">
           {draws?.map((draw) => {
-            const displayMonth = formatMonth(draw.month || '');
-
             return (
               <Card
                 bordered
@@ -123,8 +112,8 @@ export default function AdminDrawsScreen() {
                 <Link href={`/draw/${draw.id}`} asChild>
                   <YStack gap="$2">
                     <XStack justify="space-between" items="center">
-                      <Text fontWeight="700" fontSize={18}>
-                        {displayMonth} Draw
+                      <Text textTransform="capitalize" fontWeight="700" fontSize={18}>
+                        {draw.month} Draw
                       </Text>
 
                       <Text

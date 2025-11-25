@@ -75,7 +75,7 @@ export function ProfileScreen() {
         refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefresh} />}
         paddingInline={10}
         paddingBlockEnd={200}>
-        <YStack gap="$1" items="center">
+        <YStack gap="$3" items="center">
           <Card padding={'$2'} borderColor={'$borderColor'} elevate bordered rounded="$6">
             <Avatar rounded="$6" size={'$10'}>
               <Avatar.Image src={user.imageUrl} alt="avatar" />

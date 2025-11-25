@@ -10,7 +10,7 @@ import { ADMIN_TRANSACTION_ENDPOINTS } from '@/src/lib/endpoints/admin/transacti
 import { getStatusColor } from '@/src/utils/helper/getStatusColor';
 import { getStatusText } from '@/src/utils/helper/getStatusText';
 import { PaymentStatusT } from '@/src/types/purchase';
-import { LoadingScreen } from '../../common/LoadingScreen';
+import { LoadingScreen } from '../../../common/LoadingScreen';
 
 type TransactionT = {
   id: string;
