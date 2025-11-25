@@ -7,7 +7,7 @@ import useCurrentDrawNumbers from '@/src/hooks/draw/useCurrentDrawNumbers';
 import { DrawNumberSkeleton } from '../skeleton/DrawNumberSkeleton';
 
 type Props = {
-  number: LuckyNumbersT | null;
+  number: LuckyNumbersT;
   onNumberChange: (number: LuckyNumbersT | null) => void;
 };
 

@@ -15,7 +15,6 @@ export default function Layout() {
           tabBarIcon: (props) => (
             <TabBarIcon name={props.focused ? 'home' : 'home-outline'} {...props} />
           ),
-          header: () => <CustomHeader />,
         }}
       />
       <Tabs.Screen

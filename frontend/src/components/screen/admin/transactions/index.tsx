@@ -11,9 +11,11 @@ import { getStatusColor } from '@/src/utils/helper/getStatusColor';
 import { getStatusText } from '@/src/utils/helper/getStatusText';
 import { PaymentStatusT } from '@/src/types/purchase';
 import { LoadingScreen } from '../../../common/LoadingScreen';
+import { RefreshControl } from 'react-native-gesture-handler';
 
 type TransactionT = {
   id: string;
+  transactionId: string;
   amount: number;
   status: PaymentStatusT;
   paymentMethod: string;
@@ -21,6 +23,7 @@ type TransactionT = {
   userId: string;
   name: string;
   imageUrl: string | null;
+  updatedAt: string;
 };
 
 export default function AdminTransactionsScreen() {
@@ -47,7 +50,9 @@ export default function AdminTransactionsScreen() {
         }}
       />
 
-      <ScrollView style={{ width: '100%' }}>
+      <ScrollView
+        refreshControl={<RefreshControl onRefresh={() => refetch()} refreshing={isFetching} />}
+        style={{ width: '100%' }}>
         <YStack p="$4" gap="$4">
           {transactions &&
             transactions?.map((tx) => {
@@ -70,6 +75,11 @@ export default function AdminTransactionsScreen() {
                   <Separator />
 
                   {/* Transaction Info */}
+                  <XStack justify="space-between">
+                    <Text fontWeight="600">Transaction ID:</Text>
+                    <Text>₹ {tx.transactionId}</Text>
+                  </XStack>
+
                   <XStack justify="space-between">
                     <Text fontWeight="600">Amount</Text>
                     <Text>₹ {tx.amount}</Text>

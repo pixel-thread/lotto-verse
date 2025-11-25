@@ -2,10 +2,9 @@ import { useCurrentDraw } from '@/src/hooks/draw/useCurrentDraw';
 import React, { useState } from 'react';
 import { ScrollView } from 'react-native';
 import { YStack, XStack, Text, Button, Card, H2, Separator, Avatar, Checkbox } from 'tamagui';
-import { Link, Stack, useRouter } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { useUser } from '@clerk/clerk-expo';
 import { Ionicons } from '@expo/vector-icons';
-import { CustomHeader } from '../../common/CustomHeader';
 import { useMutation } from '@tanstack/react-query';
 import http from '@/src/utils/http';
 import { useQueryClient } from '@tanstack/react-query';
@@ -105,13 +104,6 @@ export function CheckoutPage({ id }: CheckoutPageProps) {
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          title: 'Checkout',
-          headerShown: true,
-          header: ({ back }) => <CustomHeader back={!!back} />,
-        }}
-      />
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 50 }}>
         <YStack gap="$6" maxW={600} self="center" width="100%">
           {/* Header */}

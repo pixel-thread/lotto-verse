@@ -38,7 +38,7 @@ export async function POST(
     } else {
       locked = await clerk.users.lockUser(clerkUser.id);
       try {
-        revokedUserSessions({ id: clerkUser.id });
+        revokedUserSessions({ id: clerkUser.id, reason: "locked" });
       } catch (error) {
         throw error;
       }

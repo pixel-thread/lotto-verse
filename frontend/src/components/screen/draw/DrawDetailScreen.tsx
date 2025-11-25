@@ -22,6 +22,7 @@ import { router, Stack } from 'expo-router';
 import { CustomHeader } from '../../common/CustomHeader';
 import useGetDraw from '@/src/hooks/draw/useGetDraw';
 import { formatMonth, formatMonthWithTime } from '@/src/utils/helper/formatMonth';
+import { LoadingScreen } from '../../common/LoadingScreen';
 
 type Props = {
   id: string;
@@ -42,16 +43,10 @@ export function DrawDetailScreen({ id }: Props) {
     } finally {
     }
   }, [refetchDraw, refetchLuckyNumbers]);
+
   if (isDrawLoading) {
     return (
       <>
-        <Stack.Screen
-          options={{
-            title: 'Luck Draw',
-            header: ({ back }) => <CustomHeader back={!!back} />,
-            headerShown: true,
-          }}
-        />
         <YStack flex={1} justify="center" items="center">
           <Spinner size="large" />
         </YStack>
@@ -60,25 +55,10 @@ export function DrawDetailScreen({ id }: Props) {
   }
 
   if (!draw) {
-    return (
-      <>
-        <Stack.Screen
-          options={{
-            title: 'Luck Draw',
-            header: ({ back }) => <CustomHeader back={!!back} />,
-            headerShown: true,
-          }}
-        />
-        <YStack flex={1} justify="center" items="center">
-          <Text fontSize={24} fontWeight="bold">
-            Draw not found
-          </Text>
-        </YStack>
-      </>
-    );
+    return <LoadingScreen />;
   }
 
-  const displayMonth = formatMonth(draw.month || '');
+  const displayMonth = draw.month;
 
   const declarationDate = formatMonthWithTime(draw.endDate || 'To be announced');
 
@@ -86,13 +66,6 @@ export function DrawDetailScreen({ id }: Props) {
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          title: 'Luck Draw',
-          header: ({ back }) => <CustomHeader back={!!back} />,
-          headerShown: true,
-        }}
-      />
       <ScrollView
         flex={1}
         refreshControl={

@@ -5,7 +5,6 @@ import { getUniqueLuckyNumber } from "@/src/services/lucky-number/getUniqueLucky
 import { getUniquePurchase } from "@/src/services/purchase/getUniquePurchase";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
 import { requireAuth } from "@/src/utils/middleware/requiredAuth";
-import { MOCK_BILLING_DETAIL } from "@/src/utils/mocked";
 import { ErrorResponse, SuccessResponse } from "@/src/utils/next-response";
 import { NextRequest } from "next/server";
 

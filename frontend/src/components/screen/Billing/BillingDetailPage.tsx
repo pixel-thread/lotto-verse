@@ -136,13 +136,6 @@ Transaction ID: ${data.payment.transactionId}
   if (!data) {
     return (
       <>
-        <Stack.Screen
-          options={{
-            title: 'Billing Details',
-            headerShown: true,
-            header: ({ back }) => <CustomHeader back={!!back} />,
-          }}
-        />
         <EmptyCard
           title="Billing Details"
           message="Billing details not found"

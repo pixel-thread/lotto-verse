@@ -10,17 +10,23 @@ import { RefreshControl } from 'react-native';
 import { Ternary } from '../../common/Ternary';
 import { WinnerCard } from './WinnerCard';
 import { NoActiveDraw } from '../draw/NoActiveDraw';
-import { formatMonth, formatMonthWithTime } from '@/src/utils/helper/formatMonth';
+import { formatMonthWithTime } from '@/src/utils/helper/formatMonth';
+import { LoadingScreen } from '../../common/LoadingScreen';
 
 export function HomeScreen() {
-  const { data: draw, refetch: refetchDraw, isFetching: isDrawLoading } = useCurrentDraw();
+  const {
+    data: draw,
+    refetch: refetchDraw,
+    isFetching: isDrawLoading,
+    isLoading,
+  } = useCurrentDraw();
   const {
     data: luckyNumbers,
     isFetching: isLuckyLoading,
     refetch: refetchLuckyNumbers,
   } = useCurrentDrawNumbers();
 
-  const displayMonth = formatMonth(draw?.month || '');
+  const displayMonth = draw?.month;
 
   const declarationDate = formatMonthWithTime(draw?.endDate || 'To be announced');
 
@@ -36,14 +42,13 @@ export function HomeScreen() {
   if (!draw) {
     return <NoActiveDraw />;
   }
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
   return (
     <>
-      <Stack.Screen
-        options={{
-          headerShown: true,
-          header: ({ back }) => <CustomHeader back={!!back} />,
-        }}
-      />
       <ScrollView
         flex={1}
         refreshControl={

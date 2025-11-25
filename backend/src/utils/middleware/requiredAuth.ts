@@ -32,16 +32,21 @@ export async function requireAuth(req: NextRequest) {
     logger.error("Claims not found", claims);
     throw new UnauthorizedError("Unauthorized");
   }
+  const clerkUser = await clerk.users.getUser(claims.sub);
+
+  if (!clerkUser) {
+    throw new UnauthorizedError("Unauthorized");
+  }
+
+  if (clerkUser.banned || clerkUser.locked) {
+    throw new UnauthorizedError("Unauthorized");
+  }
 
   // Try to find user in your backend
   const user = await getUniqueUser({ where: { clerkId: claims.sub } });
 
   if (!user) {
     // When user is not found, create a new user
-    logger.info("User not found, creating a new user", {
-      sub: claims.sub,
-    });
-
     const user = await createUser({ id: claims.sub });
 
     if (user) {
@@ -52,7 +57,10 @@ export async function requireAuth(req: NextRequest) {
     if (claims.sid) {
       logger.info("Revoke session", { sid: claims.sid });
       try {
-        await revokedUserSessions({ id: claims.sub });
+        await revokedUserSessions({
+          id: claims.sub,
+          reason: "User not found after creation",
+        });
       } catch (error) {
         throw error;
       }
