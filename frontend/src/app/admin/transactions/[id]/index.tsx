@@ -1,4 +1,4 @@
-import AdminTransactionDetail from '@/src/components/admin/transactions/TransactionDetails';
+import AdminTransactionDetail from '@/src/components/screen/admin/transactions/TransactionDetails';
 import { CustomHeader } from '@/src/components/common/CustomHeader';
 import { useLocalSearchParams } from 'expo-router';
 

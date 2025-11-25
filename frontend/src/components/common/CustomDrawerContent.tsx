@@ -20,6 +20,7 @@ export type MenuItemsT = {
 const menuItems: MenuItemsT[] = [
   { id: 1, title: 'Home', herf: '/' },
   { id: 2, title: 'Draws', herf: '/draw' },
+  { id: 3, title: 'Terms', herf: '/terms' },
 ];
 
 const adminDrawerMenuItems: MenuItemsT[] = [
@@ -28,6 +29,8 @@ const adminDrawerMenuItems: MenuItemsT[] = [
   { id: 3, title: 'Transaction', herf: '/admin/transactions' },
   { id: 4, title: 'Winner', herf: '/admin/winners' },
   { id: 5, title: 'User', herf: '/admin/users' },
+  { id: 6, title: 'Updates', herf: '/admin/updates' },
+  { id: 7, title: 'Terms', herf: '/terms' },
 ];
 
 export function CustomDrawerContent(props: DrawerContentComponentProps) {

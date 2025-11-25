@@ -39,9 +39,10 @@ export function LoginScreen() {
           toast.success('Login successful');
           setActive({
             session: createdSessionId,
-            navigate: () => {
-              router.replace('/');
-              return;
+            navigate: ({ session }) => {
+              if (session) {
+                router.replace('/');
+              }
             },
           });
         }

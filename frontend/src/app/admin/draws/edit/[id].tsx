@@ -1,4 +1,4 @@
-import AdminEditDrawScreen from '@/src/components/admin/draws/EditDrawScreen';
+import AdminEditDrawScreen from '@/src/components/screen/admin/draws/EditDrawScreen';
 import { useLocalSearchParams } from 'expo-router';
 
 export default function page() {

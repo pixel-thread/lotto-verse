@@ -10,47 +10,56 @@ import { NextRequest } from "next/server";
 export async function GET(req: NextRequest) {
   try {
     await requireAuth(req);
-    const draw = await getActiveDraw();
+
+    let draw;
+    draw = await getActiveDraw();
+
     if (!draw) {
       return ErrorResponse({
         status: 404,
         message: "No active draw found",
       });
     }
-    const user = await getUniqueUser({ where: { id: draw.winner?.userId } });
 
-    if (!user) {
-      return ErrorResponse({
-        status: 404,
-        message: "User not found",
-      });
-    }
-    const clerkUser = await clerk.users.getUser(user?.clerkId);
-    if (!clerkUser) {
-      return ErrorResponse({
-        status: 404,
-        message: "User not found",
-      });
-    }
-    const number = await getUniqueLuckyNumber({
-      where: { id: draw.winner?.luckyNumberId },
-    });
+    if (draw.isWinnerDecleared) {
+      const user = await getUniqueUser({ where: { id: draw.winner?.userId } });
 
-    const drawWithWinner = {
-      ...draw,
-      winner: {
-        ...draw.winner,
-        name: clerkUser.fullName,
-        email: clerkUser.primaryEmailAddress?.emailAddress,
-        imageUrl: clerkUser.imageUrl,
-        number: number?.number,
-        phone: clerkUser.primaryPhoneNumber?.phoneNumber,
-      },
-    };
+      if (!user) {
+        return ErrorResponse({
+          status: 404,
+          message: "User not found",
+        });
+      }
+
+      const clerkUser = await clerk.users.getUser(user?.clerkId);
+
+      if (!clerkUser) {
+        return ErrorResponse({
+          status: 404,
+          message: "User not found",
+        });
+      }
+
+      const number = await getUniqueLuckyNumber({
+        where: { id: draw.winner?.luckyNumberId },
+      });
+
+      draw = {
+        ...draw,
+        winner: {
+          ...draw.winner,
+          name: clerkUser.fullName,
+          email: clerkUser.primaryEmailAddress?.emailAddress,
+          imageUrl: clerkUser.imageUrl,
+          number: number?.number,
+          phone: clerkUser.primaryPhoneNumber?.phoneNumber,
+        },
+      };
+    }
 
     return SuccessResponse({
       message: "Successfully fetched current draw",
-      data: drawWithWinner,
+      data: draw,
       status: 200,
     });
   } catch (error) {

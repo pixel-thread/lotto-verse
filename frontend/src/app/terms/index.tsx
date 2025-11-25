@@ -1,5 +1,5 @@
-import { TermsAndConditionsPage } from '@/src/components/screen/term';
+import { TermsAndConditionsScreen } from '@/src/components/screen/term';
 
 export default function page() {
-  return <TermsAndConditionsPage />;
+  return <TermsAndConditionsScreen />;
 }

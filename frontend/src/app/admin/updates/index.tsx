@@ -1,5 +1,5 @@
-import AdminDrawsScreen from '@/src/components/screen/admin/draws';
 import { CustomHeader } from '@/src/components/common/CustomHeader';
+import UpdatesListScreen from '@/src/components/screen/admin/update';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { TouchableOpacity } from 'react-native';
@@ -9,7 +9,7 @@ const RightActions = () => {
   const router = useRouter();
 
   const onPressAddDraw = () => {
-    router.push('/admin/draws/create-draw');
+    router.push('/admin/updates/create');
   };
   return (
     <>
@@ -26,7 +26,7 @@ export default function page() {
   return (
     <>
       <CustomHeader back={true} headerRight={<RightActions />} />
-      <AdminDrawsScreen />
+      <UpdatesListScreen />
     </>
   );
 }

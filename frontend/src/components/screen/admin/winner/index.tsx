@@ -5,9 +5,9 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { YStack, XStack, Card, Text, Avatar, Button, Separator, View } from 'tamagui';
 import http from '@/src/utils/http';
 import { CustomHeader } from '@/src/components/common/CustomHeader';
-import { LoadingScreen } from '../../common/LoadingScreen';
+import { LoadingScreen } from '../../../common/LoadingScreen';
 import { ADMIN_WINNER_ENDPOINTS } from '@/src/lib/endpoints/admin/winner';
-import { EmptyCard } from '../../common/EmptyCard';
+import { EmptyCard } from '../../../common/EmptyCard';
 
 type ResponseT = {
   id: string;

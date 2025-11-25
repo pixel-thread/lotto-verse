@@ -1,4 +1,5 @@
 type UpdateType = 'OTA' | 'PTA';
+
 export type UpdateReleaseT = {
   id: string;
   channel: string;
@@ -13,6 +14,7 @@ export type UpdateReleaseT = {
   assetUrl: string | null;
   createdBy: string | null;
   metadata: any;
+  createdAt: Date;
 };
 
 export type UpdateContextT = {
