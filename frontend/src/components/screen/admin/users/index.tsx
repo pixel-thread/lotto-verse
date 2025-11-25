@@ -1,14 +1,13 @@
 import React from 'react';
 import { ScrollView } from 'react-native';
-import { Stack, router } from 'expo-router';
-import { useQuery } from '@tanstack/react-query';
-import { YStack, XStack, Avatar, Text, Card, Separator, Spinner, Button } from 'tamagui';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { YStack, XStack, Avatar, Text, Card, Separator, Button } from 'tamagui';
 import { RefreshControl } from 'react-native-gesture-handler';
 
 import http from '@/src/utils/http';
 import { LoadingScreen } from '../../../common/LoadingScreen';
-
-const ENDPOINT = '/admin/users';
+import { ADMIN_USER_ENDPOINTS } from '@/src/lib/endpoints/admin/users';
+import { toast } from 'sonner-native';
 
 type UserT = {
   phone: string;
@@ -21,18 +20,66 @@ type UserT = {
 };
 
 export default function AdminUsersScreen() {
+  const queryClient = useQueryClient();
   const {
     data: users,
     isFetching,
+    isLoading,
     refetch,
   } = useQuery({
     queryKey: ['admin-users'],
-    queryFn: () => http.get<UserT[]>(ENDPOINT),
+    queryFn: () => http.get<UserT[]>(ADMIN_USER_ENDPOINTS.GET_USERS),
     select: (res) => res?.data,
     retry: 1,
   });
 
-  if (isFetching) {
+  const onSuccess = (data: { success: boolean; message: string }) => {
+    if (data.success) {
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+      toast.success(data.message);
+      return;
+    }
+    toast.error(data.message);
+    return;
+  };
+
+  const { mutate: lockUser, isPending: isLocking } = useMutation({
+    mutationFn: (id: string) => http.post(ADMIN_USER_ENDPOINTS.POST_LOCK_USER.replace(':id', id)),
+    onSuccess,
+  });
+
+  const { mutate: banUser, isPending: isBanning } = useMutation({
+    mutationFn: (id: string) => http.post(ADMIN_USER_ENDPOINTS.POST_BAN_USER.replace(':id', id)),
+    onSuccess,
+  });
+
+  const onToggleBanned = (id: string) => {
+    toast('Are you sure you want to BANNED this user?', {
+      richColors: true,
+      closeButton: true,
+      description: 'This account will cause the user to be unable to login',
+      action: {
+        type: 'destructive',
+        label: 'Yes',
+        onClick: () => banUser(id),
+      },
+    });
+  };
+
+  const onToggleLocked = (id: string) => {
+    toast('Are you sure you want to lock this user?', {
+      closeButton: true,
+      description: 'This account will cause the user to be unable to login',
+      richColors: true,
+      action: {
+        type: 'destructive',
+        label: 'Yes',
+        onClick: () => lockUser(id),
+      },
+    });
+  };
+
+  if (isLoading) {
     return <LoadingScreen />;
   }
 
@@ -91,11 +138,26 @@ export default function AdminUsersScreen() {
                 <Separator />
 
                 <XStack items={'center'} justify={'center'} gap={'$2'}>
-                  <Button width={'50%'} themeInverse>
-                    <Button.Text>{user.isBanned ? 'Unban' : 'Ban'}</Button.Text>
+                  <Button
+                    disabled={isLocking}
+                    onPress={() => onToggleBanned(user.id)}
+                    variant={user.isBanned ? undefined : 'outlined'}
+                    width={'50%'}
+                    themeInverse={user.isBanned}>
+                    <Button.Text>
+                      {isBanning ? 'Banning' : user.isBanned ? 'Unban' : 'Ban'}
+                    </Button.Text>
                   </Button>
-                  <Button width={'50%'}>
-                    <Button.Text>{user.isLocked ? 'Unlock' : 'Lock'}</Button.Text>
+
+                  <Button
+                    disabled={isLocking}
+                    themeInverse={user.isLocked}
+                    variant={user.isLocked ? undefined : 'outlined'}
+                    onPress={() => onToggleLocked(user.id)}
+                    width={'50%'}>
+                    <Button.Text>
+                      {isLocking ? 'Locking' : user.isLocked ? 'Unlock' : 'Lock'}
+                    </Button.Text>
                   </Button>
                 </XStack>
               </Card>

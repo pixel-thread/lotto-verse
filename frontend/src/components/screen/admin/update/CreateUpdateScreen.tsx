@@ -42,6 +42,7 @@ export default function CreateUpdateScreen() {
       return;
     },
   });
+
   const onSubmit = (data: UpdateFormT) => mutate(data);
 
   return (

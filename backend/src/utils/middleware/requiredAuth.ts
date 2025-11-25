@@ -5,6 +5,7 @@ import { clerk } from "@/src/lib/clerk";
 import { getUniqueUser } from "@/src/services/user/getUserByClerkId";
 import { createUser } from "@/src/services/user/createUser";
 import { logger } from "../logger";
+import { revokedUserSessions } from "@/src/services/user/revokedUserSessions";
 
 export async function requireAuth(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
@@ -50,7 +51,11 @@ export async function requireAuth(req: NextRequest) {
     // Just in case if user is not found after creation revoke the session
     if (claims.sid) {
       logger.info("Revoke session", { sid: claims.sid });
-      await clerk.sessions.revokeSession(claims.sid);
+      try {
+        await revokedUserSessions({ id: claims.sub });
+      } catch (error) {
+        throw error;
+      }
     }
 
     throw new UnauthorizedError("Unauthorized");
