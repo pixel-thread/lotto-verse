@@ -24,6 +24,7 @@ import { Ternary } from '../../../common/Ternary';
 import { toast } from 'sonner-native';
 import { DrawT } from '@/src/types/draw';
 import { LoadingScreen } from '../../../common/LoadingScreen';
+import { RefreshControl } from 'react-native-gesture-handler';
 
 export default function AdminEditDrawScreen({ id }: { id: string }) {
   const queryClient = useQueryClient();
@@ -32,7 +33,11 @@ export default function AdminEditDrawScreen({ id }: { id: string }) {
     resolver: zodResolver(createDrawSchema),
   });
 
-  const { data: draw, isFetching } = useQuery({
+  const {
+    data: draw,
+    isFetching,
+    refetch,
+  } = useQuery({
     queryKey: ['draw', id],
     queryFn: () => http.get<DrawT>(ADMIN_DRAW_ENDPOINTS.GET_DRAW_BY_ID.replace(':id', id)),
     select: (data) => data.data,
@@ -43,7 +48,7 @@ export default function AdminEditDrawScreen({ id }: { id: string }) {
       http.put(ADMIN_DRAW_ENDPOINTS.PUT_UPDATE_DRAW.replace(':id', id), data),
     onSuccess: (data) => {
       if (data.success) {
-        router.replace('/admin/draws');
+        router.replace(`/draw/${id}`);
         queryClient.invalidateQueries({ queryKey: ['admin', 'draws'] });
         toast.success(data.message);
         return;
@@ -68,34 +73,17 @@ export default function AdminEditDrawScreen({ id }: { id: string }) {
         },
       });
     }
-  }, []);
+  }, [draw]);
 
   if (isFetching) {
-    return (
-      <>
-        <Stack.Screen
-          options={{
-            title: 'Create Draw',
-            headerShown: true,
-            header: ({ back }) => <CustomHeader back={!!back} />,
-          }}
-        />
-        <LoadingScreen />
-      </>
-    );
+    return <LoadingScreen />;
   }
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          title: 'Create Draw',
-          headerShown: true,
-          header: ({ back }) => <CustomHeader back={!!back} />,
-        }}
-      />
-
-      <ScrollView style={{ width: '100%' }}>
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={isFetching} onRefresh={refetch} />}
+        style={{ width: '100%' }}>
         <YStack paddingBlock="$4" paddingInline="$4" gap="$4">
           <Card bordered padding="$4" gap="$4">
             {/* Month */}

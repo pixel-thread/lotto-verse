@@ -20,7 +20,7 @@ export type MenuItemsT = {
 const menuItems: MenuItemsT[] = [
   { id: 1, title: 'Home', herf: '/' },
   { id: 2, title: 'Draws', herf: '/draw' },
-  { id: 3, title: 'Terms', herf: '/terms' },
+  { id: 3, title: 'Rules', herf: '/terms' },
 ];
 
 const adminDrawerMenuItems: MenuItemsT[] = [

@@ -8,6 +8,7 @@ import { CustomHeader } from '@/src/components/common/CustomHeader';
 import { LoadingScreen } from '../../../common/LoadingScreen';
 import { ADMIN_WINNER_ENDPOINTS } from '@/src/lib/endpoints/admin/winner';
 import { EmptyCard } from '../../../common/EmptyCard';
+import { RefreshControl } from 'react-native-gesture-handler';
 
 type ResponseT = {
   id: string;
@@ -42,18 +43,24 @@ export default function AdminWinnersScreen() {
   if (!winners || winners.length === 0) {
     return (
       <>
-        <EmptyCard
-          title="No Winners Found"
-          message="Please check back later"
-          onRefresh={refetch}
-          isFetching={isFetching}
-        />
+        <ScrollView
+          refreshControl={<RefreshControl refreshing={isFetching} onRefresh={refetch} />}
+          style={{ width: '100%' }}>
+          <EmptyCard
+            title="No Winners Found"
+            message="Please check back later"
+            onRefresh={refetch}
+            isFetching={isFetching}
+          />
+        </ScrollView>
       </>
     );
   }
   return (
     <>
-      <ScrollView style={{ width: '100%' }}>
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={isFetching} onRefresh={refetch} />}
+        style={{ width: '100%' }}>
         <YStack p="$4" gap="$4">
           {winners &&
             winners?.map((winner) => (

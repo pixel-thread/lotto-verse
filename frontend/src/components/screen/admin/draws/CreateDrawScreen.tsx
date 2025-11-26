@@ -31,10 +31,11 @@ export default function CreateDrawScreen() {
   });
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (data: CreateDrawSchemaT) => http.post(ADMIN_DRAW_ENDPOINTS.POST_CREATE_DRAW, data),
+    mutationFn: (data: CreateDrawSchemaT) =>
+      http.post<{ id: string }>(ADMIN_DRAW_ENDPOINTS.POST_CREATE_DRAW, data),
     onSuccess: (data) => {
       if (data.success) {
-        router.replace('/admin/draws');
+        router.replace(`/draw/${data?.data?.id}`);
         queryClient.invalidateQueries({ queryKey: ['admin', 'draws'] });
         toast.success(data.message);
         return;

@@ -1,6 +1,8 @@
 import { createDrawSchema } from '@/src/utils/validation/draw';
 import z from 'zod';
 
+export type StatusT = 'ACTIVE' | 'INACTIVE' | 'DELETE';
+
 export type WinnerT = {
   id: string;
   userId: string;
@@ -21,6 +23,6 @@ export type DrawT = z.infer<typeof createDrawSchema> & {
   month: string;
   isWinnerDecleared: boolean;
   endDate: string;
-  isActive: boolean;
+  status: StatusT;
   winner: WinnerT | null;
 };

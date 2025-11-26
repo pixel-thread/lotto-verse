@@ -1,7 +1,19 @@
+import { CustomHeader } from '@/src/components/common/CustomHeader';
 import AdminEditDrawScreen from '@/src/components/screen/admin/draws/EditDrawScreen';
-import { useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 
 export default function page() {
   const { id } = useLocalSearchParams();
-  return <AdminEditDrawScreen id={id.toString()} />;
+  return (
+    <>
+      <Stack.Screen
+        options={{
+          title: 'Create Draw',
+          headerShown: true,
+          header: ({ back }) => <CustomHeader back={!!back} />,
+        }}
+      />
+      <AdminEditDrawScreen id={id.toString()} />
+    </>
+  );
 }

@@ -12,6 +12,7 @@ import { getStatusText } from '@/src/utils/helper/getStatusText';
 import { PaymentStatusT } from '@/src/types/purchase';
 import { LoadingScreen } from '../../../common/LoadingScreen';
 import { RefreshControl } from 'react-native-gesture-handler';
+import { EmptyCard } from '@/src/components/common/EmptyCard';
 
 type TransactionT = {
   id: string;
@@ -41,15 +42,18 @@ export default function AdminTransactionsScreen() {
     return <LoadingScreen />;
   }
 
+  if (transactions?.length === 0 || !transactions) {
+    return (
+      <ScrollView
+        refreshControl={<RefreshControl onRefresh={() => refetch()} refreshing={isFetching} />}
+        style={{ width: '100%' }}>
+        <EmptyCard message="No transactions found" title="No Transactions" />
+      </ScrollView>
+    );
+  }
+
   return (
     <>
-      <Stack.Screen
-        options={{
-          title: 'Transactions',
-          header: ({ back }) => <CustomHeader back={!!back} />,
-        }}
-      />
-
       <ScrollView
         refreshControl={<RefreshControl onRefresh={() => refetch()} refreshing={isFetching} />}
         style={{ width: '100%' }}>

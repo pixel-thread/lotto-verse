@@ -5,9 +5,10 @@ import { Ternary } from '@components/common/Ternary';
 import { LuckyNumbersT } from '@/src/types/lucky-number';
 import useCurrentDrawNumbers from '@/src/hooks/draw/useCurrentDrawNumbers';
 import { DrawNumberSkeleton } from '../skeleton/DrawNumberSkeleton';
+import { logger } from '@/src/utils/logger';
 
 type Props = {
-  number: LuckyNumbersT;
+  number: LuckyNumbersT | null;
   onNumberChange: (number: LuckyNumbersT | null) => void;
 };
 
@@ -15,7 +16,7 @@ export const BrowseNumbersTab = ({
   number: selectedNumber,
   onNumberChange: setSelectedNumber,
 }: Props) => {
-  const [userPurchasedNumber, setUserPurchasedNumber] = useState<number | null>(null);
+  const [userPurchasedNumber, _] = useState<number | null>(null);
   const [page, setPage] = useState(1);
 
   const { meta, isFetching: isLuckyNumbersFetching, data } = useCurrentDrawNumbers({ page });

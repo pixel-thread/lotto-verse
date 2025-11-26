@@ -1,4 +1,3 @@
-import { CustomHeader } from '@/src/components/common/CustomHeader';
 import { CustomTabBar } from '@/src/components/common/CustomTabBar';
 import { TabBarIcon } from '@/src/components/common/TabBarIcon';
 import { Tabs } from 'expo-router';

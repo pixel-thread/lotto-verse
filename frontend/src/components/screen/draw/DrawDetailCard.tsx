@@ -18,7 +18,7 @@ export const DrawDetailCard = () => {
         <XStack justify="space-between" paddingInlineEnd="$2" gap="$1" items="center">
           <YStack gap="$1">
             <Paragraph size="$2" textTransform="uppercase">
-              Draw #{draw?.id}
+              #&nbsp;{draw?.id}
             </Paragraph>
             <H4 textTransform="uppercase" fontWeight={'bold'}>
               {displayMonth}

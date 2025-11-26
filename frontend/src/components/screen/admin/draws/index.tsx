@@ -5,13 +5,12 @@ import { Link, router } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import http from '@/src/utils/http';
 import { RefreshControl } from 'react-native-gesture-handler';
-import { formatMonth } from '@/src/utils/helper/formatMonth';
 import { ADMIN_DRAW_ENDPOINTS } from '@/src/lib/endpoints/admin/draws';
-import { DrawT } from '@/src/types/draw';
+import { DrawT, StatusT } from '@/src/types/draw';
 import { useAuth } from '@/src/hooks/auth/useAuth';
-import { LoadingScreen } from '../../../common/LoadingScreen';
+import { LoadingScreen } from '@components/common/LoadingScreen';
 import { toast } from 'sonner-native';
-import { EmptyCard } from '../../../common/EmptyCard';
+import { EmptyCard } from '@components/common/EmptyCard';
 
 export default function AdminDrawsScreen() {
   const { isSuperAdmin } = useAuth();
@@ -20,6 +19,7 @@ export default function AdminDrawsScreen() {
   const {
     data: draws,
     refetch,
+    isLoading,
     isFetching,
   } = useQuery({
     queryKey: ['admin', 'draws'],
@@ -48,7 +48,7 @@ export default function AdminDrawsScreen() {
   const { mutate: deleteDraw, isPending: isDeleting } = useMutation({
     mutationKey: ['admin', 'draws'],
     mutationFn: (id: string) =>
-      http.post(ADMIN_DRAW_ENDPOINTS.DELETE_DRAW_BY_ID.replace(':id', id)),
+      http.delete(ADMIN_DRAW_ENDPOINTS.DELETE_DRAW_BY_ID.replace(':id', id)),
     onSuccess: onSuccess,
   });
 
@@ -62,7 +62,8 @@ export default function AdminDrawsScreen() {
   const onToggleActive = (id: string) => toggleActiveDraw(id);
 
   const onDeleteDraw = (id: string) => {
-    toast('Are you sure you want to delete this draw?', {
+    return toast('Are you sure you want to delete this draw?', {
+      closeButton: true,
       action: {
         label: 'Yes',
         onClick: () => deleteDraw(id),
@@ -80,9 +81,9 @@ export default function AdminDrawsScreen() {
     });
   };
 
-  if (isFetching) {
-    return <LoadingScreen />;
-  }
+  const isDrawActive = (status: StatusT) => {
+    return status === 'ACTIVE';
+  };
 
   if (draws?.length === 0) {
     return (
@@ -92,135 +93,138 @@ export default function AdminDrawsScreen() {
     );
   }
 
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
   return (
     <>
       <ScrollView
         refreshControl={<RefreshControl refreshing={isFetching} onRefresh={refetch} />}
         style={{ width: '100%' }}>
         <YStack paddingBlock="$4" paddingInline={'$4'} gap="$4">
-          {draws?.map((draw) => {
-            return (
-              <Card
-                bordered
-                key={draw.id}
-                padding="$4"
-                backgroundColor="$background"
-                borderColor={draw.isActive ? '$green5' : '$borderColor'}
-                gap="$3"
-                borderRadius="$6">
-                {/* “Table Header”-like row */}
-                <Link href={`/draw/${draw.id}`} asChild>
-                  <YStack gap="$2">
-                    <XStack justify="space-between" items="center">
-                      <Text textTransform="capitalize" fontWeight="700" fontSize={18}>
-                        {draw.month} Draw
-                      </Text>
+          {draws?.map((draw) => (
+            <Card
+              bordered
+              key={draw.id}
+              padding="$4"
+              backgroundColor={isDrawActive(draw.status) ? '$green3' : '$red1'}
+              borderColor={isDrawActive(draw.status) ? '$green10' : '$borderColor'}
+              gap="$3"
+              borderRadius="$6">
+              {/* “Table Header”-like row */}
+              <Link href={`/draw/${draw.id}`} asChild>
+                <YStack gap="$2">
+                  <XStack justify="space-between" items="center">
+                    <Text textTransform="capitalize" fontWeight="700" fontSize={18}>
+                      {draw.month} Draw
+                    </Text>
 
-                      <Text
-                        fontSize={12}
-                        fontWeight="600"
-                        borderColor={draw.isActive ? '$green10' : '$red10'}
-                        borderWidth={1}
-                        paddingInline="$2"
-                        paddingBlock="$1"
-                        rounded="$4"
-                        color={draw.isActive ? '$green10' : '$red10'}>
-                        {draw.isActive ? 'Active' : 'Inactive'}
-                      </Text>
-                    </XStack>
+                    <Text
+                      fontSize={12}
+                      fontWeight="600"
+                      borderColor={isDrawActive(draw.status) ? '$green10' : '$red10'}
+                      borderWidth={1}
+                      paddingInline="$2"
+                      paddingBlock="$1"
+                      rounded="$4"
+                      color={isDrawActive(draw.status) ? '$green10' : '$red10'}>
+                      {draw.status}
+                    </Text>
+                  </XStack>
 
-                    <Separator marginBlock="$2" />
+                  <Separator marginBlock="$2" />
 
-                    {/* Row 1 */}
-                    <XStack justify="space-between">
-                      <Text fontSize={14} fontWeight="600">
-                        Prize
-                      </Text>
-                      <Text fontSize={14}>₹ {draw.prize.amount}</Text>
-                    </XStack>
+                  {/* Row 1 */}
+                  <XStack justify="space-between">
+                    <Text fontSize={14} fontWeight="600">
+                      Prize
+                    </Text>
+                    <Text fontSize={14}>₹ {draw.prize?.amount}</Text>
+                  </XStack>
 
-                    {/* Row 2 */}
-                    <XStack justify="space-between" marginBlockStart="$2">
-                      <Text fontSize={14} fontWeight="600">
-                        Winner
-                      </Text>
-                      <Text fontSize={14}>{draw.winner?.name || 'Not Declared'}</Text>
-                    </XStack>
+                  {/* Row 2 */}
+                  <XStack justify="space-between" marginBlockStart="$2">
+                    <Text fontSize={14} fontWeight="600">
+                      Winner
+                    </Text>
+                    <Text fontSize={14}>{draw.winner?.name || 'Not Declared'}</Text>
+                  </XStack>
 
-                    {/* Row 3 */}
-                    <XStack justify="space-between" marginBlockStart="$2">
-                      <Text fontSize={14} fontWeight="600">
-                        Declared On
-                      </Text>
-                      <Text fontSize={12}>{draw.winner?.createdAt || '-'}</Text>
-                    </XStack>
+                  {/* Row 3 */}
+                  <XStack justify="space-between" marginBlockStart="$2">
+                    <Text fontSize={14} fontWeight="600">
+                      Declared On
+                    </Text>
+                    <Text fontSize={12}>{draw.winner?.createdAt || '-'}</Text>
+                  </XStack>
 
-                    {/* Row 4 */}
-                    <XStack justify="space-between" marginBlockStart="$2">
-                      <Text fontSize={14} fontWeight="600">
-                        Entree Fee
-                      </Text>
-                      <Text fontSize={12}>{draw.entryFee || '-'}&nbsp;/-</Text>
-                    </XStack>
+                  {/* Row 4 */}
+                  <XStack justify="space-between" marginBlockStart="$2">
+                    <Text fontSize={14} fontWeight="600">
+                      Entree Fee
+                    </Text>
+                    <Text fontSize={12}>{draw.entryFee || '-'}&nbsp;/-</Text>
+                  </XStack>
 
-                    <Separator marginBlock="$3" />
-                  </YStack>
-                </Link>
-                {/* Admin Actions */}
-                <XStack gap="$3">
-                  <Button
-                    onPress={() => onDeclareWinner(draw.id)}
-                    themeInverse
-                    disabled={isDeclearing}
-                    flex={1}
-                    size="$4">
-                    <Button.Text textTransform="uppercase" fontWeight={'900'}>
-                      {isDeclearing ? 'Declaring...' : 'Declare Winner'}
-                    </Button.Text>
-                  </Button>
-                </XStack>
+                  <Separator marginBlock="$3" />
+                </YStack>
+              </Link>
+              {/* Admin Actions */}
+              <XStack gap="$3">
+                <Button
+                  onPress={() => onDeclareWinner(draw.id)}
+                  themeInverse
+                  disabled={isDeclearing}
+                  flex={1}
+                  size="$4">
+                  <Button.Text textTransform="uppercase" fontWeight={'900'}>
+                    {isDeclearing ? 'Declaring...' : 'Declare Winner'}
+                  </Button.Text>
+                </Button>
+              </XStack>
 
-                <XStack gap="$3">
-                  <Button
-                    flex={1}
-                    size="$4"
-                    variant="outlined"
-                    disabled={isPending}
-                    onPress={() => onToggleActive(draw.id)}>
-                    <Button.Text>
-                      {isPending
-                        ? draw.isActive
-                          ? 'Deactivating...'
-                          : 'Activating...'
-                        : draw.isActive
-                          ? 'Deactivate'
-                          : 'Activated'}
-                    </Button.Text>
-                  </Button>
+              <XStack gap="$3">
+                <Button
+                  flex={1}
+                  size="$4"
+                  variant="outlined"
+                  disabled={isPending}
+                  onPress={() => onToggleActive(draw.id)}>
+                  <Button.Text>
+                    {isPending
+                      ? isDrawActive(draw.status)
+                        ? 'Deactivating...'
+                        : 'Activating...'
+                      : isDrawActive(draw.status)
+                        ? 'Deactivate'
+                        : 'Activated'}
+                  </Button.Text>
+                </Button>
 
-                  <Button
-                    flex={1}
-                    size="$4"
-                    variant="outlined"
-                    onPress={() => router.push(`/admin/draws/edit/${draw.id}`)}>
-                    <Button.Text>Edit</Button.Text>
-                  </Button>
-                </XStack>
-                <XStack gap="$3">
-                  <Button
-                    bg={'$red7'}
-                    onPress={() => onDeleteDraw(draw.id)}
-                    flex={1}
-                    disabled={isDeleting}
-                    size="$4">
-                    <Button.Text color={'white'} textTransform="uppercase">
-                      {isDeleting ? 'Deleting...' : 'Delete'}
-                    </Button.Text>
-                  </Button>
-                </XStack>
-              </Card>
-            );
-          })}
+                <Button
+                  flex={1}
+                  size="$4"
+                  variant="outlined"
+                  onPress={() => router.push(`/admin/draws/edit/${draw.id}`)}>
+                  <Button.Text>Edit</Button.Text>
+                </Button>
+              </XStack>
+              <XStack gap="$3">
+                <Button
+                  bg={'$red10'}
+                  onPress={() => onDeleteDraw(draw.id)}
+                  flex={1}
+                  disabled={isDeleting}
+                  themeInverse
+                  size="$4">
+                  <Button.Text color={'white'} textTransform="uppercase">
+                    {isDeleting ? 'Deleting...' : 'Delete'}
+                  </Button.Text>
+                </Button>
+              </XStack>
+            </Card>
+          ))}
         </YStack>
       </ScrollView>
     </>

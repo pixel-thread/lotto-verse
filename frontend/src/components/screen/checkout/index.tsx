@@ -88,18 +88,14 @@ export function CheckoutPage({ id }: CheckoutPageProps) {
     },
   });
 
-  const displayMonth = formatMonth(draw?.month || '');
+  const displayMonth = draw?.month;
 
   const declarationDate = formatMonthWithTime(draw?.endDate || '');
 
   const handleCheckout = async () => mutate();
 
   if (isDrawFetching || isLuckyNumberFetching) {
-    return (
-      <>
-        <LoadingScreen />
-      </>
-    );
+    return <LoadingScreen />;
   }
 
   return (
