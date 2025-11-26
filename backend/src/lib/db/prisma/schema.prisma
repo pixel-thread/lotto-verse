@@ -22,6 +22,12 @@ enum NotificationType {
   REWARD
 }
 
+enum Status {
+  ACTIVE
+  INACTIVE
+  DELETED
+}
+
 model Notification {
   id        String           @id @default(uuid())
   title     String
@@ -54,10 +60,11 @@ model Draw {
   month             String // Format: "YYYY-MM"
   startRange        Int
   isWinnerDecleared Boolean       @default(false)
+  declareAt         DateTime?
   entryFee          Float         @default(30)
   endRange          Int
   endDate           DateTime?
-  isActive          Boolean       @default(false)
+  status            Status        @default(INACTIVE)
   createdAt         DateTime      @default(now())
   luckyNumbers      LuckyNumber[]
   purchases         Purchase[]

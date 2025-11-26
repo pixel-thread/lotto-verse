@@ -7,7 +7,9 @@ type Props = {
 export async function getAllDraw({ where }: Props = {}) {
   return await prisma.draw.findMany({
     where,
-    orderBy: { createdAt: "desc" }, // newest first
+    orderBy: {
+      status: "asc",
+    },
     include: { prize: true, winner: true },
   });
 }

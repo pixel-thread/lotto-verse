@@ -6,6 +6,7 @@ import { ErrorResponse, SuccessResponse } from "@/src/utils/next-response";
 import { getActiveDraw } from "@/src/services/draw/getActiveDraw";
 import { NextRequest } from "next/server";
 import { getMeta } from "@/src/utils/pagination/getMeta";
+import { logger } from "@/src/utils/logger";
 
 export async function GET(req: NextRequest) {
   try {
@@ -33,7 +34,7 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    if (!drawExist.isActive) {
+    if (drawExist.status === "INACTIVE") {
       return ErrorResponse({
         status: 400,
         message: "Draw is not active",

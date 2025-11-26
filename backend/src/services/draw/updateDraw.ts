@@ -38,15 +38,7 @@ export async function updateDraw({ data, where }: Props) {
     where,
     data: {
       month: data.month,
-      startRange,
-      endRange,
       endDate,
-      prize: {
-        create: {
-          amount: data.prize.amount,
-          description: data.prize.description,
-        },
-      },
     },
   });
 

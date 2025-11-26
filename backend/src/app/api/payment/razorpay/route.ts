@@ -4,7 +4,6 @@ import { createPurchaseAtomic } from "@/src/services/purchase/createPurchase";
 import { getPurchaseByLuckyNumber } from "@/src/services/purchase/getPurchaseByLuckyNumber";
 import { getUserPurchase } from "@/src/services/user/getUserPurchase";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
-import { logger } from "@/src/utils/logger";
 import { requireAuth } from "@/src/utils/middleware/requiredAuth";
 import { ErrorResponse, SuccessResponse } from "@/src/utils/next-response";
 import { createRazorPayOrder } from "@/src/utils/razorpay/createOrder";
@@ -39,10 +38,13 @@ export async function POST(req: NextRequest) {
     }
 
     const isPaymentClose =
-      isDrawExist?.isWinnerDecleared || !isDrawExist.isActive;
+      isDrawExist?.isWinnerDecleared || isDrawExist.status === "INACTIVE";
 
     if (isPaymentClose) {
-      return ErrorResponse({ error: "Draw is closed", status: 400 });
+      return ErrorResponse({
+        error: "Draw is closed unable to purchase",
+        status: 400,
+      });
     }
 
     const isLuckyNumberPurchase = await getPurchaseByLuckyNumber({

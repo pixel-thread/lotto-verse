@@ -3,16 +3,10 @@ type Props = {
   id: string;
 };
 export async function deleteDrawById({ id }: Props) {
-  return await prisma.$transaction(
-    async (tx) => {
-      await tx.luckyNumber.deleteMany({ where: { drawId: id } });
-      await tx.prize.deleteMany({ where: { drawId: id } });
-      await tx.winner.deleteMany({ where: { drawId: id } });
-      return await tx.draw.delete({ where: { id } });
-    },
-    {
-      maxWait: 20000,
-      timeout: 30000,
-    },
-  );
+  return await prisma.$transaction(async (tx) => {
+    return await tx.draw.update({
+      where: { id },
+      data: { status: "DELETED" },
+    });
+  });
 }

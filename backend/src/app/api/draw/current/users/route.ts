@@ -1,14 +1,12 @@
 import { clerk } from "@/src/lib/clerk";
-import { prisma } from "@/src/lib/db/prisma";
 import { getActiveDraw } from "@/src/services/draw/getActiveDraw";
 import { getUniqueLuckyNumber } from "@/src/services/lucky-number/getUniqueLuckyNumber";
 import { getDrawPurchase } from "@/src/services/purchase/getDrawPurchase";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
-import { logger } from "@/src/utils/logger";
 import { requireAuth } from "@/src/utils/middleware/requiredAuth";
 import { SuccessResponse } from "@/src/utils/next-response";
 import { NextRequest } from "next/server";
-//TODO: PROPER FETCH USER ACCORDING TO DRAW PURCHASE
+
 export async function GET(req: NextRequest) {
   try {
     await requireAuth(req);

@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
 
     const draws = await getAllDraw({
       where: {
-        isActive: true,
+        status: { not: "DELETED" },
         winner: { isNot: null },
         createdAt: {
           lte: new Date(), // lte means less than or equal
