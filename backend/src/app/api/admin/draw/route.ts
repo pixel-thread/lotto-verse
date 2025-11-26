@@ -1,17 +1,17 @@
 import { createDraw } from "@/src/services/draw/createDraw";
-import { getActiveDraw } from "@/src/services/draw/getActiveDraw";
 import { getAllDraw } from "@/src/services/draw/getAllDraw";
-import { getUniqueDraw } from "@/src/services/draw/getUniqueDraw";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
 import { requireSuperAdmin } from "@/src/utils/middleware/requireSuperAdmin";
-import { ErrorResponse, SuccessResponse } from "@/src/utils/next-response";
+import { SuccessResponse } from "@/src/utils/next-response";
 import { createDrawSchema } from "@/src/utils/validation/draw";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
     await requireSuperAdmin(req);
+
     const draws = await getAllDraw();
+
     return SuccessResponse({
       message: "Successfully fetched draws",
       data: draws,
@@ -27,14 +27,14 @@ export async function POST(req: NextRequest) {
     const user = await requireSuperAdmin(req);
     const body = createDrawSchema.parse(await req.json());
 
-    const monthDraw = await getActiveDraw();
+    // const monthDraw = await getActiveDraw();
 
-    if (monthDraw) {
-      return ErrorResponse({
-        status: 400,
-        message: "Draw for this month already exists",
-      });
-    }
+    // if (monthDraw) {
+    //   return ErrorResponse({
+    //     status: 400,
+    //     message: "Draw for this month already exists",
+    //   });
+    // }
 
     const draw = await createDraw({
       data: {
@@ -48,6 +48,7 @@ export async function POST(req: NextRequest) {
         createdBy: user.id,
       },
     });
+
     return SuccessResponse({
       message: "Successfully created draw",
       data: draw,

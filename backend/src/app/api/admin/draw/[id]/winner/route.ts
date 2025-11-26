@@ -15,6 +15,7 @@ export async function POST(
 ) {
   try {
     await requireSuperAdmin(req);
+
     const drawId = (await params).id;
 
     const isDrawExist = await getUniqueDraw({ where: { id: drawId } });
@@ -32,6 +33,20 @@ export async function POST(
       return ErrorResponse({
         status: 400,
         message: "No purchases found for this draw",
+      });
+    }
+
+    if (isDrawExist.status === "DELETED") {
+      return ErrorResponse({
+        status: 400,
+        message: "Draw is deleted",
+      });
+    }
+
+    if (isDrawExist.status === "INACTIVE") {
+      return ErrorResponse({
+        status: 400,
+        message: "Draw is inactive",
       });
     }
 

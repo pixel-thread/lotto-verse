@@ -45,6 +45,7 @@ export async function PUT(
       where: { id },
       data: body,
     });
+
     return SuccessResponse({
       message: "Successfully updated draw",
       data: updatedDraw,

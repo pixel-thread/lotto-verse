@@ -20,6 +20,14 @@ export async function POST(
         message: "Draw not found",
       });
     }
+
+    if (drawExist.status === "DELETED") {
+      return ErrorResponse({
+        status: 400,
+        message: "Draw is deleted",
+      });
+    }
+
     const draw = await toggleDrawActive({ id });
 
     return SuccessResponse({
