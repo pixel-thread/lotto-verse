@@ -33,12 +33,13 @@ export const razorPayOptions = async ({
   desc = "Pay for test order",
 }: Props): Promise<RazorpayOptions> => {
   const user = await clerk.users.getUser(userId);
+  const logo = `${env.NEXT_PUBLIC_API_BASE_URL.slice(0, -4)}/public/icons/web/icon-512.png`;
   return {
     prefill: {
       email: user.primaryEmailAddress?.emailAddress,
       contact: user.primaryPhoneNumber?.phoneNumber,
     },
-    image: "https://i.imgur.com/3g7nmJC.jpg",
+    image: logo,
     description: desc,
     currency: "INR",
     key: env.RAZORPAY_KEY_ID,
