@@ -108,7 +108,6 @@ export async function POST(req: NextRequest) {
       status: 201,
     });
   } catch (error) {
-    logger.log(error);
     return handleApiErrors(error);
   }
 }

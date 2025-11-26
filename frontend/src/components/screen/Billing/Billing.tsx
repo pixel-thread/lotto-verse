@@ -177,9 +177,7 @@ export function Billing() {
       paddingBlock="$4"
       paddingInline="$4"
       refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />}
-      showsVerticalScrollIndicator={false}
-      // contentContainerStyle={{ paddingBottom: 20 }}
-    >
+      showsVerticalScrollIndicator={false}>
       <YStack gap="$4">
         {/* Header Stats */}
         <Card padding="$4" rounded="$6" borderWidth={1} borderColor="$blue10" bg={'white'}>
