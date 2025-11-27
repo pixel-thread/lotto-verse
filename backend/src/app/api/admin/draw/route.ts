@@ -27,15 +27,6 @@ export async function POST(req: NextRequest) {
     const user = await requireSuperAdmin(req);
     const body = createDrawSchema.parse(await req.json());
 
-    // const monthDraw = await getActiveDraw();
-
-    // if (monthDraw) {
-    //   return ErrorResponse({
-    //     status: 400,
-    //     message: "Draw for this month already exists",
-    //   });
-    // }
-
     const draw = await createDraw({
       data: {
         month: body.month,

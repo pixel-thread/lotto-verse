@@ -8,6 +8,7 @@ import { logger } from "../logger";
 import { revokedUserSessions } from "@/src/services/user/revokedUserSessions";
 import { getCache } from "@/src/services/cache/getCache";
 import { createCache } from "@/src/services/cache/createCache";
+import { Prisma } from "@/src/lib/db/prisma/generated/prisma";
 
 export async function requireAuth(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
@@ -17,6 +18,7 @@ export async function requireAuth(req: NextRequest) {
   }
   // Parse the Clerk session JWT and get claims
   let claims;
+
   try {
     claims = await verifyToken(token, {
       secretKey: process.env.CLERK_SECRET_KEY,
@@ -44,7 +46,7 @@ export async function requireAuth(req: NextRequest) {
     throw new UnauthorizedError("Unauthorized");
   }
 
-  const cache = await getCache({ key: claims.sub });
+  const cache = await getCache<Prisma.UserGetPayload<{}>>({ key: claims.sub });
 
   if (cache) {
     return cache;
