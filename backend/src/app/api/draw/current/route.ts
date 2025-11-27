@@ -10,23 +10,13 @@ import { getTime } from "@/src/utils/helper/getTime";
 import { requireAuth } from "@/src/utils/middleware/requiredAuth";
 import { ErrorResponse, SuccessResponse } from "@/src/utils/next-response";
 import { NextRequest } from "next/server";
+import { number } from "zod";
 
 export async function GET(req: NextRequest) {
   try {
-    await requireAuth(req);
+    const user = await requireAuth(req);
 
     let draw;
-
-    const cachedDraw = await getCache<
-      Prisma.DrawGetPayload<{ include: { winner: true } }>
-    >({ key: "current-draw" });
-
-    if (cachedDraw) {
-      return SuccessResponse({
-        data: cachedDraw,
-        message: "Successfully fetched draw",
-      });
-    }
 
     draw = await getActiveDraw();
 
@@ -38,7 +28,7 @@ export async function GET(req: NextRequest) {
     }
 
     if (draw.isWinnerDecleared) {
-      const user = await getUniqueUser({ where: { id: draw.winner?.userId } });
+      // const user = await getUniqueUser({ where: { id: draw.winner?.userId } });
 
       if (!user) {
         return ErrorResponse({
@@ -56,10 +46,10 @@ export async function GET(req: NextRequest) {
         });
       }
 
-      const number = await getUniqueLuckyNumber({
-        where: { id: draw.winner?.luckyNumberId },
-      });
-
+      // const number = await getUniqueLuckyNumber({
+      //   where: { id: draw.winner?.luckyNumberId },
+      // });
+      const number = { number: 2 };
       draw = {
         ...draw,
         winner: {
@@ -72,11 +62,7 @@ export async function GET(req: NextRequest) {
         },
       };
     }
-    createCache({
-      key: "currentDraw",
-      data: draw,
-      ttl: getTime(1, "h"), // 1 minute
-    });
+
     return SuccessResponse({
       message: "Successfully fetched current draw",
       data: draw,

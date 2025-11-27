@@ -51,8 +51,6 @@ model User {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   notifications Notification[]
-
-  @@unique([role, clerkId])
 }
 
 model Draw {

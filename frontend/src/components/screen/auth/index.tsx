@@ -68,12 +68,11 @@ export function LoginScreen() {
         items={'flex-start'}
         justify={'center'}
         gap={2}>
-        <H1 fontWeight={'bold'}>Your</H1>
-        <H1 fontWeight={'bold'}>Fortune</H1>
-        <H1 fontWeight={'bold'}>Lucky Draw</H1>
+        <H1 letterSpacing={'$3'} fontWeight={'bold'}>
+          Your Lucky Numbers Await
+        </H1>
         <Paragraph width={'90%'} fontWeight={'400'}>
-          Join now for your chance to win amazing prizes every month. Pick your lucky number and see
-          if fortune smiles on you!
+          Join thousands of winners in the most exciting lucky draw platform
         </Paragraph>
       </View>
       <View

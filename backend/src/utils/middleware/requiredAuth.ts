@@ -5,10 +5,6 @@ import { getUniqueUser } from "@/src/services/user/getUserByClerkId";
 import { createUser } from "@/src/services/user/createUser";
 import { logger } from "../logger";
 import { revokedUserSessions } from "@/src/services/user/revokedUserSessions";
-import { getCache } from "@/src/services/cache/getCache";
-import { createCache } from "@/src/services/cache/createCache";
-import { Prisma } from "@/src/lib/db/prisma/generated/prisma";
-import { getTime } from "../helper/getTime";
 
 export async function requireAuth(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
@@ -36,12 +32,6 @@ export async function requireAuth(req: NextRequest) {
     throw new UnauthorizedError("Unauthorized");
   }
 
-  const cache = await getCache<Prisma.UserGetPayload<{}>>({ key: claims.sub });
-
-  if (cache) {
-    return cache;
-  }
-
   // Try to find user in your backend
   const user = await getUniqueUser({ where: { clerkId: claims.sub } });
 
@@ -51,7 +41,6 @@ export async function requireAuth(req: NextRequest) {
 
     if (user) {
       logger.info("User created", { id: user.id });
-      createCache({ key: claims.sub, data: user, ttl: getTime(1, "d") }); // ttl 1 day
       return user;
     }
     // Just in case if user is not found after creation revoke the session
@@ -69,8 +58,6 @@ export async function requireAuth(req: NextRequest) {
 
     throw new UnauthorizedError("Unauthorized");
   }
-
-  createCache({ key: claims.sub, data: user, ttl: getTime(1, "d") }); // ttl 1 day
 
   return user;
 }
