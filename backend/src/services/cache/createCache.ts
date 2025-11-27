@@ -13,10 +13,7 @@ export async function createCache({
   data: CacheData;
   ttl?: number; // in milliseconds
 }) {
-  logger.info("Creating cache", {
-    key,
-    ttl,
-  });
+  logger.log("Creating cache", { key, ttl });
   const now = Date.now(); // number
   const expiresAt = now + ttl; // number
 

@@ -1,8 +1,12 @@
 import { clerk } from "@/src/lib/clerk";
+import { Prisma } from "@/src/lib/db/prisma/generated/prisma";
+import { createCache } from "@/src/services/cache/createCache";
+import { getCache } from "@/src/services/cache/getCache";
 import { getActiveDraw } from "@/src/services/draw/getActiveDraw";
 import { getUniqueLuckyNumber } from "@/src/services/lucky-number/getUniqueLuckyNumber";
 import { getUniqueUser } from "@/src/services/user/getUserByClerkId";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
+import { getTime } from "@/src/utils/helper/getTime";
 import { requireAuth } from "@/src/utils/middleware/requiredAuth";
 import { ErrorResponse, SuccessResponse } from "@/src/utils/next-response";
 import { NextRequest } from "next/server";
@@ -10,7 +14,19 @@ import { NextRequest } from "next/server";
 export async function GET(req: NextRequest) {
   try {
     await requireAuth(req);
+
     let draw;
+
+    const cachedDraw = await getCache<
+      Prisma.DrawGetPayload<{ include: { winner: true } }>
+    >({ key: "current-draw" });
+
+    if (cachedDraw) {
+      return SuccessResponse({
+        data: cachedDraw,
+        message: "Successfully fetched draw",
+      });
+    }
 
     draw = await getActiveDraw();
 
@@ -56,7 +72,11 @@ export async function GET(req: NextRequest) {
         },
       };
     }
-
+    createCache({
+      key: "currentDraw",
+      data: draw,
+      ttl: getTime(1, "h"), // 1 minute
+    });
     return SuccessResponse({
       message: "Successfully fetched current draw",
       data: draw,
