@@ -1,48 +1,28 @@
 import { NextResponse } from "next/server";
-import { readFile, readdir } from "fs/promises";
-import path from "path";
+import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
+import { getUpdate } from "@/src/services/update/getUpdate";
+import { ErrorResponse } from "@/src/utils/next-response";
 
 export async function GET() {
   try {
-    const publicDir = path.join(process.cwd(), "public");
+    const release = await getUpdate();
 
-    // List all files in public directory
-    const files = await readdir(publicDir);
-    console.log("Files in public:", files);
-
-    // Find the first .apk file
-    const apkFile = files.find((file) => file.endsWith(".apk"));
-
-    if (!apkFile) {
-      return NextResponse.json(
-        {
-          error: "No APK file found",
-          availableFiles: files,
-        },
-        { status: 404 },
-      );
+    if (!release) {
+      return ErrorResponse({
+        status: 404,
+        message: "No release found",
+      });
     }
 
-    const filePath = path.join(publicDir, apkFile);
-    console.log("Found APK at:", filePath);
+    if (!release.assetUrl) {
+      return ErrorResponse({
+        status: 404,
+        message: "No release found",
+      });
+    }
 
-    const fileBuffer = await readFile(filePath);
-
-    return new NextResponse(fileBuffer, {
-      headers: {
-        "Content-Type": "application/vnd.android.package-archive",
-        "Content-Disposition": `attachment; filename="${apkFile}"`,
-        "Content-Length": fileBuffer.length.toString(),
-      },
-    });
+    return NextResponse.redirect(release.assetUrl);
   } catch (error) {
-    console.log("Error:", error);
-    return NextResponse.json(
-      {
-        error: "Download failed",
-        message: error instanceof Error ? error.message : String(error),
-      },
-      { status: 500 },
-    );
+    return handleApiErrors(error);
   }
 }
