@@ -82,6 +82,3 @@ export function startCacheCleanup(interval: number = 60_000) {
     }
   }, interval);
 }
-
-// Optionally start cleanup automatically
-startCacheCleanup();
