@@ -61,7 +61,7 @@ export async function requireAuth(req: NextRequest) {
 
     if (user) {
       logger.info("User created", { id: user.id });
-      createCache({ key: claims.sub, data: user });
+      createCache({ key: claims.sub, data: user, ttl: 1000 * 60 * 60 * 24 }); // ttl 1 day
       return user;
     }
     // Just in case if user is not found after creation revoke the session
@@ -80,7 +80,7 @@ export async function requireAuth(req: NextRequest) {
     throw new UnauthorizedError("Unauthorized");
   }
 
-  createCache({ key: claims.sub, data: user });
+  createCache({ key: claims.sub, data: user, ttl: 1000 * 60 * 60 * 24 }); // ttl 1 day
 
   return user;
 }
