@@ -10,8 +10,8 @@ import { NextRequest } from "next/server";
 export async function GET(req: NextRequest) {
   try {
     await requireAuth(req);
-
     let draw;
+
     draw = await getActiveDraw();
 
     if (!draw) {

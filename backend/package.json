@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "npm run generate:all",
+    "postinstall": "npm run generate:all && npm run cache:push",
     "generate:all": "npm run main:generate && npm run cache:generate",
     "push:all": "npm run main:push && npm run cache:push",
     "reset:all": "npm run main:reset && npm run cache:reset",
