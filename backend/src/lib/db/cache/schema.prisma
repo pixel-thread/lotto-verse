@@ -12,6 +12,9 @@ model CacheEntry {
   id        String  @id @default(uuid())
   key       String  @unique
   value     String
-  expiresAt BigInt?  // <-- change here
-  createdAt BigInt   // <-- change here
+  expiresAt BigInt? // <-- change here
+  createdAt BigInt // <-- change here
+
+  @@index([key])
+  @@index([expiresAt])
 }
