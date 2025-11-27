@@ -58,6 +58,7 @@ next-env.d.ts
 
 # Git patch/diff/orig files
 *.orig.*
-
 # Backend generated files
 /backend/src/lib/db/prisma/generated
+/backend/src/lib/db/cache/gen
+/backend/src/lib/db/cache/cache.db

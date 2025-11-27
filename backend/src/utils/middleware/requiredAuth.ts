@@ -6,6 +6,8 @@ import { getUniqueUser } from "@/src/services/user/getUserByClerkId";
 import { createUser } from "@/src/services/user/createUser";
 import { logger } from "../logger";
 import { revokedUserSessions } from "@/src/services/user/revokedUserSessions";
+import { getCache } from "@/src/services/cache/getCache";
+import { createCache } from "@/src/services/cache/createCache";
 
 export async function requireAuth(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
@@ -15,7 +17,6 @@ export async function requireAuth(req: NextRequest) {
   }
   // Parse the Clerk session JWT and get claims
   let claims;
-
   try {
     claims = await verifyToken(token, {
       secretKey: process.env.CLERK_SECRET_KEY,
@@ -32,6 +33,7 @@ export async function requireAuth(req: NextRequest) {
     logger.error("Claims not found", claims);
     throw new UnauthorizedError("Unauthorized");
   }
+
   const clerkUser = await clerk.users.getUser(claims.sub);
 
   if (!clerkUser) {
@@ -40,6 +42,12 @@ export async function requireAuth(req: NextRequest) {
 
   if (clerkUser.banned || clerkUser.locked) {
     throw new UnauthorizedError("Unauthorized");
+  }
+
+  const cache = await getCache({ key: claims.sub });
+
+  if (cache) {
+    return cache;
   }
 
   // Try to find user in your backend
@@ -51,6 +59,7 @@ export async function requireAuth(req: NextRequest) {
 
     if (user) {
       logger.info("User created", { id: user.id });
+      createCache({ key: claims.sub, data: user });
       return user;
     }
     // Just in case if user is not found after creation revoke the session
@@ -68,6 +77,8 @@ export async function requireAuth(req: NextRequest) {
 
     throw new UnauthorizedError("Unauthorized");
   }
+
+  createCache({ key: claims.sub, data: user });
 
   return user;
 }

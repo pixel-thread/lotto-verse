@@ -7,7 +7,17 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "prisma generate"
+    "postinstall": "npm run generate:all",
+    "generate:all": "npm run main:generate && npm run cache:generate",
+    "push:all": "npm run main:push && npm run cache:push",
+    "reset:all": "npm run main:reset && npm run cache:reset",
+    "prisma:generate": "npx prisma generate",
+    "cache:generate": "npx prisma generate --schema=./src/lib/db/cache/schema.prisma",
+    "cache:push": "npx prisma db push --schema=./src/lib/db/cache/schema.prisma",
+    "cache:reset": "npx prisma db push --force-reset --schema=./src/lib/db/cache/schema.prisma",
+    "main:generate": "npx prisma generate --schema=./src/lib/db/prisma/schema.prisma",
+    "main:push": "npx prisma db push --schema=./src/lib/db/prisma/schema.prisma",
+    "main:reset": "npx prisma db push --force-reset --schema=./src/lib/db/prisma/schema.prisma"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.34.5",
