@@ -1,6 +1,5 @@
 import { createMapCache } from "@/src/lib/cache";
 import { GLOBAL_CACHE_TTL } from "@/src/lib/constant/cache";
-import { cachedb } from "@/src/lib/db/cache/prisma";
 
 type CacheData = any;
 
