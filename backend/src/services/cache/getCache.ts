@@ -1,15 +1,14 @@
-import { cachedb } from "@/src/lib/db/cache/prisma";
+import { deleteMapCache, getMapCache } from "@/src/lib/cache";
 import { CacheValue } from "@/src/types/cache";
 import { nowMs } from "@/src/utils/helper/nowMs";
+import { logger } from "@/src/utils/logger";
 
 export async function getCache<T = CacheValue>({
   key,
 }: {
   key: string;
 }): Promise<T | null> {
-  const entry = await cachedb.cacheEntry.findUnique({
-    where: { key },
-  });
+  const entry = getMapCache({ key });
 
   if (!entry) return null;
 
@@ -17,11 +16,12 @@ export async function getCache<T = CacheValue>({
 
   if (entry.expiresAt !== null && entry.expiresAt <= now) {
     // Soft-delete expired entries and return null
-    await cachedb.cacheEntry.delete({ where: { key } });
+    deleteMapCache({ key });
     return null;
   }
 
   try {
+    logger.log("Cache hit", { key });
     return JSON.parse(entry.value) as T;
   } catch {
     return null;

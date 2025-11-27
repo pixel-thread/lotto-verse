@@ -56,16 +56,16 @@ export async function GET(req: NextRequest) {
       page,
     });
 
-    await createCache({
+    createCache({
       key: "current-draw",
       data: draw,
       ttl: getTime(1, "h"),
     });
 
-    await createCache({
+    createCache({
       key: `current-luckyNumbers-${draw.id}-${page}`,
       data: numbers,
-      ttl: getTime(1, "d"),
+      ttl: getTime(30, "m"),
     });
 
     return SuccessResponse({
