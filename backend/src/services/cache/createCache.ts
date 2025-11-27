@@ -1,5 +1,6 @@
 import { GLOBAL_CACHE_TTL } from "@/src/lib/constant/cache";
 import { cachedb } from "@/src/lib/db/cache/prisma";
+import { logger } from "@/src/utils/logger";
 
 type CacheData = any;
 
@@ -12,6 +13,10 @@ export async function createCache({
   data: CacheData;
   ttl?: number; // in milliseconds
 }) {
+  logger.info("Creating cache", {
+    key,
+    ttl,
+  });
   const now = Date.now(); // number
   const expiresAt = now + ttl; // number
 

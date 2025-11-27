@@ -27,6 +27,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (isSignedIn) {
         logger.info('Getting Token..', { userId });
         const token = await getToken({ template: 'jwt' });
+        console.log(token); //
         if (token) {
           logger.info('Setting Token', { userId });
           axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
