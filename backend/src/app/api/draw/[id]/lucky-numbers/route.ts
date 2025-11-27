@@ -21,7 +21,7 @@ export async function GET(
         message: "Draw does not exist",
       });
     }
-    if (!drawExist.isActive) {
+    if (drawExist.status === "INACTIVE") {
       return ErrorResponse({
         status: 400,
         message: "Draw is not active",
