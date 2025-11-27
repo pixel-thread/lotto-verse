@@ -5,7 +5,7 @@ generator cacheClient {
 
 datasource cache {
   provider = "sqlite"
-  url      = "file:./cache.db"
+  url      = "file:/tmp/cache.db"
 }
 
 model CacheEntry {

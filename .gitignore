@@ -61,4 +61,4 @@ next-env.d.ts
 # Backend generated files
 /backend/src/lib/db/prisma/generated
 /backend/src/lib/db/cache/gen
-/backend/src/lib/db/cache/cache.db
+/backend/src/lib/db/cache/tmp/cache.db
