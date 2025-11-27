@@ -1,5 +1,6 @@
 import { createMapCache } from "@/src/lib/cache";
 import { GLOBAL_CACHE_TTL } from "@/src/lib/constant/cache";
+import { logger } from "@/src/utils/logger";
 
 type CacheData = any;
 
@@ -19,7 +20,7 @@ export async function createCache({
     ...data,
     expiresAt,
   };
-
+  console.log("Cache created", { key });
   return createMapCache({
     key,
     value: JSON.stringify(value),

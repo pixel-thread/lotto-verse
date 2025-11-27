@@ -9,7 +9,7 @@
 
 # @name Deploy to uat
 
-GET https://api.vercel.com/v1/integrations/deploy/prj_ZgPbV8jaj1APBwydFMWW8elPKX9V/VrTFzCrA6Y HTTP/1.1
+POST https://api.vercel.com/v1/integrations/deploy/prj_ZgPbV8jaj1APBwydFMWW8elPKX9V/4N3KVy02zq HTTP/1.1
 
 
 ### 

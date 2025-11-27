@@ -1,28 +1,17 @@
 import React, { useCallback } from 'react';
 import { RefreshControl } from 'react-native';
-import {
-  YStack,
-  XStack,
-  Text,
-  ScrollView,
-  Card,
-  H1,
-  Paragraph,
-  Button,
-  Circle,
-  Spinner,
-} from 'tamagui';
+import { YStack, XStack, Text, ScrollView, Card, H1, Paragraph, Button, Circle } from 'tamagui';
 import useCurrentDrawNumbers from '@/src/hooks/draw/useCurrentDrawNumbers';
 import { RecentDrawParticipants } from '../home/RecentDrawParticipants';
 import { ContinuousShuffleCounter } from '../home/slot-counter/ContinousShuffleCounter';
 import { WinnerCard } from '../home/WinnerCard';
 import { HowItWorkSection } from './HowItWorkSection';
 import { drawRule } from '@/src/lib/constant/draw/drawRule';
-import { router, Stack } from 'expo-router';
-import { CustomHeader } from '../../common/CustomHeader';
+import { router } from 'expo-router';
 import useGetDraw from '@/src/hooks/draw/useGetDraw';
-import { formatMonth, formatMonthWithTime } from '@/src/utils/helper/formatMonth';
+import { formatMonthWithTime } from '@/src/utils/helper/formatMonth';
 import { LoadingScreen } from '../../common/LoadingScreen';
+import { EmptyCard } from '../../common/EmptyCard';
 
 type Props = {
   id: string;
@@ -45,17 +34,25 @@ export function DrawDetailScreen({ id }: Props) {
   }, [refetchDraw, refetchLuckyNumbers]);
 
   if (isDrawLoading) {
-    return (
-      <>
-        <YStack flex={1} justify="center" items="center">
-          <Spinner size="large" />
-        </YStack>
-      </>
-    );
+    return <LoadingScreen />;
   }
 
   if (!draw) {
-    return <LoadingScreen />;
+    return (
+      <ScrollView
+        flex={1}
+        refreshControl={
+          <RefreshControl refreshing={isDrawLoading || isLuckyLoading} onRefresh={onRefresh} />
+        }
+        style={{
+          padding: 20,
+        }}>
+        <EmptyCard
+          title="No Active Draw Currently"
+          message="There are no active draws at the moment. Please check back later or view previous draws"
+        />
+      </ScrollView>
+    );
   }
 
   const displayMonth = draw.month;

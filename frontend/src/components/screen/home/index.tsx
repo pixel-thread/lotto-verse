@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 import { View, H1, Paragraph, Text, YStack, XStack, ScrollView, Card, Circle } from 'tamagui';
-import { router, Stack } from 'expo-router';
-import { CustomHeader } from '../../common/CustomHeader';
+import { router } from 'expo-router';
 import { useCurrentDraw } from '@/src/hooks/draw/useCurrentDraw';
 import useCurrentDrawNumbers from '@/src/hooks/draw/useCurrentDrawNumbers';
 import { ContinuousShuffleCounter } from './slot-counter/ContinousShuffleCounter';
@@ -20,6 +19,7 @@ export function HomeScreen() {
     isFetching: isDrawLoading,
     isLoading,
   } = useCurrentDraw();
+
   const {
     data: luckyNumbers,
     isFetching: isLuckyLoading,
@@ -39,12 +39,12 @@ export function HomeScreen() {
     }
   }, [refetchDraw, refetchLuckyNumbers]);
 
-  if (!draw) {
-    return <NoActiveDraw />;
-  }
-
   if (isLoading) {
     return <LoadingScreen />;
+  }
+
+  if (!draw) {
+    return <NoActiveDraw />;
   }
 
   return (

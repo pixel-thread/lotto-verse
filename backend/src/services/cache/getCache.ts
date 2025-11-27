@@ -21,7 +21,7 @@ export async function getCache<T = CacheValue>({
   }
 
   try {
-    logger.log("Cache hit", { key });
+    console.log("Cache hit", { key });
     return JSON.parse(entry.value) as T;
   } catch {
     return null;

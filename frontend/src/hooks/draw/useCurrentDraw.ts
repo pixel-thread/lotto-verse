@@ -8,6 +8,5 @@ export function useCurrentDraw() {
     queryKey: ['current', 'draw'],
     queryFn: () => http.get<DrawT>(DRAW_ENDPOINTS.GET_ACTIVE_DRAW),
     select: (data) => data.data,
-    structuralSharing: true, // https://tanstack.com/query/v4/docs/react/guides/structural-sharing
   });
 }
