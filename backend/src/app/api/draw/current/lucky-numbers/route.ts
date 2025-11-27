@@ -1,4 +1,3 @@
-import { getUniqueDraw } from "@/src/services/draw/getUniqueDraw";
 import { getLuckyNumbers } from "@/src/services/lucky-number/getLuckyNumbers";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
 import { requireAuth } from "@/src/utils/middleware/requiredAuth";
@@ -10,13 +9,13 @@ import { getCache } from "@/src/services/cache/getCache";
 import { Prisma } from "@/src/lib/db/prisma/generated/prisma";
 import { createCache } from "@/src/services/cache/createCache";
 import { getTime } from "@/src/utils/helper/getTime";
-import { logger } from "@/src/utils/logger";
 
 export async function GET(req: NextRequest) {
   try {
     await requireAuth(req);
 
     let page = req.nextUrl.searchParams.get("page") || "1";
+
     let draw;
 
     const cachedDraw = await getCache<Prisma.DrawGetPayload<{}>>({
