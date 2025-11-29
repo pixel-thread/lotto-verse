@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "scheme": "lottoverse",
     "platforms": ["ios", "android"],
-    "plugins": ["expo-router", "expo-font"],
+    "plugins": ["expo-router", "expo-font", ["expo-notifications"]],
     "experiments": {
       "typedRoutes": true,
       "tsconfigPaths": true
@@ -31,7 +31,8 @@
         "foregroundImage": "./src/assets/icons/android-icon/play_store_512.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.jyrwaboys.frontend"
+      "package": "com.jyrwaboys.frontend",
+      "googleServicesFile": "./google-services.json"
     },
     "extra": {
       "router": {},

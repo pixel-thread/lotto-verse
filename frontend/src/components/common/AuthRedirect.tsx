@@ -8,7 +8,7 @@ import { cn } from '@/src/lib/utils';
 import { useFonts } from 'expo-font';
 import { MaxWidthContainer } from './MaxWidthContainer';
 
-export const AuthRedirect = () => {
+const AuthRedirect = () => {
   const [loaded] = useFonts({
     jetBrainMono: require('@assets/fonts/JetBrainsMono-Regular.ttf'),
   });
@@ -37,3 +37,5 @@ export const AuthRedirect = () => {
     </View>
   );
 };
+
+export default AuthRedirect;

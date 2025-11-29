@@ -2,7 +2,7 @@
 
 @drawId = 867342cf-812a-4f8b-bb53-60417dccf729
 @luckyNumberId = 02b1eb0d-570c-4f33-a67a-91abda43fc8d
-@userId = d8bb68ec-6c30-49c5-87f4-f41c471a78b0
+@userId = 92555eef-dd92-4b3b-ba5a-18ab6cc6816e
 
 
 ### 
@@ -219,3 +219,18 @@ Authorization: Bearer {{TOKEN}}
 GET {{NEXT_PUBLIC_API_BASE_URL}}/notifications HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{TOKEN}}
+
+
+### 
+
+# @name send push
+
+POST {{NEXT_PUBLIC_API_BASE_URL}}/push/send HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+{
+  "message": "Test",
+  "title": "Test",
+  "users": "{{userId}}"
+}

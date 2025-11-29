@@ -1,5 +1,5 @@
 import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo';
-import { AuthRedirect } from '@/src/components/common/AuthRedirect';
+import AuthRedirect from '@/src/components/common/AuthRedirect';
 import { tokenCache } from '@clerk/clerk-expo/token-cache';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -11,6 +11,7 @@ import { Toaster } from 'sonner-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import EASUpdateProvider from './update';
 import ErrorBoundary from '../common/ErrorBoundary';
+import { PushProvider } from './push';
 
 export const Wrapper = () => {
   return (
@@ -26,10 +27,12 @@ export const Wrapper = () => {
                 <RNQueryProvider>
                   <EASUpdateProvider>
                     <AuthProvider>
-                      <SafeAreaProvider className="flex-1">
-                        <AuthRedirect />
-                        <Toaster position="bottom-center" />
-                      </SafeAreaProvider>
+                      <PushProvider>
+                        <SafeAreaProvider className="flex-1">
+                          <AuthRedirect />
+                          <Toaster position="bottom-center" />
+                        </SafeAreaProvider>
+                      </PushProvider>
                     </AuthProvider>
                   </EASUpdateProvider>
                 </RNQueryProvider>

@@ -7,7 +7,7 @@ import { Wrapper } from '../components/provider';
 
 SplashScreen.setOptions({ duration: 1000, fade: true });
 
-export default function Layout() {
+export default function layout() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {

@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "895697439626",
+    "project_id": "lotto-verse",
+    "storage_bucket": "lotto-verse.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:895697439626:android:f317d5d3db5978fba85673",
+        "android_client_info": {
+          "package_name": "com.jyrwaboys.frontend"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5szLXfaU35SK_GbWlZpqHT4a1YEgtEyE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
+
