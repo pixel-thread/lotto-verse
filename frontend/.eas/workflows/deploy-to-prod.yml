@@ -2,9 +2,9 @@ name: Deploy to production
 
 on:
   push:
-    branches: ["master"]
+    branches: ['master']
     paths:
-      - "frontend/**"
+      - 'frontend/**'
 
 jobs:
   fingerprint:
