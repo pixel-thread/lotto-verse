@@ -1,22 +1,8 @@
 "use client";
 import { Smartphone, Trophy } from "lucide-react";
-import http from "../utils/http";
-import { logger } from "../utils/logger";
 import Link from "next/link";
 
 export default function HeroLandingPage() {
-  const onClickDownload = async () => {
-    try {
-      const res = await http.get("/release/download");
-
-      if (res.success) {
-        window.location.href = res.data;
-      }
-    } catch (error) {
-      logger.error("Error downloading APK", error);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
       {/* Hero Section */}
