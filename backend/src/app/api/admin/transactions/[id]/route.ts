@@ -2,6 +2,7 @@ import { clerk } from "@/src/lib/clerk";
 import { getUniqueLuckyNumber } from "@/src/services/lucky-number/getUniqueLuckyNumber";
 import { getUniqueTransaction } from "@/src/services/transaction/getUniqueTransaction";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
+import { requireAdmin } from "@/src/utils/middleware/requireAdmin";
 import { requireSuperAdmin } from "@/src/utils/middleware/requireSuperAdmin";
 import { ErrorResponse, SuccessResponse } from "@/src/utils/next-response";
 import { NextRequest } from "next/server";
@@ -28,7 +29,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    await requireSuperAdmin(req);
+    await requireAdmin(req);
     const id = (await params).id;
     const transaction = await getUniqueTransaction({ where: { id: id } });
     if (!transaction) {

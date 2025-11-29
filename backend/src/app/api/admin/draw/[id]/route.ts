@@ -2,6 +2,7 @@ import { deleteDrawById } from "@/src/services/draw/deleteDrawById";
 import { getUniqueDraw } from "@/src/services/draw/getUniqueDraw";
 import { updateDraw } from "@/src/services/draw/updateDraw";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
+import { requireAdmin } from "@/src/utils/middleware/requireAdmin";
 import { requireSuperAdmin } from "@/src/utils/middleware/requireSuperAdmin";
 import { ErrorResponse, SuccessResponse } from "@/src/utils/next-response";
 import { createDrawSchema } from "@/src/utils/validation/draw";
@@ -12,7 +13,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    await requireSuperAdmin(req);
+    await requireAdmin(req);
     const id = (await params).id;
     const draw = await getUniqueDraw({ where: { id } });
     return SuccessResponse({

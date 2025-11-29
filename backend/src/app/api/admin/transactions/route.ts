@@ -1,13 +1,13 @@
 import { clerk } from "@/src/lib/clerk";
 import { getTransactions } from "@/src/services/transaction/getTransactions";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
-import { requireSuperAdmin } from "@/src/utils/middleware/requireSuperAdmin";
+import { requireAdmin } from "@/src/utils/middleware/requireAdmin";
 import { SuccessResponse } from "@/src/utils/next-response";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
-    await requireSuperAdmin(req);
+    await requireAdmin(req);
 
     const transactions = await getTransactions();
 

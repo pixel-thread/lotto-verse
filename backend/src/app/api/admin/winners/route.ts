@@ -1,13 +1,13 @@
 import { clerk } from "@/src/lib/clerk";
 import { getWinners } from "@/src/services/winner/getWinners";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
-import { requireSuperAdmin } from "@/src/utils/middleware/requireSuperAdmin";
+import { requireAdmin } from "@/src/utils/middleware/requireAdmin";
 import { SuccessResponse } from "@/src/utils/next-response";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
-    await requireSuperAdmin(req);
+    await requireAdmin(req);
     const winners = await getWinners();
 
     const data = await Promise.all(

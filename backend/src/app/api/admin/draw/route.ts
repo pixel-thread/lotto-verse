@@ -1,6 +1,7 @@
 import { createDraw } from "@/src/services/draw/createDraw";
 import { getAllDraw } from "@/src/services/draw/getAllDraw";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
+import { requireAdmin } from "@/src/utils/middleware/requireAdmin";
 import { requireSuperAdmin } from "@/src/utils/middleware/requireSuperAdmin";
 import { SuccessResponse } from "@/src/utils/next-response";
 import { createDrawSchema } from "@/src/utils/validation/draw";
@@ -8,7 +9,7 @@ import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
-    await requireSuperAdmin(req);
+    await requireAdmin(req);
 
     const draws = await getAllDraw();
 

@@ -38,7 +38,7 @@ export default function HeroLandingPage() {
                 >
                   <Smartphone className="w-6 h-6" />
                   <div className="text-left">
-                    <div className="text-xs opacity-80">Download on</div>
+                    <div className="text-xl opacity-80">Download on</div>
                     <div className="text-lg">Lotto Verse</div>
                   </div>
                 </Link>

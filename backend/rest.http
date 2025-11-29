@@ -219,3 +219,24 @@ Authorization: Bearer {{TOKEN}}
 GET {{NEXT_PUBLIC_API_BASE_URL}}/notifications HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{TOKEN}}
+
+
+### 
+
+# @name Add App Update
+
+POST {{NEXT_PUBLIC_API_BASE_URL}}/admin/updates HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+{
+  "assetUrl": "https://drive.google.com/uc?id=1AZgzXzsUw5DIlHPrNfV96fc_FplB-kjC",
+  "channel": "PROD",
+  "createdBy": "1998nongrum@gmail.com",
+  "minAppVersion": "0.0.0",
+  "releaseName": "v1.0.0",
+  "releaseNotes": "• V1 Release",
+  "rolloutPercent": 100,
+  "runtimeVersion": "1.0.0",
+  "type": "PTA"
+}

@@ -1,6 +1,7 @@
 import { createUpdate } from "@/src/services/update/createUpdate";
 import { getUpdates } from "@/src/services/update/getUpdates";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
+import { requireAdmin } from "@/src/utils/middleware/requireAdmin";
 import { requireSuperAdmin } from "@/src/utils/middleware/requireSuperAdmin";
 import { SuccessResponse } from "@/src/utils/next-response";
 import { updateSchema } from "@/src/utils/validation/updates";
@@ -8,7 +9,7 @@ import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
-    await requireSuperAdmin(req);
+    await requireAdmin(req);
 
     const updates = await getUpdates();
 
