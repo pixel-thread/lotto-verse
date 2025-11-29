@@ -28,7 +28,7 @@ export const Wrapper = () => {
                     <AuthProvider>
                       <SafeAreaProvider className="flex-1">
                         <AuthRedirect />
-                        <Toaster position="bottom-center" />
+                        <Toaster closeButton position="bottom-center" />
                       </SafeAreaProvider>
                     </AuthProvider>
                   </EASUpdateProvider>
