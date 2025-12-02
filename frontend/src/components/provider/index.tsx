@@ -27,12 +27,10 @@ export const Wrapper = () => {
                 <RNQueryProvider>
                   <EASUpdateProvider>
                     <AuthProvider>
-                      <PushProvider>
-                        <SafeAreaProvider className="flex-1">
-                          <AuthRedirect />
-                          <Toaster position="bottom-center" />
-                        </SafeAreaProvider>
-                      </PushProvider>
+                      <SafeAreaProvider className="flex-1">
+                        <AuthRedirect />
+                        <Toaster closeButton position="bottom-center" />
+                      </SafeAreaProvider>
                     </AuthProvider>
                   </EASUpdateProvider>
                 </RNQueryProvider>

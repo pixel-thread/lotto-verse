@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { UpdateModal } from '../../common/app-update/UpdateModal';
 import { useQuery } from '@tanstack/react-query';
 import { RELEASE_ENDPOINTS } from '@/src/lib/endpoints/release';
@@ -7,6 +7,7 @@ import { UpdateContext } from '@/src/lib/context/update';
 import { UpdateReleaseT } from '@/src/types/update';
 import { compareVersions } from '@/src/utils/update';
 import { getAppInfo } from '@/src/utils/update/getAppInfo';
+import { checkForAndHandleUpdates } from '@/src/services/update/checkForAndHandleUpdates';
 
 type Props = Readonly<{ children: React.ReactNode }>;
 
@@ -32,6 +33,11 @@ export default function EASUpdateProvider({ children }: Props) {
     }),
     [data]
   );
+
+  useEffect(() => {
+    checkForAndHandleUpdates();
+  }, []);
+
   return (
     <UpdateContext.Provider value={value}>
       <UpdateModal />

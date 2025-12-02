@@ -1,0 +1,16 @@
+name: Create Preview Update
+
+on:
+  push:
+    branches: ['uat']
+    paths:
+      - 'frontend/**'
+
+jobs:
+  android_development_build:
+    name: Build Android
+    type: build
+    work-directory: ./frontend
+    params:
+      platform: android
+      profile: preview
