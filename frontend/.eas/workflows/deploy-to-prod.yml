@@ -9,7 +9,7 @@ jobs:
     name: Notify deployment start
     type: slack
     params:
-      webhook_url: { { env.SLACK_WEBHOOK_URL } }
+      webhook_url: ${{ env.SLACK_WEBHOOK_URL }}
       message: |
         🚀 Production deployment started
         Branch: master
@@ -54,7 +54,7 @@ jobs:
     if: ${{ failure() }}
     type: slack
     params:
-      webhook_url: { { env.SLACK_WEBHOOK_URL } }
+      webhook_url: ${{ env.SLACK_WEBHOOK_URL }}
       message: |
         ❌ Production deployment failed
         Fingerprint status: ${{ needs.fingerprint.status }}
@@ -68,7 +68,7 @@ jobs:
     if: ${{ success() }}
     type: slack
     params:
-      webhook_url: { { env.SLACK_WEBHOOK_URL } }
+      webhook_url: ${{ env.SLACK_WEBHOOK_URL }}
       message: |
         ✅ Production deployment completed
         Used existing build: ${{ needs.get_android_build.outputs.build_id }}

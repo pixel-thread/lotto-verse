@@ -9,7 +9,7 @@ jobs:
     name: Notify preview deployment start
     type: slack
     params:
-      webhook_url: https://hooks.slack.com/services/XXX/YYY/ZZZ
+      webhook_url: ${{ env.SLACK_WEBHOOK_URL }}
       message: |
         🚀 Preview deployment started
         Branch: uat
@@ -54,7 +54,7 @@ jobs:
     if: ${{ failure() }}
     type: slack
     params:
-      webhook_url: https://hooks.slack.com/services/XXX/YYY/ZZZ
+      webhook_url: ${{ env.SLACK_WEBHOOK_URL }}
       message: |
         ❌ Preview deployment failed
         Fingerprint status: ${{ needs.fingerprint.status }}
@@ -68,7 +68,7 @@ jobs:
     if: ${{ success() }}
     type: slack
     params:
-      webhook_url: https://hooks.slack.com/services/XXX/YYY/ZZZ
+      webhook_url: ${{ env.SLACK_WEBHOOK_URL }}
       message: |
         ✅ Preview deployment completed
         Used existing build: ${{ needs.get_android_build.outputs.build_id }}
