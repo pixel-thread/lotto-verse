@@ -14,7 +14,7 @@ jobs:
         🚀 Preview deployment started
         Branch: uat
         Platform: android
-        Commit: ${{ env.EAS_COMMIT_HASH }}
+        Commit: ${{ github.event.head_commit.message }}
 
   fingerprint:
     name: Fingerprint
