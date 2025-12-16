@@ -1,10 +1,9 @@
-name: Create development builds
+name: EAS Trigger development builds
 
 jobs:
   android_development_build:
     name: Build Android
     type: build
-    work-directory: ./frontend
     params:
       platform: android
       profile: development
