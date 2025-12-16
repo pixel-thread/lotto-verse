@@ -11,8 +11,8 @@ jobs:
     params:
       webhook_url: ${{ env.SLACK_WEBHOOK_URL }}
       message: |
-        🚀 Preview deployment started
-        Branch: uat
+        🚀 UAT deployment started
+        Branch: UAT
         Platform: android
         Commit: ${{ github.event.head_commit.message }}
 
@@ -56,7 +56,7 @@ jobs:
     params:
       webhook_url: ${{ env.SLACK_WEBHOOK_URL }}
       message: |
-        ❌ Preview deployment failed
+        ❌ UAT deployment failed
         Fingerprint status: ${{ needs.fingerprint.status }}
         get_android_build status: ${{ needs.get_android_build.status }}
         build_android status: ${{ needs.build_android.status }}
@@ -70,7 +70,7 @@ jobs:
     params:
       webhook_url: ${{ env.SLACK_WEBHOOK_URL }}
       message: |
-        ✅ Preview deployment completed
+        ✅ UAT deployment completed
         Used existing build: ${{ needs.get_android_build.outputs.build_id }}
         New build ID (if created): ${{ needs.build_android.outputs.build_id }}
         Branch: preview
