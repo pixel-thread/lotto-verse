@@ -2,23 +2,27 @@ name: EAS Trigger deployment to preview
 
 on:
   push:
-    # Deploy only from your protected branch
     branches: ['uat']
 
 jobs:
+  notify_start:
+    name: Notify preview deployment start
+    type: slack
+    params:
+      webhook_url: https://hooks.slack.com/services/XXX/YYY/ZZZ
+      message: |
+        🚀 Preview deployment started
+        Branch: uat
+        Platform: android
+        Commit: ${{ env.EAS_COMMIT_HASH }}
+
   fingerprint:
-    # 1) Generate native fingerprint for current commit
-    #    This captures native deps, config, etc. so we know
-    #    whether a new binary is required or JS-only update is enough.
     name: Fingerprint
+    needs: [notify_start]
     type: fingerprint
     environment: preview
 
   get_android_build:
-    # 2) Ask EAS if there is an existing Android build
-    #    that matches this fingerprint + profile.
-    #    If yes -> we can send OTA to that binary.
-    #    If no  -> we must create a new native build.
     name: Check for existing android build
     needs: [fingerprint]
     type: get_build
@@ -27,8 +31,6 @@ jobs:
       profile: preview
 
   build_android:
-    # 3A) No compatible build found -> create a new native build.
-    #     This is your "mandatory update candidate" (PTA).
     name: Build Android
     needs: [get_android_build]
     if: ${{ !needs.get_android_build.outputs.build_id }}
@@ -38,8 +40,6 @@ jobs:
       profile: preview
 
   publish_android_update:
-    # 3B) Compatible build exists -> publish an OTA update
-    #     to the preview branch for that existing binary.
     name: Publish Android update
     needs: [get_android_build]
     if: ${{ needs.get_android_build.outputs.build_id }}
@@ -47,3 +47,31 @@ jobs:
     params:
       branch: preview
       platform: android
+
+  notify_failure:
+    name: Notify preview failure
+    needs: [fingerprint, get_android_build, build_android, publish_android_update]
+    if: ${{ failure() }}
+    type: slack
+    params:
+      webhook_url: https://hooks.slack.com/services/XXX/YYY/ZZZ
+      message: |
+        ❌ Preview deployment failed
+        Fingerprint status: ${{ needs.fingerprint.status }}
+        get_android_build status: ${{ needs.get_android_build.status }}
+        build_android status: ${{ needs.build_android.status }}
+        publish_android_update status: ${{ needs.publish_android_update.status }}
+
+  notify_success:
+    name: Notify preview success
+    needs: [build_android, publish_android_update]
+    if: ${{ success() }}
+    type: slack
+    params:
+      webhook_url: https://hooks.slack.com/services/XXX/YYY/ZZZ
+      message: |
+        ✅ Preview deployment completed
+        Used existing build: ${{ needs.get_android_build.outputs.build_id }}
+        New build ID (if created): ${{ needs.build_android.outputs.build_id }}
+        Branch: preview
+        Platform: android

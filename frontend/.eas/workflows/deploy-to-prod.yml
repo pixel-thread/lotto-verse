@@ -2,23 +2,27 @@ name: EAS Trigger deployment to production
 
 on:
   push:
-    # Deploy only from your protected branch
     branches: ['master']
 
 jobs:
+  notify_start:
+    name: Notify deployment start
+    type: slack
+    params:
+      webhook_url: { { env.SLACK_WEBHOOK_URL } }
+      message: |
+        🚀 Production deployment started
+        Branch: master
+        Platform: android
+        Commit: ${{ env.EAS_COMMIT_HASH }}
+
   fingerprint:
-    # 1) Generate native fingerprint for current commit
-    #    This captures native deps, config, etc. so we know
-    #    whether a new binary is required or JS-only update is enough.
     name: Fingerprint
+    needs: [notify_start]
     type: fingerprint
     environment: production
 
   get_android_build:
-    # 2) Ask EAS if there is an existing Android build
-    #    that matches this fingerprint + profile.
-    #    If yes -> we can send OTA to that binary.
-    #    If no  -> we must create a new native build.
     name: Check for existing android build
     needs: [fingerprint]
     type: get_build
@@ -27,8 +31,6 @@ jobs:
       profile: production
 
   build_android:
-    # 3A) No compatible build found -> create a new native build.
-    #     This is your "mandatory update candidate" (PTA).
     name: Build Android
     needs: [get_android_build]
     if: ${{ !needs.get_android_build.outputs.build_id }}
@@ -38,8 +40,6 @@ jobs:
       profile: production
 
   publish_android_update:
-    # 3B) Compatible build exists -> publish an OTA update
-    #     to the production branch for that existing binary.
     name: Publish Android update
     needs: [get_android_build]
     if: ${{ needs.get_android_build.outputs.build_id }}
@@ -47,3 +47,31 @@ jobs:
     params:
       branch: production
       platform: android
+
+  notify_failure:
+    name: Notify failure
+    needs: [fingerprint, get_android_build, build_android, publish_android_update]
+    if: ${{ failure() }}
+    type: slack
+    params:
+      webhook_url: { { env.SLACK_WEBHOOK_URL } }
+      message: |
+        ❌ Production deployment failed
+        Fingerprint status: ${{ needs.fingerprint.status }}
+        get_android_build status: ${{ needs.get_android_build.status }}
+        build_android status: ${{ needs.build_android.status }}
+        publish_android_update status: ${{ needs.publish_android_update.status }}
+
+  notify_success:
+    name: Notify success
+    needs: [build_android, publish_android_update]
+    if: ${{ success() }}
+    type: slack
+    params:
+      webhook_url: { { env.SLACK_WEBHOOK_URL } }
+      message: |
+        ✅ Production deployment completed
+        Used existing build: ${{ needs.get_android_build.outputs.build_id }}
+        New build ID (if created): ${{ needs.build_android.outputs.build_id }}
+        Branch: production
+        Platform: android
