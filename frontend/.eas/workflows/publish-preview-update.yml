@@ -50,7 +50,7 @@ jobs:
 
   notify_failure:
     name: Notify preview failure
-    needs: [fingerprint, get_android_build, build_android, publish_android_update]
+    after: [fingerprint, get_android_build, build_android, publish_android_update]
     if: ${{ failure() }}
     type: slack
     params:
