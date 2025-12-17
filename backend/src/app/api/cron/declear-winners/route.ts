@@ -7,6 +7,20 @@ import { logger } from "@/src/utils/logger";
 import { ErrorResponse, SuccessResponse } from "@/src/utils/next-response";
 import { NextRequest } from "next/server";
 
+export const isWinnerDeclarationOpen = (declareAt: Date): boolean => {
+  const now = new Date();
+
+  // Same date check in IST
+  const nowISTDate = now.toLocaleDateString("en-CA", {
+    timeZone: "Asia/Kolkata",
+  });
+  const declareDateIST = declareAt.toLocaleDateString("en-CA", {
+    timeZone: "Asia/Kolkata",
+  });
+
+  return nowISTDate === declareDateIST;
+};
+
 export async function GET(req: NextRequest) {
   try {
     const authHeader = req.headers.get("authorization");
@@ -26,24 +40,17 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // If same date → return true (ignore time)
-    const declearAt = activeDraw.declareAt;
-    const now = new Date();
-    const today = now.toDateString();
-    const declareDate = declearAt.toDateString();
-    const isDecleartionDate = today === declareDate;
-
-    if (!isDecleartionDate) {
-      return ErrorResponse({
-        status: 400,
-        message: "Draw declaration time not reached",
-      });
-    }
-
-    if (!declearAt) {
+    if (!activeDraw.declareAt) {
       return ErrorResponse({
         status: 400,
         message: "Draw declaration time not set",
+      });
+    }
+
+    if (!isWinnerDeclarationOpen(activeDraw.declareAt)) {
+      return ErrorResponse({
+        status: 400,
+        message: "Draw declaration time not reached (IST)",
       });
     }
 

@@ -4,6 +4,7 @@ import { createPurchaseAtomic } from "@/src/services/purchase/createPurchase";
 import { getPurchaseByLuckyNumber } from "@/src/services/purchase/getPurchaseByLuckyNumber";
 import { getUserPurchase } from "@/src/services/user/getUserPurchase";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
+import { convertUTCToIST } from "@/src/utils/helper/convertUtcToIst";
 import { requireAuth } from "@/src/utils/middleware/requiredAuth";
 import { ErrorResponse, SuccessResponse } from "@/src/utils/next-response";
 import { createRazorPayOrder } from "@/src/utils/razorpay/createOrder";
@@ -11,6 +12,33 @@ import { razorPayOptions } from "@/src/utils/razorpay/razorpayOption";
 import { createPaymentSchema } from "@/src/utils/validation/payment";
 import { NextRequest } from "next/server";
 
+export const isPaymentOpen = (declareAt: Date): boolean => {
+  const now = new Date();
+
+  // 4 PM IST on declareAt date (2hrs before 6 PM IST cron)
+  const cutoffIST = new Date(declareAt.getTime());
+  const cutoffISTStr = cutoffIST.toLocaleString("en-CA", {
+    timeZone: "Asia/Kolkata",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }); // "2025-12-17 16:00"
+
+  const nowISTStr = now.toLocaleString("en-CA", {
+    timeZone: "Asia/Kolkata",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+
+  return nowISTStr < cutoffISTStr;
+};
 export async function POST(req: NextRequest) {
   try {
     const user = await requireAuth(req);
@@ -44,20 +72,9 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const declareAt = isDrawExist.declareAt;
-    const now = new Date();
-    // Payments close 2hrs BEFORE cron (6 PM UTC → 4 PM UTC)
-    const cutoffDate = new Date(declareAt);
-    cutoffDate.setUTCHours(16, 0, 0, 0); // 4 PM UTC
-
-    const isPaymentOpen = now < cutoffDate;
-
-    if (!isPaymentOpen) {
-      const closedMinutes = Math.round(
-        (now.getTime() - cutoffDate.getTime()) / (1000 * 60),
-      );
+    if (!isPaymentOpen(isDrawExist.declareAt)) {
       return ErrorResponse({
-        error: `Payments closed ${closedMinutes} minutes ago (closed at 4 PM UTC)`,
+        error: "Payments closed at 4 PM IST",
         status: 400,
       });
     }
