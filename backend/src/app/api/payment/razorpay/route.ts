@@ -37,6 +37,31 @@ export async function POST(req: NextRequest) {
       return ErrorResponse({ error: "Draw not found", status: 404 });
     }
 
+    if (!isDrawExist.declareAt) {
+      return ErrorResponse({
+        error: "Draw declaration time not set",
+        status: 400,
+      });
+    }
+
+    const declareAt = isDrawExist.declareAt;
+    const now = new Date();
+    // Payments close 2hrs BEFORE cron (6 PM UTC → 4 PM UTC)
+    const cutoffDate = new Date(declareAt);
+    cutoffDate.setUTCHours(16, 0, 0, 0); // 4 PM UTC
+
+    const isPaymentOpen = now < cutoffDate;
+
+    if (!isPaymentOpen) {
+      const closedMinutes = Math.round(
+        (now.getTime() - cutoffDate.getTime()) / (1000 * 60),
+      );
+      return ErrorResponse({
+        error: `Payments closed ${closedMinutes} minutes ago (closed at 4 PM UTC)`,
+        status: 400,
+      });
+    }
+
     const isPaymentClose =
       isDrawExist?.isWinnerDecleared || isDrawExist.status === "INACTIVE";
 

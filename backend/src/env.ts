@@ -11,6 +11,7 @@ export const env = createEnv({
     RAZORPAY_KEY_SECRET: z.string("ENV RAZORPAY_KEY_SECRET is missing"),
     RAZORPAY_WEBHOOK_SECRET: z.string("ENV RAZORPAY_WEBHOOK_SECRET is missing"),
     EAS_WEBHOOK_SECRET: z.string("ENV EAS_WEBHOOK_SECRET is missing"),
+    CRON_SECRET: z.string("ENV CRON_SECRET is missing"),
   },
 
   client: {

@@ -2,7 +2,13 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
     "src/app/api/**/*": {
-      "maxDuration": 60
+      "maxDuration": 900
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/declear-winners",
+      "schedule": "30 12 * * *"
+    }
+  ]
 }

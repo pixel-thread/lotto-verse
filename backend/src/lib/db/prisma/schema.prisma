@@ -80,7 +80,7 @@ model Draw {
   month             String // Format: "YYYY-MM"
   startRange        Int
   isWinnerDecleared Boolean       @default(false)
-  declareAt         DateTime?
+  declareAt         DateTime
   entryFee          Float         @default(30)
   endRange          Int
   endDate           DateTime?
