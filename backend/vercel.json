@@ -8,7 +8,7 @@
   "crons": [
     {
       "path": "/api/cron/declear-winners",
-      "schedule": "30 12 * * *"
+      "schedule": "30 11 * * *"
     }
   ]
 }

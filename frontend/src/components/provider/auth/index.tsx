@@ -1,7 +1,7 @@
 import axiosInstance from '@/src/utils/api';
 import { logger } from '@/src/utils/logger';
 import { useAuth } from '@clerk/clerk-expo';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { LoadingScreen } from '../../common/LoadingScreen';
 import { toast } from 'sonner-native';
 import { AuthContext } from '@lib/context/auth';
