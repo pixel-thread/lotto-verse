@@ -1,7 +1,5 @@
 import { SuccessResponse } from "@/src/utils/next-response";
 
-const now = new Date();
-
 const convertUTCToIST = (utcDate: Date): Date => {
   // IST = UTC + 5:30
   const istOffsetMs = 5.5 * 60 * 60 * 1000; // 5 hours 30 min
