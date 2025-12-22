@@ -1,10 +1,18 @@
 "use client";
+import { useQuery } from "@tanstack/react-query";
 import { Smartphone, Trophy } from "lucide-react";
-import Link from "next/link";
+import http from "../utils/http";
+import { AppVersion } from "../lib/db/prisma/generated/prisma";
 
 export default function HeroLandingPage() {
+  const { data, isFetching } = useQuery({
+    queryKey: ["latest-update"],
+    queryFn: () => http.get<AppVersion>("/update/latest"),
+    select: (data) => data.data,
+  });
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-blue-50">
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-12 lg:py-20">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -32,16 +40,36 @@ export default function HeroLandingPage() {
                 Download Our App
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link
-                  href="/api/release/download"
-                  className="flex items-center gap-3 bg-black text-white px-6 py-4 rounded-2xl font-bold hover:bg-gray-800 transition-all hover:scale-105 shadow-lg"
-                >
-                  <Smartphone className="w-6 h-6" />
-                  <div className="text-left">
-                    <div className="text-xl opacity-80">Download on</div>
-                    <div className="text-lg">Lotto Verse</div>
-                  </div>
-                </Link>
+                {isFetching ? (
+                  <h1 className="flex items-center gap-3 bg-black text-white px-6 py-4 rounded-2xl font-bold hover:bg-gray-800 transition-all hover:scale-105 shadow-lg">
+                    Loading
+                  </h1>
+                ) : (
+                  <>
+                    {data?.downloadUrl ? (
+                      <a
+                        href={data?.downloadUrl ?? ""}
+                        target="_blank"
+                        className="flex items-center gap-3 bg-black text-white px-6 py-4 rounded-2xl font-bold hover:bg-gray-800 transition-all hover:scale-105 shadow-lg"
+                      >
+                        <Smartphone className="w-6 h-6" />
+                        <div className="text-left">
+                          <div className="text-xl opacity-80">Download on</div>
+                          <div className="text-lg">Lotto Verse</div>
+                        </div>
+                      </a>
+                    ) : (
+                      <h1 className="flex items-center gap-3 bg-black text-white px-6 py-4 rounded-2xl font-bold hover:bg-gray-800 transition-all hover:scale-105 shadow-lg">
+                        <Smartphone className="w-6 h-6" />
+                        <div className="text-left">
+                          <div className="text-xl opacity-80">
+                            No App Available
+                          </div>
+                        </div>
+                      </h1>
+                    )}
+                  </>
+                )}
               </div>
             </div>
 
