@@ -98,7 +98,7 @@ export const handleApiErrors = (error: unknown) => {
   }
 
   logger.error({
-    type: "UnknownError",
+    type: "InternalServerError",
     message: "Internal Server Error",
     error,
   });
