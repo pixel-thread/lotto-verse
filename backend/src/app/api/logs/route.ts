@@ -5,7 +5,9 @@ import { NextRequest } from "next/server";
 import z from "zod";
 
 const logSchema = z.object({
-  type: z.enum(["ERROR", "INFO", "WARN", "LOG"]),
+  type: z.enum(["ERROR", "INFO", "WARN", "LOG"], {
+    message: "Invalid log type",
+  }),
   content: z.string(),
   timestamp: z.string().refine((val) => !isNaN(Date.parse(val)), {
     message: "Invalid ISO date string",
@@ -14,8 +16,8 @@ const logSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const body = logSchema.parse(await req.json());
   try {
+    const body = logSchema.parse(await req.json());
     await addLogsToDB(body);
     return SuccessResponse({ message: "Log saved successfully" });
   } catch (error) {

@@ -22,6 +22,7 @@
         "name": "next"
       }
     ],
+    "baseUrl": ".",
     "paths": {
       "@/*": [
         "./*"
@@ -47,7 +48,8 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts",
-    "prisma.config.tssxssaf"
+    "prisma.config.tssxssaf",
+    "cypress/e2e/api/logs/log.spec.cy"
   ],
   "exclude": [
     "node_modules"
