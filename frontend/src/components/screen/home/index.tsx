@@ -198,7 +198,7 @@ export function HomeScreen() {
               marginTop="$2">
               <Text fontSize={16} style={{ textAlign: 'center' }} lineHeight={20}>
                 Limited numbers available. Results announced promptly after draw ends. i.e{' '}
-                {draw?.endDate.split('T')[0]} at 6:00pm
+                {draw?.endDate.split('T')[0]} at 6-7 pm
               </Text>
             </Card>
           </YStack>
