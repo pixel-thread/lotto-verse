@@ -15,7 +15,7 @@ export async function updatePurchase({ where, data }: Props) {
         where: { id: purchase.luckyNumberId },
         data: { isPurchased: data.status === "SUCCESS" ? true : false },
       });
-      await tx.transaction.create({
+      const transaction = await tx.transaction.create({
         data: {
           user: { connect: { id: purchase.userId } },
           amount: purchase.amount,
@@ -24,7 +24,14 @@ export async function updatePurchase({ where, data }: Props) {
           purchase: { connect: { id: purchase.id } },
         },
       });
+      if (purchase.status !== "SUCCESS") {
+        await tx.purchase.update({
+          where: { id: purchase.id },
+          data: { status: data.status, transactionId: transaction.id },
+        });
+      }
     }
+
     return purchase;
   });
 }
