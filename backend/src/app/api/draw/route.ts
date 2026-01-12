@@ -32,6 +32,7 @@ export async function GET(req: NextRequest) {
               name: "Unknown User",
               email: null,
               imageUrl: null,
+              createdAt: draw.declareAt,
             },
           };
         }
@@ -44,6 +45,7 @@ export async function GET(req: NextRequest) {
               name: clerkUser.username || clerkUser.firstName || "Anonymous",
               email: clerkUser.emailAddresses[0]?.emailAddress || null,
               imageUrl: clerkUser.imageUrl || null,
+              createdAt: draw.declareAt,
             },
           };
         } catch (clerkError) {
@@ -57,6 +59,8 @@ export async function GET(req: NextRequest) {
               name: "Unknown User",
               email: null,
               imageUrl: null,
+              declearedAt: null,
+              createdAt: draw.declareAt,
             },
           };
         }
