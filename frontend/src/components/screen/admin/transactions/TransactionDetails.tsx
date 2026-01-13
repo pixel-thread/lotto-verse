@@ -124,7 +124,7 @@ export default function AdminTransactionDetail({ id }: { id: string }) {
                   Purchase
                 </Text>
                 <XStack justify="space-between">
-                  <Text fontWeight="600">Transaction ID</Text>
+                  <Text fontWeight="600">TID</Text>
                   <Text>{tx.id}</Text>
                 </XStack>
 

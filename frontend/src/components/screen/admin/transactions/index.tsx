@@ -25,6 +25,7 @@ import { RefreshControl } from 'react-native-gesture-handler';
 import { EmptyCard } from '@/src/components/common/EmptyCard';
 import { DrawT } from '@/src/types/draw';
 import { ADMIN_DRAW_ENDPOINTS } from '@/src/lib/endpoints/admin/draws';
+import { Ternary } from '@/src/components/common/Ternary';
 
 type TransactionT = {
   id: string;
@@ -61,16 +62,6 @@ export default function AdminTransactionsScreen() {
     select: (res) => res.data,
     enabled: !!value,
   });
-
-  if (transactions?.length === 0) {
-    return (
-      <ScrollView
-        refreshControl={<RefreshControl onRefresh={() => refetch()} refreshing={isFetching} />}
-        style={{ width: '100%' }}>
-        <EmptyCard message="No transactions found" title="No Transactions" />
-      </ScrollView>
-    );
-  }
 
   return (
     <>
@@ -116,70 +107,76 @@ export default function AdminTransactionsScreen() {
             </Select>
           </SelectProvider>
         </YStack>
-        <YStack p="$4" gap="$4">
-          {transactions &&
-            transactions?.map((tx) => {
-              return (
-                <Card bordered p="$4" key={tx.id} gap="$3">
-                  {/* User Row */}
-                  <XStack gap="$3" items="center">
-                    <Avatar size="$4" circular>
-                      <Avatar.Image src={tx?.imageUrl || ''} />
-                      <Avatar.Fallback />
-                    </Avatar>
-                    <YStack>
-                      <Text fontWeight="700">{tx.name}</Text>
-                      <Text fontSize={12} color="grey">
-                        User ID: {tx.userId}
-                      </Text>
-                    </YStack>
-                  </XStack>
+        <Ternary
+          condition={transactions?.length === 0}
+          ifTrue={<EmptyCard message="No transactions found" title="No Transactions" />}
+          ifFalse={
+            <YStack p="$4" gap="$4">
+              {transactions &&
+                transactions?.map((tx) => {
+                  return (
+                    <Card bordered p="$4" key={tx.id} gap="$3">
+                      {/* User Row */}
+                      <XStack gap="$3" items="center">
+                        <Avatar size="$4" circular>
+                          <Avatar.Image src={tx?.imageUrl || ''} />
+                          <Avatar.Fallback />
+                        </Avatar>
+                        <YStack>
+                          <Text fontWeight="700">{tx.name}</Text>
+                          <Text fontSize={12} color="grey">
+                            User ID: {tx.userId}
+                          </Text>
+                        </YStack>
+                      </XStack>
 
-                  <Separator />
+                      <Separator />
 
-                  {/* Transaction Info */}
-                  <XStack justify="space-between">
-                    <Text fontWeight="600">Transaction ID:</Text>
-                    <Text>₹ {tx.transactionId}</Text>
-                  </XStack>
+                      {/* Transaction Info */}
+                      <XStack justify="space-between">
+                        <Text fontWeight="600">TID:</Text>
+                        <Text>{tx.transactionId}</Text>
+                      </XStack>
 
-                  <XStack justify="space-between">
-                    <Text fontWeight="600">Amount</Text>
-                    <Text>₹ {tx.amount}</Text>
-                  </XStack>
+                      <XStack justify="space-between">
+                        <Text fontWeight="600">Amount</Text>
+                        <Text>₹ {tx.amount}</Text>
+                      </XStack>
 
-                  <XStack justify="space-between">
-                    <Text fontWeight="600">Payment Method</Text>
-                    <Text>{tx.paymentMethod}</Text>
-                  </XStack>
+                      <XStack justify="space-between">
+                        <Text fontWeight="600">Payment Method</Text>
+                        <Text>{tx.paymentMethod}</Text>
+                      </XStack>
 
-                  <XStack justify="space-between">
-                    <Text fontWeight="600">Status</Text>
-                    <Text fontWeight="700" color={getStatusColor(tx.status)}>
-                      {getStatusText(tx.status)}
-                    </Text>
-                  </XStack>
+                      <XStack justify="space-between">
+                        <Text fontWeight="600">Status</Text>
+                        <Text fontWeight="700" color={getStatusColor(tx.status)}>
+                          {getStatusText(tx.status)}
+                        </Text>
+                      </XStack>
 
-                  <XStack justify="space-between">
-                    <Text fontWeight="600">Created</Text>
-                    <Text>{tx.createdAt}</Text>
-                  </XStack>
+                      <XStack justify="space-between">
+                        <Text fontWeight="600">Created</Text>
+                        <Text>{tx.createdAt}</Text>
+                      </XStack>
 
-                  <XStack justify="space-between">
-                    <Text fontWeight="600">Updated</Text>
-                    <Text>{tx.updatedAt}</Text>
-                  </XStack>
+                      <XStack justify="space-between">
+                        <Text fontWeight="600">Updated</Text>
+                        <Text>{tx.updatedAt}</Text>
+                      </XStack>
 
-                  {/* See More */}
-                  <Button
-                    marginBlockStart="$3"
-                    onPress={() => router.push(`/admin/transactions/${tx.id}`)}>
-                    <Button.Text>View Details</Button.Text>
-                  </Button>
-                </Card>
-              );
-            })}
-        </YStack>
+                      {/* See More */}
+                      <Button
+                        marginBlockStart="$3"
+                        onPress={() => router.push(`/admin/transactions/${tx.id}`)}>
+                        <Button.Text>View Details</Button.Text>
+                      </Button>
+                    </Card>
+                  );
+                })}
+            </YStack>
+          }
+        />
       </ScrollView>
     </>
   );
