@@ -46,6 +46,7 @@ export async function createDraw({ data }: Props) {
       endRange,
       endDate,
       declareAt: endDate,
+      entryFee: 50,
       prize: {
         create: {
           amount: data.prize.amount,
