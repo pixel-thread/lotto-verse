@@ -12,6 +12,7 @@ import { router } from 'expo-router';
 import { Pressable } from 'react-native';
 import { EmptyCard } from '../../common/EmptyCard';
 import { PurchaseT } from '@/src/types/purchase';
+import { useAuth } from '@/src/hooks/auth/useAuth';
 
 type Props = {
   purchase: PurchaseT;
@@ -20,8 +21,11 @@ type Props = {
 
 // Compact version for lists
 export function BillingComponent({ purchase }: Props) {
+  const { user } = useAuth();
+  const userId = user?.id;
+
   const hasWinningNumber =
-    purchase.luckyNumber.some((num) => num.winnerId) && purchase.status === 'SUCCESS';
+    purchase.luckyNumber.some((num) => num.winnerId === userId) && purchase.status === 'SUCCESS';
 
   return (
     <Pressable key={purchase.id} onPress={() => router.push(`/billing/${purchase.id}`)}>
