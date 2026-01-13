@@ -1,3 +1,4 @@
+import { useAuth } from '@/src/hooks/auth/useAuth';
 import { useCurrentDraw } from '@/src/hooks/draw/useCurrentDraw';
 import React from 'react';
 import { YStack, Text, Card, Avatar, H1 } from 'tamagui';
@@ -6,7 +7,8 @@ import { LinearGradient } from 'tamagui/linear-gradient';
 export function WinnerCard() {
   const { data } = useCurrentDraw();
   const winner = data?.winner;
-
+  const { user } = useAuth();
+  const isWinner = user?.id === winner?.userId;
   if (!winner) return null;
 
   return (
@@ -43,7 +45,6 @@ export function WinnerCard() {
         <Text fontSize={28} fontWeight="900" letterSpacing={0.8}>
           🎉 Winner 🎉
         </Text>
-
         <Avatar circular size={150} borderWidth={4} elevation="$4">
           <Avatar.Image accessibilityLabel={`${winner.name}'s photo`} src={winner.imageUrl} />
           <Avatar.Fallback />
@@ -66,6 +67,37 @@ export function WinnerCard() {
           </H1>
           {winner.email && <Text fontSize={16}>{winner.email}</Text>}
         </YStack>
+
+        <YStack gap={10}>
+          <Text fontSize={16} text="center" letterSpacing={0.8} color={'gray'}>
+            Prize Pool
+          </Text>
+          <Text fontSize={24} text="center" letterSpacing={0.8} fontWeight="600">
+            ₹&nbsp;{data.prize.amount}
+          </Text>
+        </YStack>
+        {/* Contact Winner Section */}
+        {isWinner && (
+          <YStack
+            gap="$2"
+            paddingBlock="$4"
+            paddingInline="$4"
+            rounded="$6"
+            bg="$backgroundFocus"
+            width="100%"
+            items="center"
+            borderWidth={1}
+            borderColor="$borderColorFocus">
+            <Text fontSize={16} text={'center'} color="$color9">
+              Please contact the number below for the prize.
+            </Text>
+            <Text fontSize={18} text={'center'} fontWeight={'500'}>
+              +91 7085-566-834
+            </Text>
+          </YStack>
+        )}
+
+        {/* Contact Admin Section */}
       </YStack>
     </Card>
   );

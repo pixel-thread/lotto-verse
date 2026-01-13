@@ -9,6 +9,7 @@ import { DrawT } from '@/src/types/draw';
 import { useCurrentDraw } from '@/src/hooks/draw/useCurrentDraw';
 import { RefreshControl } from 'react-native-gesture-handler';
 import { formatMonth } from '@/src/utils/helper/formatMonth';
+import { logger } from '@/src/utils/logger';
 
 export const NoActiveDraw = () => {
   const { refetch, isFetching } = useCurrentDraw();
@@ -17,6 +18,8 @@ export const NoActiveDraw = () => {
     queryFn: () => http.get<DrawT[]>(DRAW_ENDPOINTS.GET_DRAWS),
     select: (data) => data.data,
   });
+
+  logger.log(prevDraws);
 
   return (
     <>
@@ -53,7 +56,6 @@ export const NoActiveDraw = () => {
           <YStack gap="$4" paddingBlock="$4">
             {prevDraws &&
               prevDraws?.map((draw) => {
-                const displayMonth = formatMonth(draw.month || '');
                 return (
                   <Card
                     key={draw.id}
@@ -63,7 +65,7 @@ export const NoActiveDraw = () => {
                     borderColor="$borderColor">
                     <YStack gap="$2">
                       <Text fontWeight="700" fontSize={18} textTransform="uppercase">
-                        {displayMonth} Draw
+                        {draw.month}
                       </Text>
                       <Text fontSize={32} fontWeight="900" color="$green10">
                         ₹ {draw.prize.amount}

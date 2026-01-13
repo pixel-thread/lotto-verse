@@ -252,8 +252,8 @@ Transaction ID: ${data.payment.transactionId}
                 <Text fontSize={18} fontWeight="700">
                   Lucky Numbers ({data.luckyNumbers.length})
                 </Text>
-                <Text fontSize={14} color="gray">
-                  Draw: {formatMonthWithTime(new Date(data.draw.month).toString() || '')}
+                <Text fontWeight={'900'} fontSize={14} color="gray">
+                  Draw: {data.draw.month}
                 </Text>
               </YStack>
 
@@ -294,10 +294,7 @@ Transaction ID: ${data.payment.transactionId}
                     Draw Month
                   </Text>
                   <Text fontSize={14} fontWeight="600">
-                    {new Date(data.draw.month).toLocaleDateString('en-US', {
-                      month: 'long',
-                      year: 'numeric',
-                    })}
+                    {data.draw.month}
                   </Text>
                 </XStack>
 

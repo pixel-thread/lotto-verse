@@ -21,10 +21,6 @@ const items: Items[] = [
     isDisabled: true,
   },
   {
-    href: '/profile/recent-purchase',
-    label: 'Recent Purchases',
-  },
-  {
     href: '/billing',
     label: 'Billing',
   },
