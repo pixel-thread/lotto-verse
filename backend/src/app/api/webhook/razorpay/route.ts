@@ -7,10 +7,9 @@ import { logger } from "@/src/utils/logger";
 
 export async function POST(req: Request) {
   try {
-    console.log("Webhook triggered");
+    logger.log("Webhook triggered", {});
     // 1. Read raw body as text
     const rawBody = await req.text();
-    console.log(rawBody);
     // 2. Validate signature
     const signature = req.headers.get("x-razorpay-signature");
     if (!signature) {
@@ -25,19 +24,26 @@ export async function POST(req: Request) {
     if (
       !crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))
     ) {
-      console.log("Invalid signature");
+      logger.log("Invalid webhook signature");
       return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
     }
 
     // 3. Parse event JSON
     const event = JSON.parse(rawBody);
 
-    console.log("Event:", event.event);
+    logger.log("Event:", event.event);
 
+    logger.info("payment.captured", {
+      paymentId: event.payload.payment.entity.id,
+      status: event.payload.payment.entity.status,
+    });
     // 4. Handle webhook types
     switch (event.event) {
       case "payment.captured":
-        console.log("payment.captured");
+        logger.info("payment.captured", {
+          paymentId: event.payload.payment.entity.id,
+          status: event.payload.payment.entity.status,
+        });
         await updatePurchase({
           where: { razorpayId: event.payload.payment.entity.order_id },
           data: {
