@@ -19,24 +19,10 @@ export function DrawScreen() {
 
   if (draw?.isWinnerDecleared) {
     return (
-      <ScrollView
-        flex={1}
-        bg="$background"
-        showsVerticalScrollIndicator={false}
-        paddingBlockEnd={40}
-        paddingInlineStart={32}
-        paddingInline={20}>
-        <DrawDetailCard />
-        <YStack
-          marginBlockStart={40}
-          flex={1}
-          items="center"
-          justify="center"
-          borderWidth={1}
-          rounded="$4"
-          gap="$3">
-          <H2>Draw Winner</H2>
+      <ScrollView flex={1} bg="$background" paddingInline="$4" showsVerticalScrollIndicator={false}>
+        <YStack gap={24} flex={1} width="100%">
           <WinnerCard />
+          <HowItWorkSection title="Rules" options={drawRule} />
         </YStack>
       </ScrollView>
     );

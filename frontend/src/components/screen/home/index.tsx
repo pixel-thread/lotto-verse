@@ -58,12 +58,17 @@ export function HomeScreen() {
         showsVerticalScrollIndicator={false}
         style={{
           paddingBottom: 60,
+          padding: 4,
         }}>
         <YStack gap="$6">
           {/* HERO SECTION - Eye-catching Prize Display */}
           <Ternary
             condition={!!draw?.winner || !!draw?.isWinnerDecleared}
-            ifTrue={<WinnerCard />}
+            ifTrue={
+              <View paddingInline={'$4'}>
+                <WinnerCard />
+              </View>
+            }
             ifFalse={
               <Card
                 elevate

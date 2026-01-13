@@ -8,8 +8,6 @@ import { DRAW_ENDPOINTS } from '@/src/lib/endpoints/draw';
 import { DrawT } from '@/src/types/draw';
 import { useCurrentDraw } from '@/src/hooks/draw/useCurrentDraw';
 import { RefreshControl } from 'react-native-gesture-handler';
-import { formatMonth } from '@/src/utils/helper/formatMonth';
-import { logger } from '@/src/utils/logger';
 
 export const NoActiveDraw = () => {
   const { refetch, isFetching } = useCurrentDraw();
@@ -18,8 +16,6 @@ export const NoActiveDraw = () => {
     queryFn: () => http.get<DrawT[]>(DRAW_ENDPOINTS.GET_DRAWS),
     select: (data) => data.data,
   });
-
-  logger.log(prevDraws);
 
   return (
     <>

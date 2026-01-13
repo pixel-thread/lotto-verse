@@ -13,8 +13,6 @@ export function WinnerCard() {
 
   return (
     <Card
-      padding="$5"
-      margin="$4"
       borderWidth={0}
       rounded="$8"
       alignSelf="center"
@@ -42,6 +40,9 @@ export function WinnerCard() {
         gap="$4"
         paddingBlockStart="$5"
         paddingBlockEnd="$6">
+        <Text fontSize={23} color="$color10" letterSpacing={0.8}>
+          {data.month}
+        </Text>
         <Text fontSize={28} fontWeight="900" letterSpacing={0.8}>
           🎉 Winner 🎉
         </Text>
@@ -68,7 +69,7 @@ export function WinnerCard() {
           {winner.email && <Text fontSize={16}>{winner.email}</Text>}
         </YStack>
 
-        <YStack gap={10}>
+        <YStack gap={10} paddingBlock="$4">
           <Text fontSize={16} text="center" letterSpacing={0.8} color={'gray'}>
             Prize Pool
           </Text>
@@ -80,7 +81,7 @@ export function WinnerCard() {
         {isWinner && (
           <YStack
             gap="$2"
-            paddingBlock="$4"
+            paddingBlock="$14"
             paddingInline="$4"
             rounded="$6"
             bg="$backgroundFocus"
