@@ -1,4 +1,6 @@
 import { clerk } from "@/src/lib/clerk";
+import { getActiveDraw } from "@/src/services/draw/getActiveDraw";
+import { getPurchase } from "@/src/services/purchase/getPurchase";
 import { getTransactions } from "@/src/services/transaction/getTransactions";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
 import { requireAdmin } from "@/src/utils/middleware/requireAdmin";
@@ -9,7 +11,26 @@ export async function GET(req: NextRequest) {
   try {
     await requireAdmin(req);
 
-    const transactions = await getTransactions();
+    const activeDraw = await getActiveDraw();
+
+    const allPurchases = await getPurchase({
+      where: { drawId: activeDraw?.id },
+    });
+
+    if (!allPurchases) {
+      return SuccessResponse({
+        message: "No purchases found",
+        data: [],
+      });
+    }
+
+    const transactions = await getTransactions({
+      where: {
+        purchaseId: {
+          in: allPurchases.map((purchase) => purchase.id),
+        },
+      },
+    });
 
     const data = await Promise.all(
       transactions.map(async (transaction) => {
