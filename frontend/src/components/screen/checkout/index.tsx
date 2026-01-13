@@ -12,7 +12,7 @@ import { PAYMENT_ENDPOINTS } from '@/src/lib/endpoints/payment';
 import { toast } from 'sonner-native';
 import RazorpayCheckout, { CheckoutOptions, SuccessResponse } from 'react-native-razorpay';
 import { logger } from '@/src/utils/logger';
-import { formatMonth, formatMonthWithTime } from '@/src/utils/helper/formatMonth';
+import { formatMonthWithTime } from '@/src/utils/helper/formatMonth';
 import { useLuckyNumber } from '@/src/hooks/lucky-number/useLuckyNumber';
 import { LoadingScreen } from '../../common/LoadingScreen';
 

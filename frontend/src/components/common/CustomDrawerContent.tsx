@@ -36,12 +36,13 @@ const adminDrawerMenuItems: MenuItemsT[] = [
 export function CustomDrawerContent(props: DrawerContentComponentProps) {
   const { colorScheme } = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
-  const { isSuperAdmin } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
   const theme = useTheme();
-  let items: MenuItemsT[] = isSuperAdmin ? adminDrawerMenuItems : menuItems;
+  const isAdmin = user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN';
+  let items: MenuItemsT[] = isAdmin ? adminDrawerMenuItems : menuItems;
   return (
     <DrawerContentScrollView
       {...props}
