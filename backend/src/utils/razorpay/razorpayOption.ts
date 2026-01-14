@@ -48,7 +48,7 @@ export const razorPayOptions = async ({
     description: desc,
     currency: "INR",
     key: env.RAZORPAY_KEY_ID,
-    amount: order.amount + 2,
+    amount: order.amount + 1.8,
     order_id: order.razorpayId,
     name: env.NEXT_PUBLIC_APP_NAME,
     theme: { color: "#000" },
