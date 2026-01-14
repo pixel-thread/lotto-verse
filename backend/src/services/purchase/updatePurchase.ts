@@ -24,12 +24,10 @@ export async function updatePurchase({ where, data }: Props) {
           purchase: { connect: { id: purchase.id } },
         },
       });
-      if (purchase.status !== "SUCCESS") {
-        await tx.purchase.update({
-          where: { id: purchase.id },
-          data: { status: data.status, transactionId: transaction.id },
-        });
-      }
+      await tx.purchase.update({
+        where: { id: purchase.id },
+        data: { transactionId: transaction.id },
+      });
     }
 
     return purchase;
