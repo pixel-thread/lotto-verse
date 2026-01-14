@@ -27,7 +27,7 @@ export function CheckoutPage({ id }: CheckoutPageProps) {
   const [agreeToTerms, setAgreeToTerms] = useState(false);
 
   const entryFee = draw?.entryFee || 0;
-  const platformFee = (entryFee * 0.06).toFixed(2); // 6% platform fee
+  const platformFee = (entryFee * 0.036).toFixed(2); // 6% platform fee
   const totalCost = (entryFee + parseFloat(platformFee)).toFixed(2);
 
   const { isPending: isVerifyFetching, mutate: mutateVerify } = useMutation({

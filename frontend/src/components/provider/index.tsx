@@ -11,6 +11,7 @@ import { Toaster } from 'sonner-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import EASUpdateProvider from './update';
 import ErrorBoundary from '../common/ErrorBoundary';
+import { ProfileUpdateSheet } from '../common/ProfileUpdateSheet';
 
 export const Wrapper = () => {
   return (
@@ -28,6 +29,7 @@ export const Wrapper = () => {
                     <AuthProvider>
                       <SafeAreaProvider className="flex-1">
                         <AuthRedirect />
+                        <ProfileUpdateSheet open={true} setOpen={() => {}} />
                         <Toaster closeButton position="bottom-center" />
                       </SafeAreaProvider>
                     </AuthProvider>

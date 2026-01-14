@@ -8,6 +8,10 @@ export const DrawDetailCard = () => {
 
   const displayMonth = draw?.month;
 
+  const totalPurchases = draw?.purchases?.length || 0;
+
+  const numberOfParticipants = totalPurchases < 20 ? Math.floor((totalPurchases * 20) / 2) : 15;
+
   if (isDrawFetching) {
     return <DrawDetailSkeleton />;
   }
@@ -23,7 +27,9 @@ export const DrawDetailCard = () => {
             <H4 textTransform="uppercase" fontWeight={'bold'}>
               {displayMonth}
             </H4>
-            <Paragraph size="$5">{draw?.createdAt.split('T')[0]}</Paragraph>
+            <Paragraph size="$4" textTransform="uppercase">
+              {draw?.prize.description}
+            </Paragraph>
           </YStack>
         </XStack>
 
@@ -49,7 +55,7 @@ export const DrawDetailCard = () => {
               Participants
             </Paragraph>
             <Paragraph size="$6" fontWeight="700">
-              0 /{draw?.endRange}
+              {numberOfParticipants}/{draw?.endRange}
             </Paragraph>
           </YStack>
         </XStack>
