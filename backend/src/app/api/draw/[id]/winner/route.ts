@@ -1,6 +1,6 @@
 import { getDrawWinner } from "@/src/services/draw/getDrawWinner";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
-import { requireAuth } from "@/src/utils/middleware/requiredAuth";
+import { logger } from "@/src/utils/logger";
 import { ErrorResponse, SuccessResponse } from "@/src/utils/next-response";
 import { NextRequest } from "next/server";
 
@@ -9,7 +9,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    await requireAuth(req);
+    logger.log("GET /api/draw/current", req.url);
     const drawId = (await params).id;
 
     const drawWinner = await getDrawWinner({ id: drawId });

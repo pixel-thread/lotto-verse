@@ -1,19 +1,8 @@
 import { addLogsToDB } from "@/src/services/logs/addLogsToDB";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
 import { SuccessResponse } from "@/src/utils/next-response";
+import { logSchema } from "@/src/utils/validation/log";
 import { NextRequest } from "next/server";
-import z from "zod";
-
-const logSchema = z.object({
-  type: z.enum(["ERROR", "INFO", "WARN", "LOG"], {
-    message: "Invalid log type",
-  }),
-  content: z.string(),
-  timestamp: z.string().refine((val) => !isNaN(Date.parse(val)), {
-    message: "Invalid ISO date string",
-  }),
-  message: z.string().default("Unknown message"),
-});
 
 export async function POST(req: NextRequest) {
   try {

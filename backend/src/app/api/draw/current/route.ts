@@ -7,14 +7,13 @@ import { getUniqueLuckyNumber } from "@/src/services/lucky-number/getUniqueLucky
 import { getUniqueUser } from "@/src/services/user/getUserByClerkId";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
 import { getTime } from "@/src/utils/helper/getTime";
-import { requireAuth } from "@/src/utils/middleware/requiredAuth";
+import { logger } from "@/src/utils/logger";
 import { ErrorResponse, SuccessResponse } from "@/src/utils/next-response";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
-    await requireAuth(req);
-
+    logger.log("GET /api/draw/current", req.url);
     let draw;
 
     const cachedDraw = await getCache<

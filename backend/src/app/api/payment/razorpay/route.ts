@@ -4,7 +4,6 @@ import { createPurchaseAtomic } from "@/src/services/purchase/createPurchase";
 import { getPurchaseByLuckyNumber } from "@/src/services/purchase/getPurchaseByLuckyNumber";
 import { getUserPurchase } from "@/src/services/user/getUserPurchase";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
-import { convertUTCToIST } from "@/src/utils/helper/convertUtcToIst";
 import { requireAuth } from "@/src/utils/middleware/requiredAuth";
 import { ErrorResponse, SuccessResponse } from "@/src/utils/next-response";
 import { createRazorPayOrder } from "@/src/utils/razorpay/createOrder";
@@ -39,6 +38,7 @@ export const isPaymentOpen = (declareAt: Date): boolean => {
 
   return nowISTStr < cutoffISTStr;
 };
+
 export async function POST(req: NextRequest) {
   try {
     const user = await requireAuth(req);
@@ -144,6 +144,10 @@ export async function POST(req: NextRequest) {
       userId: user.clerkId,
       order: createdOrder,
       desc: `Pay for ${isLuckyNumberExist.number}`,
+      notes: {
+        drawId: isLuckyNumberExist.drawId,
+        drawMonth: isDrawExist.month,
+      },
     });
 
     return SuccessResponse({
