@@ -13,7 +13,7 @@ type UserT = {
 export function useLottoVerseUser() {
   const { user } = useUser();
   return useQuery({
-    queryKey: ['user', user?.id],
+    queryKey: ['lotto-verse-user', user?.id],
     queryFn: () => http.get<UserT>(USER_ENDPOINTS.GET_USER),
     select: (data) => data.data,
   });
