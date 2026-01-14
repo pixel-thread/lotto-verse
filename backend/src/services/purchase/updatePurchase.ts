@@ -26,7 +26,7 @@ export async function updatePurchase({ where, data }: Props) {
       });
       await tx.purchase.update({
         where: { id: purchase.id },
-        data: { transactionId: transaction.id },
+        data: { transactionId: transaction.id, status: "SUCCESS" },
       });
     }
 
