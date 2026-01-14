@@ -2,7 +2,7 @@ name: Migrate Prisma database
 on:
   push:
     paths:
-      - src/lib/db/prisma/migrations/**
+      - backend/src/lib/db/prisma/migrations/**
     branches:
       - master
 
