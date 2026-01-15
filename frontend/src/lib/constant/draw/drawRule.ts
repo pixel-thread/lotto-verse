@@ -17,11 +17,26 @@ export const drawRule = [
   {
     step: 4,
     title: 'Claim Your Prize',
-    desc: 'If your number wins, you must present the purchase receipt to claim your prize. Prizes must be collected within the stipulated time frame.',
+    desc: 'If your number wins, you must present the purchase receipt to claim your prize. Prizes must be collected within 48 hours of draw announcement.',
   },
   {
     step: 5,
+    title: 'Payment Issues',
+    desc: 'If payment is debited from your bank but shows pending, contact support immediately with transaction details for resolution.',
+  },
+  {
+    step: 6,
+    title: 'Contact Support',
+    desc: 'For any issues, payment problems, or questions: WhatsApp +91 7085-566-834 . Response within 1 hours.',
+  },
+  {
+    step: 7,
+    title: 'Trust & Transparency',
+    desc: "Don't trust us yet? Every draw is live-streamed, results are public, and all transactions are verifiable. Contact us anytime for proof.",
+  },
+  {
+    step: 8,
     title: 'Terms and Conditions',
-    desc: 'Participation is subject to the official rules and terms. The organizers reserve the right to final decisions and to cancel or modify the draw if necessary.',
+    desc: 'Participation is subject to official rules. Organizers reserve rights to final decisions, cancel/modify draws, and verify winners.',
   },
 ];

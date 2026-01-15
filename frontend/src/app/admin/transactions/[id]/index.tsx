@@ -2,7 +2,7 @@ import AdminTransactionDetail from '@/src/components/screen/admin/transactions/T
 import { CustomHeader } from '@/src/components/common/CustomHeader';
 import { useLocalSearchParams } from 'expo-router';
 
-export default function page() {
+export default function TransactionPage() {
   const { id } = useLocalSearchParams();
   return (
     <>

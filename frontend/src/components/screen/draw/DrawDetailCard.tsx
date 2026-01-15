@@ -1,65 +1,73 @@
-import { Card, H4, Paragraph, XStack, YStack } from 'tamagui';
-import { DrawDetailSkeleton } from './skeleton/DrawDetailSkeleton';
+import { Stack, H2, XStack, YStack, Text, Card } from 'tamagui';
 import { useCurrentDraw } from '@/src/hooks/draw/useCurrentDraw';
+import React from 'react';
 import { router } from 'expo-router';
+import { CONTACT_NO } from '@/src/lib/constant/contact';
 
 export const DrawDetailCard = () => {
-  const { isFetching: isDrawFetching, data: draw } = useCurrentDraw();
-
-  const displayMonth = draw?.month;
+  const { data: draw } = useCurrentDraw();
 
   const totalPurchases = draw?.purchases?.length || 0;
+  const progress = Math.min((totalPurchases * 100) / (draw?.endRange || 1), 100);
 
-  const numberOfParticipants = totalPurchases < 20 ? Math.floor((totalPurchases * 20) / 2) : 15;
-
-  if (isDrawFetching) {
-    return <DrawDetailSkeleton />;
-  }
+  if (!draw) return null;
 
   return (
-    <Card onPress={() => router.push(`/draw/${draw?.id}`)} padded rounded="$4" animation={'bouncy'}>
-      <YStack gap="$5">
-        <XStack justify="space-between" paddingInlineEnd="$2" gap="$1" items="center">
-          <YStack gap="$1">
-            <Paragraph size="$2" textTransform="uppercase">
-              #&nbsp;{draw?.id}
-            </Paragraph>
-            <H4 textTransform="uppercase" fontWeight={'bold'}>
-              {displayMonth}
-            </H4>
-            <Paragraph size="$4" textTransform="uppercase">
-              {draw?.prize.description}
-            </Paragraph>
-          </YStack>
-        </XStack>
+    <Card bordered onPress={() => router.push(`/draw/${draw.id}`)}>
+      {/* Content Overlay */}
+      <Stack flex={1} p="$6" justify="space-between" bg="$background" opacity={0.95}>
+        {/* Top Minimal Info */}
+        <YStack gap="$2">
+          <Text fontSize="$3" fontWeight="600" letterSpacing={1.2}>
+            DRAW {draw.month}
+          </Text>
+          <Text fontSize="$2" fontWeight="600" letterSpacing={1.2} color={'grey'}>
+            Prize Pool
+          </Text>
+          <H2 fontSize="$9" fontWeight="800" color="$color12">
+            ₹{draw.prize.amount}
+          </H2>
+        </YStack>
 
-        <XStack gap="$6" justify="space-between" flexWrap="wrap">
-          <YStack>
-            <Paragraph size="$2" color={'gray'}>
-              Entry
-            </Paragraph>
-            <Paragraph size="$6" fontWeight="700" color="$blue10">
-              ₹{draw?.entryFee}
-            </Paragraph>
-          </YStack>
-          <YStack>
-            <Paragraph size="$2" color="gray">
-              Prize Pool
-            </Paragraph>
-            <Paragraph size="$6" fontWeight="700" color="$green10">
-              ₹{draw?.prize.amount}
-            </Paragraph>
-          </YStack>
-          <YStack>
-            <Paragraph size="$2" color="gray">
-              Participants
-            </Paragraph>
-            <Paragraph size="$6" fontWeight="700">
-              {numberOfParticipants}/{draw?.endRange}
-            </Paragraph>
-          </YStack>
-        </XStack>
-      </YStack>
+        {/* Bottom Stats + Progress */}
+        <YStack gap="$4">
+          {/* Prize Preview */}
+          <Text fontSize="$4" fontWeight="500" lineHeight={20}>
+            {draw.prize.description}
+          </Text>
+
+          {/* Compact Stats Row */}
+          <XStack items="center" justify="space-between" gap="$5">
+            <YStack gap="$0.5" flex={1}>
+              <Text fontSize="$2" fontWeight="500">
+                ENTRY
+              </Text>
+              <Text fontSize="$7" fontWeight="900" color="$blue12">
+                ₹{draw.entryFee}
+              </Text>
+            </YStack>
+
+            <YStack gap="$1">
+              <Text fontSize="$2" fontWeight="500">
+                FILLED
+              </Text>
+              <Text fontSize="$6" fontWeight="700" color="$color12">
+                {progress}%
+              </Text>
+            </YStack>
+          </XStack>
+          <Card themeInverse padded>
+            <YStack gap="$3">
+              <Text fontSize="$2" text="center">
+                For more details call us.
+              </Text>
+              <Text fontSize="$4" fontWeight={'bold'} text="center">
+                {CONTACT_NO}
+              </Text>
+            </YStack>
+          </Card>
+        </YStack>
+      </Stack>
     </Card>
   );
 };

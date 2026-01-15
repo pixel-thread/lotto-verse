@@ -1,9 +1,7 @@
 import { useCurrentDraw } from '@/src/hooks/draw/useCurrentDraw';
 import {
   View,
-  Separator,
   Select,
-  SelectProvider,
   Button,
   Sheet,
   Card,
@@ -13,7 +11,7 @@ import {
   YStack,
   ScrollView,
 } from 'tamagui';
-import { SearchNumberTab } from '../draw/tabs/SearchNumberTab';
+import { SearchNumberTab } from '../../draw/tabs/SearchNumberTab';
 import { LuckyNumbersT } from '@/src/types/lucky-number';
 import { useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -45,6 +43,8 @@ export const CreatePurchase = () => {
       }),
     onSuccess: (data) => {
       if (data.success) {
+        setNumber(null);
+        setSelectedUser('');
         toast.success(data.message);
         return;
       }
@@ -53,11 +53,7 @@ export const CreatePurchase = () => {
     },
   });
 
-  const {
-    data: users,
-    isFetching: isFetchingUsers,
-    refetch,
-  } = useQuery({
+  const { data: users, isFetching: isFetchingUsers } = useQuery({
     queryKey: ['admin-users'],
     queryFn: () => http.get<UserT[]>(ADMIN_USER_ENDPOINTS.GET_USERS),
     select: (data) => data?.data,
@@ -85,38 +81,37 @@ export const CreatePurchase = () => {
                 Select User
               </Text>
             </XStack>
-            <SelectProvider>
-              <Select value={selectedUser} onValueChange={setSelectedUser}>
-                <Select.Trigger disabled={isFetchingUsers || isFetching} bg={'$background'}>
-                  <Select.Value bg={'$background'} placeholder="Select a user..." />
-                </Select.Trigger>
+            <Select value={selectedUser} onValueChange={setSelectedUser}>
+              <Select.Trigger disabled={isFetchingUsers || isFetching} bg={'$background'}>
+                <Select.Value bg={'$background'} placeholder="Select a user..." />
+              </Select.Trigger>
 
-                <Adapt when="maxMd" platform="touch">
-                  <Sheet modal>
-                    <Sheet.Frame>
-                      <Adapt.Contents />
-                    </Sheet.Frame>
-                    <Sheet.Overlay />
-                  </Sheet>
-                </Adapt>
+              <Adapt when="maxMd" platform="touch">
+                <Sheet modal>
+                  <Sheet.Handle />
+                  <Sheet.Frame>
+                    <Adapt.Contents />
+                  </Sheet.Frame>
+                  <Sheet.Overlay />
+                </Sheet>
+              </Adapt>
 
-                <Select.Content>
-                  <Select.ScrollUpButton />
-                  <Select.Viewport>
-                    <Select.Label>Select User</Select.Label>
-                    {users &&
-                      users?.map((item, i) => (
-                        <Select.Item bordered key={item.id} value={item.id} index={i}>
-                          <Select.ItemText fontWeight={'600'} fontSize="$4">
-                            {item.email}
-                          </Select.ItemText>
-                        </Select.Item>
-                      ))}
-                  </Select.Viewport>
-                  <Select.ScrollDownButton />
-                </Select.Content>
-              </Select>
-            </SelectProvider>
+              <Select.Content>
+                <Select.ScrollUpButton themeInverse />
+                <Select.Viewport gap={'$3'} bordered>
+                  <Select.Label>Select a User</Select.Label>
+                  {users &&
+                    users?.map((item, i) => (
+                      <Select.Item bordered key={item.id} value={item.id} index={i}>
+                        <Select.ItemText fontWeight={'600'} fontSize="$4">
+                          {i + 1}.&nbsp;{item.email}
+                        </Select.ItemText>
+                      </Select.Item>
+                    ))}
+                </Select.Viewport>
+                <Select.ScrollDownButton />
+              </Select.Content>
+            </Select>
           </YStack>
         </Card>
 
@@ -128,7 +123,7 @@ export const CreatePurchase = () => {
                 Search Number
               </Text>
             </XStack>
-            <SearchNumberTab draw={ActiveDraw} onNumberChange={(number) => setNumber(number)} />
+            <SearchNumberTab onNumberChange={(number) => setNumber(number)} />
           </YStack>
         </Card>
 

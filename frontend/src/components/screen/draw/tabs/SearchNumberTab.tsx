@@ -5,18 +5,17 @@ import { useMutation } from '@tanstack/react-query';
 import http from '@/src/utils/http';
 import { LUCKY_NUMBER_ENDPOINTS } from '@/src/lib/endpoints/lucky-number';
 import { LuckyNumbersT } from '@/src/types/lucky-number';
-import { Ionicons } from '@expo/vector-icons';
-import { DrawT } from '@/src/types/draw';
 import { Ternary } from '@/src/components/common/Ternary';
 import { router } from 'expo-router';
+import { useCurrentDraw } from '@/src/hooks/draw/useCurrentDraw';
 
 type Props = {
-  onNumberChange: (number: LuckyNumbersT | null) => void;
-  draw?: DrawT | null;
+  onNumberChange?: (number: LuckyNumbersT) => void;
 };
 
-export const SearchNumberTab = memo(({ onNumberChange, draw }: Props) => {
+export const SearchNumberTab = memo(({ onNumberChange }: Props) => {
   const [searchNumber, setSearchNumber] = useState('');
+  const { data: draw } = useCurrentDraw();
   const [searchedNumber, setSearchedNumber] = useState<LuckyNumbersT | null>(null);
   // Only get the data we need, don't track isFetching
   const endRange = draw?.endRange || 999;
@@ -33,21 +32,23 @@ export const SearchNumberTab = memo(({ onNumberChange, draw }: Props) => {
           const number = data.data[0];
           if (!number.isPurchased) {
             setSearchedNumber(number);
-            onNumberChange(number); // Keep parent synced
+            onNumberChange && onNumberChange(number);
             return data;
           }
-          toast.success('Number is purchase by another user');
+          setSearchedNumber(number);
+          toast.error('Number is purchase by another user', {
+            duration: 5000,
+            position: 'top-center',
+          });
           return number;
         }
         toast.error('Number not found');
-        onNumberChange(null);
         return;
       }
       toast.error(data.message);
-      onNumberChange(null);
       return data;
     },
-    [onNumberChange]
+    []
   );
 
   const { mutate: check, isPending: isChecking } = useMutation({
@@ -59,14 +60,10 @@ export const SearchNumberTab = memo(({ onNumberChange, draw }: Props) => {
   });
 
   // Memoize the text change handler
-  const onTextChange = useCallback(
-    (text: string) => {
-      onNumberChange(null);
-      setSearchNumber(text);
-      setSearchedNumber(null);
-    },
-    [onNumberChange]
-  );
+  const onTextChange = useCallback((text: string) => {
+    setSearchNumber(text);
+    setSearchedNumber(null);
+  }, []);
 
   // Memoize the check handler
   const handleCheck = useCallback(() => {
@@ -80,70 +77,72 @@ export const SearchNumberTab = memo(({ onNumberChange, draw }: Props) => {
       toast.error('This number has already been purchased');
       return;
     }
-
-    if (searchedNumber) {
-      onNumberChange(searchedNumber);
-    }
+    router.push(`/draw/checkout?numberId=${searchedNumber?.id}`);
   }, []);
 
   return (
-    <YStack gap="$4" width="100%">
-      <Paragraph size="$4" fontWeight="600">
-        Check Number Availability
-      </Paragraph>
-      <Paragraph size="$2" color="gray">
-        Enter a specific number to check if it's available
-      </Paragraph>
+    <Card padded>
+      <YStack gap="$4" width="100%">
+        <Paragraph size="$2">Enter a specific number to check if it's available</Paragraph>
+        <XStack gap="$3" items="center">
+          <Input
+            flex={1}
+            size="$5"
+            placeholder={placeholder}
+            keyboardType="numeric"
+            value={searchNumber}
+            onChangeText={onTextChange}
+            maxLength={maxLength}
+            borderWidth={2}
+            borderColor="$borderColor"
+            focusStyle={{
+              borderColor: '$blue9',
+            }}
+          />
+        </XStack>
 
-      <XStack gap="$3" items="center">
-        <Input
-          flex={1}
-          size="$5"
-          placeholder={placeholder}
-          keyboardType="numeric"
-          value={searchNumber}
-          onChangeText={onTextChange}
-          maxLength={maxLength}
-          borderWidth={2}
-          borderColor="$borderColor"
-          focusStyle={{
-            borderColor: '$blue9',
-          }}
-        />
+        {searchedNumber && (
+          <Card
+            themeShallow
+            padding="$4"
+            rounded="$6"
+            bordered
+            themeInverse={!searchedNumber.isPurchased}>
+            <YStack gap="$2" items="center">
+              <Text fontSize="$3" textTransform="uppercase" fontWeight="700">
+                Selected Number
+              </Text>
+              <Text fontSize="$10" fontWeight="900">
+                {searchNumber ?? '—'}
+              </Text>
+              <Text fontSize="$2">
+                {searchedNumber.isPurchased ? 'This number is not available' : 'Ready to buy'}
+              </Text>
+            </YStack>
+          </Card>
+        )}
+
         <Button
           size="$5"
           themeInverse={searchNumber !== ''}
           onPress={!!searchedNumber?.id ? onConfirmSelection : handleCheck}
-          disabled={!searchNumber || isChecking}
-          icon={<Ionicons name="search" size={20} color="white" />}>
+          disabled={!searchNumber || isChecking}>
           <Ternary
             condition={isChecking}
             ifTrue={<Spinner size="small" color="white" />}
             ifFalse={
               <Text fontWeight="700" color="white">
-                {!!searchedNumber?.id ? 'Confirm' : 'Check'}
+                {searchedNumber?.isPurchased
+                  ? 'Not Available'
+                  : !searchedNumber?.isPurchased && searchedNumber
+                    ? 'Buy'
+                    : 'Check'}
               </Text>
             }
           />
         </Button>
-      </XStack>
-
-      {searchedNumber && (
-        <Card padding="$4" rounded="$6" bordered themeInverse>
-          <YStack gap="$2" items="center">
-            <Text fontSize="$3" textTransform="uppercase" fontWeight="700">
-              Selected Number
-            </Text>
-            <Text fontSize="$10" fontWeight="900">
-              {searchNumber ?? '—'}
-            </Text>
-            <Text fontSize="$2" color="gray">
-              {!!SearchNumberTab ? 'Ready to add purchase' : 'No number selected'}
-            </Text>
-          </YStack>
-        </Card>
-      )}
-    </YStack>
+      </YStack>
+    </Card>
   );
 });
 

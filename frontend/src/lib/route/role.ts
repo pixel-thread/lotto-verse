@@ -1,22 +1,20 @@
-import { RoleRoute } from "@/src/types/routeRole";
-
-export const routeRoles: RoleRoute[] = [
+export const routeRoles = [
   {
-    url: "/admin/*",
-    role: ["SUPER_ADMIN"],
+    url: '/admin/*',
+    role: ['SUPER_ADMIN'],
     needAuth: true,
-    redirect: "/forbidden",
+    redirect: '/forbidden',
   },
   {
-    url: "/tournament/*",
-    role: ["PLAYER", "ADMIN", "SUPER_ADMIN"],
+    url: '/tournament/*',
+    role: ['PLAYER', 'ADMIN', 'SUPER_ADMIN'],
     needAuth: true,
-    redirect: "/auth",
+    redirect: '/auth',
   },
   {
-    url: "/settings/*",
-    role: ["PLAYER", "ADMIN", "SUPER_ADMIN"],
+    url: '/settings/*',
+    role: ['PLAYER', 'ADMIN', 'SUPER_ADMIN'],
     needAuth: true,
-    redirect: "/auth",
+    redirect: '/auth',
   },
 ];

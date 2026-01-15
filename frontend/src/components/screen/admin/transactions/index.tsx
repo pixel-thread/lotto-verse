@@ -26,6 +26,7 @@ import { EmptyCard } from '@/src/components/common/EmptyCard';
 import { DrawT } from '@/src/types/draw';
 import { ADMIN_DRAW_ENDPOINTS } from '@/src/lib/endpoints/admin/draws';
 import { Ternary } from '@/src/components/common/Ternary';
+import { Ionicons } from '@expo/vector-icons';
 
 type TransactionT = {
   id: string;
@@ -70,53 +71,70 @@ export default function AdminTransactionsScreen() {
           <RefreshControl onRefresh={() => refetch()} refreshing={isFetching || isFetchingDraw} />
         }
         style={{ width: '100%' }}>
-        <YStack p="$4" gap="$4">
-          <Text fontWeight={'500'} fontSize="$5">
-            Select a draw
-          </Text>
-          <SelectProvider>
-            <Select value={value} onValueChange={setValue}>
-              <Select.Trigger disabled={isFetchingDraw || isFetching} bg={'$background'}>
-                <Select.Value bg={'$background'} placeholder="Select a draw..." />
-              </Select.Trigger>
+        <YStack paddingBlock="$4" paddingInline="$4" gap="$5" justify="center">
+          <Card padding="$5" rounded="$8" bordered>
+            <YStack gap="$2" items="center">
+              <Text fontSize="$8" fontWeight="900">
+                Transactions
+              </Text>
+              <Text fontSize="$3" color="gray">
+                Filter by draw and review payment details
+              </Text>
+            </YStack>
+          </Card>
 
-              <Adapt when="maxMd" platform="touch">
-                <Sheet modal>
-                  <Sheet.Frame>
-                    <Adapt.Contents />
-                  </Sheet.Frame>
-                  <Sheet.Overlay />
-                </Sheet>
-              </Adapt>
+          <Card padding="$4" rounded="$6" bordered bg="$background">
+            <YStack gap="$3">
+              <XStack items="center" gap="$2">
+                <Ionicons name="calendar-outline" size={18} />
+                <Text fontSize="$4" fontWeight="700">
+                  Select Draw
+                </Text>
+              </XStack>
+              <SelectProvider>
+                <Select value={value} onValueChange={setValue}>
+                  <Select.Trigger disabled={isFetchingDraw || isFetching} bg={'$background'}>
+                    <Select.Value bg={'$background'} placeholder="Select a draw..." />
+                  </Select.Trigger>
 
-              <Select.Content>
-                <Select.ScrollUpButton />
-                <Select.Viewport>
-                  <Select.Label>Select a draw</Select.Label>
-                  {data &&
-                    data?.map((item, i) => (
-                      <Select.Item bordered key={item.id} value={item.id} index={i}>
-                        <Select.ItemText fontWeight={'600'} fontSize="$4">
-                          {item.month}
-                        </Select.ItemText>
-                      </Select.Item>
-                    ))}
-                </Select.Viewport>
-                <Select.ScrollDownButton />
-              </Select.Content>
-            </Select>
-          </SelectProvider>
+                  <Adapt when="maxMd" platform="touch">
+                    <Sheet modal>
+                      <Sheet.Frame>
+                        <Adapt.Contents />
+                      </Sheet.Frame>
+                      <Sheet.Overlay />
+                    </Sheet>
+                  </Adapt>
+
+                  <Select.Content>
+                    <Select.ScrollUpButton />
+                    <Select.Viewport>
+                      <Select.Label>Select a draw</Select.Label>
+                      {data &&
+                        data?.map((item, i) => (
+                          <Select.Item bordered key={item.id} value={item.id} index={i}>
+                            <Select.ItemText fontWeight={'600'} fontSize="$4">
+                              {item.month}
+                            </Select.ItemText>
+                          </Select.Item>
+                        ))}
+                    </Select.Viewport>
+                    <Select.ScrollDownButton />
+                  </Select.Content>
+                </Select>
+              </SelectProvider>
+            </YStack>
+          </Card>
         </YStack>
         <Ternary
           condition={transactions?.length === 0}
           ifTrue={<EmptyCard message="No transactions found" title="No Transactions" />}
           ifFalse={
-            <YStack p="$4" gap="$4">
+            <YStack p="$4" gap="$4" self="center">
               {transactions &&
                 transactions?.map((tx) => {
                   return (
-                    <Card bordered p="$4" key={tx.id} gap="$3">
-                      {/* User Row */}
+                    <Card bordered p="$4" key={tx.id} gap="$3" rounded="$6">
                       <XStack gap="$3" items="center">
                         <Avatar size="$4" circular>
                           <Avatar.Image src={tx?.imageUrl || ''} />
@@ -132,7 +150,6 @@ export default function AdminTransactionsScreen() {
 
                       <Separator />
 
-                      {/* Transaction Info */}
                       <XStack justify="space-between">
                         <Text fontWeight="600">TID:</Text>
                         <Text>{tx.transactionId}</Text>
@@ -165,7 +182,6 @@ export default function AdminTransactionsScreen() {
                         <Text>{tx.updatedAt}</Text>
                       </XStack>
 
-                      {/* See More */}
                       <Button
                         marginBlockStart="$3"
                         onPress={() => router.push(`/admin/transactions/${tx.id}`)}>

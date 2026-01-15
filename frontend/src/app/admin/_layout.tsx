@@ -2,7 +2,7 @@ import { useAuth } from '@/src/hooks/auth/useAuth';
 import { logger } from '@/src/utils/logger';
 import { Redirect, Stack } from 'expo-router';
 
-export default function page() {
+export default function AdminLayout() {
   const { user } = useAuth();
 
   const isSuperAdmin = user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN';

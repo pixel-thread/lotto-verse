@@ -3,8 +3,7 @@ import React from 'react';
 import { H3, Text, YStack, XStack, ScrollView, Card, Button, Avatar, View } from 'tamagui';
 
 export const RecentDrawParticipants = () => {
-  const { data: users, refetch, isFetching } = useCurrentDrawUser();
-  if (users?.length === 0 || isFetching) return null;
+  const { data: users, refetch } = useCurrentDrawUser();
   return (
     <Card
       padded
@@ -24,7 +23,7 @@ export const RecentDrawParticipants = () => {
           </H3>
           <Button onPress={() => refetch()}>Refresh</Button>
         </XStack>
-        <View height={5} />
+        <View height={5} gap={'$3'} />
         {users &&
           users?.map((user) => (
             <XStack
@@ -34,6 +33,7 @@ export const RecentDrawParticipants = () => {
               items="center"
               borderWidth={0.5}
               borderColor="$borderColor"
+              m="$1"
               paddingBlock="$2"
               paddingInline="$2">
               <XStack gap="$3" items="center">
@@ -46,13 +46,10 @@ export const RecentDrawParticipants = () => {
                     {user.name}
                   </Text>
                   <Text fontSize={12} color="gray">
-                    {user.purchaseAt}
+                    {user.purchaseAt.split('T')[0]}
                   </Text>
                 </YStack>
               </XStack>
-              <Text fontSize={17} fontWeight="700">
-                #{user?.number}
-              </Text>
             </XStack>
           ))}
       </ScrollView>

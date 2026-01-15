@@ -3,7 +3,7 @@ import { CheckoutPage } from '@/src/components/screen/checkout';
 import { Redirect } from 'expo-router';
 import { useSearchParams } from 'expo-router/build/hooks';
 
-export default function page() {
+export default function Checkout() {
   const searchParams = useSearchParams();
   const id = searchParams.get('numberId');
 

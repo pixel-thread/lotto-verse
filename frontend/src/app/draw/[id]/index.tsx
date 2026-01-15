@@ -2,7 +2,7 @@ import { CustomHeader } from '@/src/components/common/CustomHeader';
 import { DrawDetailScreen } from '@/src/components/screen/draw/DrawDetailScreen';
 import { useLocalSearchParams } from 'expo-router';
 
-export default function page() {
+export default function Draw() {
   const { id } = useLocalSearchParams();
   return (
     <>

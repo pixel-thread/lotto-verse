@@ -33,7 +33,6 @@ export function ContinuousShuffleCounter({ luckyNumbers }: { luckyNumbers: Numbe
       .split('')
       .forEach((d) => uniqueDigitsSet.add(d));
   });
-  const shuffleDigits = Array.from(uniqueDigitsSet);
 
   // Determine display number (winner or cycle)
   const displayNumber =
@@ -48,7 +47,7 @@ export function ContinuousShuffleCounter({ luckyNumbers }: { luckyNumbers: Numbe
     if (!isStopped) {
       intervalRef.current = setInterval(() => {
         setCurrentIndex((prev) => (prev + 1) % numbers.length);
-      }, 100000); // Long interval for continuous shuffle
+      }, 10000); // Long interval for continuous shuffle
 
       return () => {
         if (intervalRef.current) clearInterval(intervalRef.current);
@@ -68,7 +67,6 @@ export function ContinuousShuffleCounter({ luckyNumbers }: { luckyNumbers: Numbe
               targetDigit={digit}
               index={index}
               isStopped={isStopped || false}
-              shuffleDigits={shuffleDigits} // Pass allowed digits to shuffle
             />
           ))}
         </XStack>

@@ -30,7 +30,7 @@ export function HomeScreen() {
 
   const declarationDate = formatMonthWithTime(draw?.endDate || 'To be announced');
 
-  const declarationTime = '6:00 PM';
+  const declarationTime = '6-7 PM';
 
   const onRefresh = useCallback(async () => {
     try {

@@ -2,7 +2,7 @@ import { CustomHeader } from '@/src/components/common/CustomHeader';
 import AdminEditDrawScreen from '@/src/components/screen/admin/draws/EditDrawScreen';
 import { Stack, useLocalSearchParams } from 'expo-router';
 
-export default function page() {
+export default function EditDraw() {
   const { id } = useLocalSearchParams();
   return (
     <>
