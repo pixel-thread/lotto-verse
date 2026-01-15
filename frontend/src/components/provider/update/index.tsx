@@ -35,7 +35,9 @@ export default function EASUpdateProvider({ children }: Props) {
   );
 
   useEffect(() => {
-    checkForAndHandleUpdates();
+    if (process.env.NODE_ENV === 'production') {
+      checkForAndHandleUpdates();
+    }
   }, []);
 
   return (

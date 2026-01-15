@@ -27,6 +27,7 @@ const adminDrawerMenuItems: MenuItemsT[] = [
   { id: 1, title: 'Home', herf: '/' },
   { id: 2, title: 'Draws', herf: '/admin/draws' },
   { id: 3, title: 'Transaction', herf: '/admin/transactions' },
+  { id: 8, title: 'Purchases', herf: '/admin/purchases' },
   { id: 4, title: 'Winner', herf: '/admin/winners' },
   { id: 5, title: 'User', herf: '/admin/users' },
   { id: 6, title: 'Updates', herf: '/admin/updates' },

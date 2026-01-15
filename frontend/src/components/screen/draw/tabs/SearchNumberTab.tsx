@@ -129,22 +129,17 @@ export const SearchNumberTab = memo(({ onNumberChange, draw }: Props) => {
       </XStack>
 
       {searchedNumber && (
-        <Card
-          padding="$4"
-          borderRadius="$6"
-          borderWidth={2}
-          borderColor={searchedNumber.isPurchased ? '$red8' : '$green8'}
-          backgroundColor={searchedNumber.isPurchased ? '$red2' : '$green2'}>
-          <YStack gap="$3" items="center">
-            <Text fontSize="$10" fontWeight="900">
-              {searchedNumber.number}
+        <Card padding="$4" rounded="$6" bordered themeInverse>
+          <YStack gap="$2" items="center">
+            <Text fontSize="$3" textTransform="uppercase" fontWeight="700">
+              Selected Number
             </Text>
-            <Paragraph
-              size="$4"
-              fontWeight="600"
-              color={searchedNumber.isPurchased ? '$red11' : '$green11'}>
-              {searchedNumber.isPurchased ? 'Already Purchased' : 'Available for Purchase'}
-            </Paragraph>
+            <Text fontSize="$10" fontWeight="900">
+              {searchNumber ?? '—'}
+            </Text>
+            <Text fontSize="$2" color="gray">
+              {!!SearchNumberTab ? 'Ready to add purchase' : 'No number selected'}
+            </Text>
           </YStack>
         </Card>
       )}

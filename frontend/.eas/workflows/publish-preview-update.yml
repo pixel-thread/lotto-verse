@@ -3,7 +3,7 @@ name: EAS Trigger deployment to preview
 on:
   push:
     # Deploy only from your protected branch
-    branches: ['uat']
+    # branches: ['uat']
 
 jobs:
   fingerprint:
