@@ -34,7 +34,7 @@ export async function createPurchaseAtomic({ data }: Props) {
       const purchase = await tx.purchase.create({
         data: {
           razorpayId: data.razorpayId,
-          amount: data.amount,
+          amount: data.amount + 1.8,
           status: "PENDING", // or SUCCESS based on flow
           luckyNumberId: data.luckyNumberId,
           luckyNumber: { connect: { id: data.luckyNumberId } },
