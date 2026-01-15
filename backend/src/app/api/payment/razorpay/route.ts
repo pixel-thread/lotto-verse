@@ -124,7 +124,7 @@ export async function POST(req: NextRequest) {
       return ErrorResponse({ error: "Enter price not found", status: 404 });
     }
 
-    const order = await createRazorPayOrder({ amount: price });
+    const order = await createRazorPayOrder({ amount: price + 1.8 });
 
     if (!order) {
       return ErrorResponse({ error: "Payment not created", status: 500 });
