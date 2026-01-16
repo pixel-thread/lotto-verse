@@ -11,7 +11,6 @@ import { USER_ENDPOINTS } from '@/src/lib/endpoints/user';
 import { useAuth } from '@/src/hooks/auth/useAuth';
 import { useAuth as useCAuth } from '@clerk/clerk-expo';
 import { toast } from 'sonner-native';
-import { logger } from '@/src/utils/logger';
 
 type FormData = {
   phoneNo: string;
@@ -31,11 +30,6 @@ export const ProfileUpdateSheet = ({}: Props) => {
 
   const url = USER_ENDPOINTS.POST_UPDATE_USER.replace(':id', user?.id || '');
 
-  logger.log('url', {
-    url: url,
-    userId: user?.id,
-    user,
-  });
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: FormData) => http.post(url, data),
     onSuccess: (data) => {
