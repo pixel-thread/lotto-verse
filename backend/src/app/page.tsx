@@ -4,6 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Smartphone } from "lucide-react";
 import http from "../utils/http";
 import { AppVersion, Prisma } from "../lib/db/prisma/generated/prisma";
+import { Button } from "../components/ui/button";
+import { openApp } from "../utils/openApp";
 
 export default function HeroLandingPage() {
   const { data, isFetching } = useQuery({
@@ -77,6 +79,13 @@ export default function HeroLandingPage() {
                 App Not Available
               </div>
             )}
+            <Button
+              variant="outline"
+              className="inline-flex items-center ml-4 gap-4 h-14 px-8 rounded-xl font-semibold transition"
+              onClick={() => openApp("/")}
+            >
+              Open The App
+            </Button>
           </div>
 
           {/* Minimal Stats */}
