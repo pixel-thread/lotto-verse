@@ -8,25 +8,26 @@ import { NextRequest } from "next/server";
 export async function GET(req: NextRequest) {
   try {
     await requireAdmin(req);
+
     const winners = await getWinners();
 
     const data = await Promise.all(
       winners.map(async (winner) => {
-        const id = winner.user.id;
+        const id = winner.user.clerkId;
         const clerkUser = await clerk.users.getUser(id);
         return {
           id: winner.id,
+          userId: winner.user.id,
           name: clerkUser.username || clerkUser.firstName || clerkUser.lastName,
           imageUrl: clerkUser.imageUrl,
           draw: winner.draw.month,
           luckyNumber: winner.luckyNumber,
-          isPaid: winner.paidAt !== null,
-          paidAt: winner.paidAt,
+          isPaid: winner.isPaid,
+          paidAt: winner.paidAt?.toISOString().slice(0, 10),
           prizeAmount: winner?.draw?.prize?.amount,
         };
       }),
     );
-
     return SuccessResponse({
       data: data,
       message: "Success fetching winners",
