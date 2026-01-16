@@ -4,6 +4,7 @@ import { createPurchaseAtomic } from "@/src/services/purchase/createPurchase";
 import { getPurchaseByLuckyNumber } from "@/src/services/purchase/getPurchaseByLuckyNumber";
 import { getUserPurchase } from "@/src/services/user/getUserPurchase";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
+import { logger } from "@/src/utils/logger";
 import { requireAuth } from "@/src/utils/middleware/requiredAuth";
 import { ErrorResponse, SuccessResponse } from "@/src/utils/next-response";
 import { createRazorPayOrder } from "@/src/utils/razorpay/createOrder";
@@ -66,6 +67,12 @@ export async function POST(req: NextRequest) {
     }
 
     if (!isDrawExist.declareAt) {
+      logger.info("Draw declaration time not set", {
+        userId: user.id,
+        drawId: isDrawExist.id,
+        drawDeclareAt: isDrawExist.declareAt,
+      });
+
       return ErrorResponse({
         error: "Draw declaration time not set",
         status: 400,
@@ -73,6 +80,11 @@ export async function POST(req: NextRequest) {
     }
 
     if (!isPaymentOpen(isDrawExist.declareAt)) {
+      logger.info("Payment closed", {
+        userId: user.id,
+        drawId: isDrawExist.id,
+      });
+
       return ErrorResponse({
         error: "Payments closed at 4 PM IST",
         status: 400,
@@ -83,6 +95,12 @@ export async function POST(req: NextRequest) {
       isDrawExist?.isWinnerDecleared || isDrawExist.status === "INACTIVE";
 
     if (isPaymentClose) {
+      logger.info("Draw is closed unable to purchase", {
+        drawStatus: isDrawExist.status,
+        drawId: isDrawExist.id,
+        userId: user.id,
+      });
+
       return ErrorResponse({
         error: "Draw is closed unable to purchase",
         status: 400,
@@ -148,6 +166,12 @@ export async function POST(req: NextRequest) {
         drawId: isLuckyNumberExist.drawId,
         drawMonth: isDrawExist.month,
       },
+    });
+
+    logger.info("Payment created", {
+      userId: user.id,
+      amount: createdOrder.amount,
+      drawId: isLuckyNumberExist.drawId,
     });
 
     return SuccessResponse({
