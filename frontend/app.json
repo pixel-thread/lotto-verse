@@ -35,13 +35,14 @@
       "intentFilters": [
         {
           "action": "VIEW",
+          "category": ["BROWSABLE", "DEFAULT"],
           "data": [
             {
               "scheme": "https",
-              "host": "lott-verse.vercel.app"
+              "host": "lotto-verse.vercel.app",
+              "pathPrefix": "/"
             }
-          ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          ]
         }
       ]
     },
