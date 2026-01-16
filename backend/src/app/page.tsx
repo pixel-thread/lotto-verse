@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Smartphone, Trophy } from "lucide-react";
 import http from "../utils/http";
 import { AppVersion } from "../lib/db/prisma/generated/prisma";
+import { openApp } from "../utils/openApp";
 
 export default function HeroLandingPage() {
   const { data, isFetching } = useQuery({
@@ -14,6 +15,7 @@ export default function HeroLandingPage() {
   return (
     <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-blue-50">
       {/* Hero Section */}
+      <button onClick={() => openApp("results?id=123")}>Open in App</button>
       <div className="container mx-auto px-4 py-12 lg:py-20">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Side - Hero Content */}

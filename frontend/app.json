@@ -31,7 +31,19 @@
         "foregroundImage": "./src/assets/icons/android-icon/play_store_512.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.jyrwaboys.frontend"
+      "package": "com.jyrwaboys.frontend",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "https",
+              "host": "lott-verse.vercel.app"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "extra": {
       "router": {},

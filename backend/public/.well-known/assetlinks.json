@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.jyrwaboys.frontend",
+      "sha256_cert_fingerprints": [
+        "76:54:84:4F:4D:7A:2E:B0:C0:C7:7F:D6:B6:AB:9E:49:99:27:88:9E:CD:5D:7D:9F:0E:09:CF:24:AD:73:A1:7E"
+      ]
+    }
+  }
+]
