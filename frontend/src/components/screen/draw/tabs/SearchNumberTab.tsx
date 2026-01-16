@@ -1,109 +1,113 @@
-import React, { useState, useCallback, memo, useMemo } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import { Button, Card, Input, Paragraph, Spinner, Text, XStack, YStack } from 'tamagui';
 import { toast } from 'sonner-native';
 import { useMutation } from '@tanstack/react-query';
+import { router } from 'expo-router';
+
 import http from '@/src/utils/http';
 import { LUCKY_NUMBER_ENDPOINTS } from '@/src/lib/endpoints/lucky-number';
 import { LuckyNumbersT } from '@/src/types/lucky-number';
 import { Ternary } from '@/src/components/common/Ternary';
-import { router } from 'expo-router';
 import { useCurrentDraw } from '@/src/hooks/draw/useCurrentDraw';
-import { logger } from '@/src/utils/logger';
 import { useAuth } from '@/src/hooks/auth/useAuth';
+import { logger } from '@/src/utils/logger';
 
 type Props = {
   onNumberChange?: (number: LuckyNumbersT) => void;
 };
 
+type BackendResponse = {
+  success: boolean;
+  message: string;
+  data: LuckyNumbersT[] | null;
+};
+
 export const SearchNumberTab = memo(({ onNumberChange }: Props) => {
-  const [searchNumber, setSearchNumber] = useState('');
-  const [searchedNumber, setSearchedNumber] = useState<LuckyNumbersT | null>(null);
   const { user } = useAuth();
   const { data: draw } = useCurrentDraw();
-  // Only get the data we need, don't track isFetching
-  const endRange = draw?.endRange || 999;
-  const startRange = draw?.startRange || 1;
-  // Memoize computed values
-  const maxLength = useMemo(() => String(endRange || 999).length, [endRange]);
+
+  const [searchNumber, setSearchNumber] = useState('');
+  const [searchedNumber, setSearchedNumber] = useState<LuckyNumbersT | null>(null);
+  const [selectedNumberId, setSelectedNumberId] = useState<string | null>(null);
+
+  const startRange = draw?.startRange ?? 1;
+  const endRange = draw?.endRange ?? 999;
+
+  const maxLength = useMemo(() => String(endRange).length, [endRange]);
   const placeholder = useMemo(() => `Enter ${startRange}-${endRange}`, [startRange, endRange]);
 
-  // Memoize the success handler
+  const resetSelection = useCallback(() => {
+    setSearchedNumber(null);
+    setSelectedNumberId(null);
+  }, []);
+
   const handleSuccess = useCallback(
-    (data: { success: boolean; message: string; data: LuckyNumbersT[] | null }) => {
-      if (data?.success) {
-        if (data.data && data.data.length > 0) {
-          const number = data.data[0];
-          if (!number.isPurchased) {
-            setSearchedNumber(number);
-            onNumberChange && onNumberChange(number);
-            return data;
-          }
-          setSearchedNumber(number);
-          toast.error('Number is purchase by another user', {
-            duration: 5000,
-            position: 'top-center',
-          });
-          return number;
-        }
-        toast.error('Number not found');
+    (response: BackendResponse) => {
+      if (!response?.success || !response.data?.length) {
+        toast.error(response?.message || 'Number not found');
+        resetSelection();
         return;
       }
-      toast.error(data.message);
-      return data;
+
+      const number = response.data[0];
+      setSearchedNumber(number);
+
+      if (number.isPurchased) {
+        setSelectedNumberId(null);
+        toast.error('This number is already purchased');
+        return;
+      }
+
+      setSelectedNumberId(number.id);
+      onNumberChange?.(number);
     },
-    []
+    [onNumberChange, resetSelection]
   );
 
-  const { mutate: check, isPending: isChecking } = useMutation({
-    mutationFn: (searchNumber: string) =>
-      http.post<LuckyNumbersT[]>(LUCKY_NUMBER_ENDPOINTS.POST_SEARCH_LUCKY_NUMBER, {
-        query: searchNumber,
-      }),
+  const { mutate: checkNumber, isPending } = useMutation({
+    mutationFn: (query: string) =>
+      http.post<LuckyNumbersT[]>(LUCKY_NUMBER_ENDPOINTS.POST_SEARCH_LUCKY_NUMBER, { query }),
     onSuccess: handleSuccess,
   });
 
-  // Memoize the text change handler
-  const onTextChange = useCallback((text: string) => {
-    setSearchNumber(text);
-    setSearchedNumber(null);
-  }, []);
+  const onTextChange = useCallback(
+    (text: string) => {
+      setSearchNumber(text);
+      resetSelection();
+    },
+    [resetSelection]
+  );
 
-  // Memoize the check handler
   const handleCheck = useCallback(() => {
-    if (searchNumber.trim() !== '') {
-      check(searchNumber);
-    }
-  }, [check, searchNumber]);
+    if (!searchNumber.trim()) return;
+    checkNumber(searchNumber);
+  }, [checkNumber, searchNumber]);
 
-  const onConfirmSelection = useCallback(() => {
-    if (searchedNumber) {
-      if (searchedNumber?.isPurchased) {
-        toast.error('This number has already been purchased');
-        logger.info('Number already purchased', {
-          numberId: searchedNumber?.id,
-          userId: user?.id,
-          number: searchedNumber?.number,
-        });
-        return;
-      }
-      logger.info('Navigating to checkout', {
-        numberId: searchedNumber?.id,
+  const handleBuy = useCallback(() => {
+    if (!selectedNumberId) {
+      logger.error('Buy pressed without selected number', {
         userId: user?.id,
-        number: searchedNumber?.number,
+        searchNumber,
       });
-      router.push(`/draw/checkout?numberId=${searchedNumber?.id}`);
       return;
     }
-    logger.error('No number selected Before Buy/checkout', {
+
+    logger.info('Navigating to checkout', {
+      numberId: selectedNumberId,
       userId: user?.id,
-      searchNumber: searchNumber,
+      number: searchNumber,
     });
-  }, []);
+
+    router.push(`/draw/checkout?numberId=${selectedNumberId}`);
+  }, [selectedNumberId, user?.id, searchNumber]);
+
+  const canBuy = !!selectedNumberId;
 
   return (
     <Card padded>
       <YStack gap="$4" width="100%">
-        <Paragraph size="$2">Enter a specific number to check if it's available</Paragraph>
+        <Paragraph size="$2">Enter a specific number to check if it&apos;s available</Paragraph>
+
         <XStack gap="$3" items="center">
           <Input
             flex={1}
@@ -115,9 +119,7 @@ export const SearchNumberTab = memo(({ onNumberChange }: Props) => {
             maxLength={maxLength}
             borderWidth={2}
             borderColor="$borderColor"
-            focusStyle={{
-              borderColor: '$blue9',
-            }}
+            focusStyle={{ borderColor: '$blue9' }}
           />
         </XStack>
 
@@ -132,9 +134,11 @@ export const SearchNumberTab = memo(({ onNumberChange }: Props) => {
               <Text fontSize="$3" textTransform="uppercase" fontWeight="700">
                 Selected Number
               </Text>
+
               <Text fontSize="$10" fontWeight="900">
-                {searchNumber ?? '—'}
+                {searchedNumber.number}
               </Text>
+
               <Text fontSize="$2">
                 {searchedNumber.isPurchased ? 'This number is not available' : 'Ready to buy'}
               </Text>
@@ -144,21 +148,13 @@ export const SearchNumberTab = memo(({ onNumberChange }: Props) => {
 
         <Button
           size="$5"
-          themeInverse={searchNumber !== ''}
-          onPress={!!searchedNumber?.id ? onConfirmSelection : handleCheck}
-          disabled={!searchNumber || isChecking}>
+          themeInverse={canBuy}
+          disabled={!searchNumber || isPending}
+          onPress={canBuy ? handleBuy : handleCheck}>
           <Ternary
-            condition={isChecking}
+            condition={isPending}
             ifTrue={<Spinner size="small" color="white" />}
-            ifFalse={
-              <Text fontWeight="700" color="white">
-                {searchedNumber?.isPurchased
-                  ? 'Not Available'
-                  : !searchedNumber?.isPurchased && searchedNumber
-                    ? 'Buy'
-                    : 'Check'}
-              </Text>
-            }
+            ifFalse={<Text>{canBuy ? 'Buy' : 'Check'}</Text>}
           />
         </Button>
       </YStack>

@@ -15,35 +15,35 @@ type Items = {
 };
 
 const items: Items[] = [
-  {
-    href: '/',
-    label: 'Profile',
-    isDisabled: true,
-  },
+  // {
+  //   href: '/',
+  //   label: 'Profile',
+  //   isDisabled: true,
+  // },
   {
     href: '/billing',
     label: 'Billing',
   },
-  {
-    href: '/',
-    label: 'Rules',
-    isDisabled: true,
-  },
-  {
-    href: '/',
-    label: 'Help',
-    isDisabled: true,
-  },
-  {
-    href: '/',
-    label: 'Settings',
-    isDisabled: true,
-  },
-  {
-    href: '/',
-    label: 'About',
-    isDisabled: true,
-  },
+  // {
+  //   href: '/',
+  //   label: 'Rules',
+  //   isDisabled: true,
+  // },
+  // {
+  //   href: '/',
+  //   label: 'Help',
+  //   isDisabled: true,
+  // },
+  // {
+  //   href: '/',
+  //   label: 'Settings',
+  //   isDisabled: true,
+  // },
+  // {
+  //   href: '/',
+  //   label: 'About',
+  //   isDisabled: true,
+  // },
 ];
 
 export function ProfileScreen() {
@@ -53,8 +53,19 @@ export function ProfileScreen() {
   const { data: userData, refetch, isFetching: isLoading } = useLottoVerseUser();
   const onRefresh = () => refetch();
 
-  if (!user || !userData || isLoading) {
-    return <LoadingScreen />;
+  if (isLoading || !user || !userData) {
+    return (
+      <>
+        <Stack.Screen
+          options={{
+            title: 'Profile',
+            header: ({ back }) => <CustomHeader back={!!back} />,
+            headerShown: true,
+          }}
+        />
+        <LoadingScreen />
+      </>
+    );
   }
 
   return (
@@ -69,7 +80,9 @@ export function ProfileScreen() {
       <ScrollView
         flex={1}
         refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefresh} />}
-        paddingInline={10}
+        paddingInline={'$4'}
+        paddingBlock={'$4'}
+        bg={'$background'}
         paddingBlockEnd={200}>
         <YStack gap="$3" items="center">
           <Card padding={'$2'} borderColor={'$borderColor'} elevate bordered rounded="$6">

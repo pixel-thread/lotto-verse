@@ -35,7 +35,6 @@ export function CheckoutPage({ id }: CheckoutPageProps) {
       http.post<{ id: string }>(PAYMENT_ENDPOINTS.POST_VERYFY_PAYMENT, data),
     onSuccess: (data) => {
       if (data.success) {
-        logger.log('Payment verified', { userId: user?.id });
         toast.success(`${data.message}, Redirecting`, {
           duration: 10000,
         });
@@ -43,6 +42,7 @@ export function CheckoutPage({ id }: CheckoutPageProps) {
         queryClient.invalidateQueries({
           queryKey: ['current', 'luckyNumbers', 1],
         });
+        logger.info('Payment verified', { userId: user?.id, luckyNumberId: data?.data?.id });
         router.push(`/draw/purchase/${id}`);
         return data;
       }
@@ -57,7 +57,7 @@ export function CheckoutPage({ id }: CheckoutPageProps) {
       http.post<CheckoutOptions>(PAYMENT_ENDPOINTS.POST_CREATE_PAYMENT, { luckyNumberId: id }),
     onSuccess: (data) => {
       if (data?.success && data.data) {
-        logger.log('Creating payment options', { userId: user?.id, luckyNumberId: id });
+        logger.info('Creating payment options', { userId: user?.id, luckyNumberId: id });
         const options: CheckoutOptions = {
           description: data.data.description,
           name: data.data.name,
@@ -67,10 +67,10 @@ export function CheckoutPage({ id }: CheckoutPageProps) {
           key: data.data.key,
         };
 
-        logger.log('Opening Razorpay', { userId: user?.id, luckyNumberId: id });
+        logger.info('Opening Razorpay', { userId: user?.id, luckyNumberId: id });
         RazorpayCheckout.open(options)
           .then((data) => {
-            logger.log('Payment went through', { userId: user?.id, luckyNumberId: id });
+            logger.info('Payment went through', { userId: user?.id, luckyNumberId: id });
             mutateVerify(data);
             return data;
           })
