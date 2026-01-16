@@ -72,5 +72,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     isAuthLoading: isFetching,
     isSuperAdmin: data?.role === 'SUPER_ADMIN' || false,
   } satisfies AuthContextT;
+
+  if (isFetching) {
+    return <LoadingScreen />;
+  }
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
