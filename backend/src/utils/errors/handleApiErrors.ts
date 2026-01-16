@@ -9,8 +9,7 @@ import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
 export const handleApiErrors = (error: unknown) => {
   // Handle Clerk API errors
   if (isClerkAPIResponseError(error)) {
-    logger.error({
-      type: "ClerkAPIError",
+    logger.error("Clerk API error", {
       message: error.message,
       error,
     });
@@ -22,8 +21,7 @@ export const handleApiErrors = (error: unknown) => {
   }
 
   if (error instanceof Prisma.PrismaClientInitializationError) {
-    logger.error({
-      type: "PrismaClientInitializationError",
+    logger.error("PrismaClientInitializationError", {
       message: error.message,
       error,
     });
@@ -31,8 +29,7 @@ export const handleApiErrors = (error: unknown) => {
   }
 
   if (error instanceof Prisma.PrismaClientValidationError) {
-    logger.error({
-      type: "PrismaClientValidationError",
+    logger.error("PrismaClientValidationError", {
       message: error.message,
       error,
     });
@@ -40,8 +37,7 @@ export const handleApiErrors = (error: unknown) => {
   }
 
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
-    logger.error({
-      type: "PrismaClientKnownRequestError",
+    logger.error("PrismaClientKnownRequestError", {
       message: error.message,
       error,
     });
@@ -49,8 +45,7 @@ export const handleApiErrors = (error: unknown) => {
   }
 
   if (error instanceof ZodError) {
-    logger.error({
-      type: "ZodError",
+    logger.error("ZodError", {
       message: error.issues[0].message,
       error: error,
     });
@@ -62,8 +57,7 @@ export const handleApiErrors = (error: unknown) => {
   }
 
   if (error instanceof EmailError) {
-    logger.error({
-      type: "EmailError",
+    logger.error("EmailError", {
       message: error.message,
       error,
     });
@@ -75,8 +69,7 @@ export const handleApiErrors = (error: unknown) => {
   }
 
   if (error instanceof UnauthorizedError) {
-    logger.error({
-      type: "UnauthorizedError",
+    logger.error("UnauthorizedError", {
       message: error.message,
       error,
     });
@@ -86,8 +79,7 @@ export const handleApiErrors = (error: unknown) => {
     });
   }
   if (error instanceof Error) {
-    logger.error({
-      type: "Error",
+    logger.error("Error", {
       message: error.message,
       error,
     });
@@ -97,8 +89,7 @@ export const handleApiErrors = (error: unknown) => {
     });
   }
 
-  logger.error({
-    type: "InternalServerError",
+  logger.error("InternalServerError", {
     message: "Internal Server Error",
     error,
   });
