@@ -40,6 +40,7 @@ export function DrawDetailScreen({ id }: Props) {
   if (!draw) {
     return (
       <ScrollView
+        bg="$background"
         flex={1}
         refreshControl={
           <RefreshControl refreshing={isDrawLoading || isLuckyLoading} onRefresh={onRefresh} />
@@ -65,6 +66,7 @@ export function DrawDetailScreen({ id }: Props) {
     <>
       <ScrollView
         flex={1}
+        bg="$background"
         refreshControl={
           <RefreshControl refreshing={isDrawLoading || isLuckyLoading} onRefresh={onRefresh} />
         }
