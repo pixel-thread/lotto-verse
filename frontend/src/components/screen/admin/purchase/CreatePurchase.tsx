@@ -31,7 +31,7 @@ type UserT = {
   isLocked: boolean;
 };
 export const CreatePurchase = () => {
-  const { data: ActiveDraw, isFetching } = useCurrentDraw();
+  const { isFetching } = useCurrentDraw();
   const [number, setNumber] = useState<LuckyNumbersT | null>(null);
   const [selectedUser, setSelectedUser] = useState<string>('');
 
