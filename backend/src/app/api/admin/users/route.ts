@@ -1,13 +1,11 @@
 import { clerk } from "@/src/lib/clerk";
 import { getUsers } from "@/src/services/user/getUsers";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
-import { requireAdmin } from "@/src/utils/middleware/requireAdmin";
 import { SuccessResponse } from "@/src/utils/next-response";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
-    await requireAdmin(req);
     const users = await getUsers();
 
     const data = await Promise.all(

@@ -1,102 +1,104 @@
 "use client";
+
 import { useQuery } from "@tanstack/react-query";
-import { Smartphone, Trophy } from "lucide-react";
+import { Smartphone } from "lucide-react";
 import http from "../utils/http";
-import { AppVersion } from "../lib/db/prisma/generated/prisma";
+import { AppVersion, Prisma } from "../lib/db/prisma/generated/prisma";
 
 export default function HeroLandingPage() {
   const { data, isFetching } = useQuery({
     queryKey: ["latest-update"],
     queryFn: () => http.get<AppVersion>("/update/latest"),
-    select: (data) => data.data,
+    select: (res) => res.data,
+  });
+
+  const { data: users = [], isFetching: isFetchingUsers } = useQuery({
+    queryKey: ["users"],
+    queryFn: () => http.get<Prisma.UserGetPayload<{}>[]>("/admin/users"),
+    select: (res) => res.data,
   });
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-blue-50">
+    <div className="min-h-screen bg-white text-black">
+      {/* Mock Header */}
+      <header className="border-b border-gray-200">
+        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+          <div className="text-xl font-black tracking-tight">
+            Lotto<span className="text-gray-400">Verse</span>
+          </div>
+
+          <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-gray-600">
+            <a href="#" className="hover:text-black transition">
+              Home
+            </a>
+            <a href="#" className="hover:text-black transition">
+              Winners
+            </a>
+            <a href="#" className="hover:text-black transition">
+              About
+            </a>
+          </nav>
+        </div>
+      </header>
+
       {/* Hero Section */}
-      <div className="container mx-auto px-4 py-12 lg:py-20">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left Side - Hero Content */}
-          <div className="space-y-8">
-            <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-bold uppercase">
-                <Trophy className="w-4 h-4" />
-                <span>Win Big Today!</span>
-              </div>
+      <main className="container mx-auto px-4 py-20">
+        <div className="max-w-3xl">
+          <h1 className="text-5xl lg:text-6xl font-black leading-tight">
+            Simple.
+            <br />
+            Fair.
+            <br />
+            Rewarding.
+          </h1>
 
-              <h1 className="text-5xl lg:text-6xl font-black text-gray-900 leading-tight">
-                Your Lucky Numbers Await
-              </h1>
+          <p className="mt-6 text-lg text-gray-600 max-w-xl">
+            A modern lucky draw platform trusted by thousands. Download the app
+            and start participating in verified daily draws.
+          </p>
 
-              <p className="text-lg text-gray-600 leading-relaxed">
-                Join thousands of winners in the most exciting lucky draw
-                platform. Download our app and start your winning journey today.
-              </p>
-            </div>
+          {/* Download CTA */}
+          <div className="mt-10">
+            {isFetching ? (
+              <div className="inline-flex items-center justify-center h-14 px-8 rounded-xl bg-black text-white font-semibold">
+                Loading...
+              </div>
+            ) : data?.downloadUrl ? (
+              <a
+                href={data.downloadUrl}
+                target="_blank"
+                className="inline-flex items-center gap-4 h-14 px-8 rounded-xl bg-black text-white font-semibold hover:bg-gray-900 transition"
+              >
+                <Smartphone className="w-5 h-5" />
+                Download App
+              </a>
+            ) : (
+              <div className="inline-flex items-center justify-center h-14 px-8 rounded-xl bg-gray-200 text-gray-600 font-semibold">
+                App Not Available
+              </div>
+            )}
+          </div>
 
-            {/* App Download Buttons */}
-            <div className="space-y-4">
-              <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-                Download Our App
-              </p>
-              <div className="flex flex-wrap gap-4">
-                {isFetching ? (
-                  <h1 className="flex items-center gap-3 bg-black text-white px-6 py-4 rounded-2xl font-bold hover:bg-gray-800 transition-all hover:scale-105 shadow-lg">
-                    Loading
-                  </h1>
-                ) : (
-                  <>
-                    {data?.downloadUrl ? (
-                      <a
-                        href={data?.downloadUrl ?? ""}
-                        target="_blank"
-                        className="flex items-center gap-3 bg-black text-white px-6 py-4 rounded-2xl font-bold hover:bg-gray-800 transition-all hover:scale-105 shadow-lg"
-                      >
-                        <Smartphone className="w-6 h-6" />
-                        <div className="text-left">
-                          <div className="text-xl opacity-80">Download on</div>
-                          <div className="text-lg">Lotto Verse</div>
-                        </div>
-                      </a>
-                    ) : (
-                      <h1 className="flex items-center gap-3 bg-black text-white px-6 py-4 rounded-2xl font-bold hover:bg-gray-800 transition-all hover:scale-105 shadow-lg">
-                        <Smartphone className="w-6 h-6" />
-                        <div className="text-left">
-                          <div className="text-xl opacity-80">
-                            No App Available
-                          </div>
-                        </div>
-                      </h1>
-                    )}
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* Features */}
-            <div className="grid grid-cols-3 gap-4 pt-4">
-              <div className="text-center">
-                <div className="text-3xl font-black text-blue-600">10K+</div>
-                <div className="text-xs text-gray-600 font-semibold">
-                  Active Users
-                </div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-black text-green-600">₹50L+</div>
-                <div className="text-xs text-gray-600 font-semibold">
-                  Prizes Won
-                </div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-black text-purple-600">99%</div>
-                <div className="text-xs text-gray-600 font-semibold">
-                  Satisfaction
-                </div>
-              </div>
-            </div>
+          {/* Minimal Stats */}
+          <div className="mt-16 grid grid-cols-3 gap-8 max-w-xl">
+            <Stat
+              value={isFetchingUsers ? "..." : users?.length.toString() || "0"}
+              label="Active Users"
+            />
+            <Stat value="₹50L+" label="Rewards Paid" />
+            <Stat value="99%" label="User Trust" />
           </div>
         </div>
-      </div>
+      </main>
+    </div>
+  );
+}
+
+function Stat({ value, label }: { value: string; label: string }) {
+  return (
+    <div>
+      <div className="text-3xl font-black">{value}</div>
+      <div className="text-sm text-gray-500 font-medium mt-1">{label}</div>
     </div>
   );
 }
