@@ -8,6 +8,8 @@ import { LuckyNumbersT } from '@/src/types/lucky-number';
 import { Ternary } from '@/src/components/common/Ternary';
 import { router } from 'expo-router';
 import { useCurrentDraw } from '@/src/hooks/draw/useCurrentDraw';
+import { logger } from '@/src/utils/logger';
+import { useAuth } from '@/src/hooks/auth/useAuth';
 
 type Props = {
   onNumberChange?: (number: LuckyNumbersT) => void;
@@ -15,8 +17,9 @@ type Props = {
 
 export const SearchNumberTab = memo(({ onNumberChange }: Props) => {
   const [searchNumber, setSearchNumber] = useState('');
-  const { data: draw } = useCurrentDraw();
   const [searchedNumber, setSearchedNumber] = useState<LuckyNumbersT | null>(null);
+  const { user } = useAuth();
+  const { data: draw } = useCurrentDraw();
   // Only get the data we need, don't track isFetching
   const endRange = draw?.endRange || 999;
   const startRange = draw?.startRange || 1;
@@ -73,11 +76,28 @@ export const SearchNumberTab = memo(({ onNumberChange }: Props) => {
   }, [check, searchNumber]);
 
   const onConfirmSelection = useCallback(() => {
-    if (searchedNumber?.isPurchased) {
-      toast.error('This number has already been purchased');
+    if (searchedNumber) {
+      if (searchedNumber?.isPurchased) {
+        toast.error('This number has already been purchased');
+        logger.info('Number already purchased', {
+          numberId: searchedNumber?.id,
+          userId: user?.id,
+          number: searchedNumber?.number,
+        });
+        return;
+      }
+      logger.info('Navigating to checkout', {
+        numberId: searchedNumber?.id,
+        userId: user?.id,
+        number: searchedNumber?.number,
+      });
+      router.push(`/draw/checkout?numberId=${searchedNumber?.id}`);
       return;
     }
-    router.push(`/draw/checkout?numberId=${searchedNumber?.id}`);
+    logger.error('No number selected Before Buy/checkout', {
+      userId: user?.id,
+      searchNumber: searchNumber,
+    });
   }, []);
 
   return (

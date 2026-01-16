@@ -27,6 +27,7 @@ import { DrawT } from '@/src/types/draw';
 import { ADMIN_DRAW_ENDPOINTS } from '@/src/lib/endpoints/admin/draws';
 import { Ternary } from '@/src/components/common/Ternary';
 import { Ionicons } from '@expo/vector-icons';
+import { useCurrentDraw } from '@/src/hooks/draw/useCurrentDraw';
 
 type TransactionT = {
   id: string;
@@ -43,7 +44,6 @@ type TransactionT = {
 
 export default function AdminTransactionsScreen() {
   const [value, setValue] = React.useState('');
-
   const { data = [], isFetching: isFetchingDraw } = useQuery({
     queryKey: ['draw'],
     queryFn: () => http.get<DrawT[]>(ADMIN_DRAW_ENDPOINTS.GET_ALL_DRAW),
