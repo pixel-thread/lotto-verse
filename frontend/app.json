@@ -36,6 +36,7 @@
         {
           "action": "VIEW",
           "category": ["BROWSABLE", "DEFAULT"],
+          "autoVerify": true,
           "data": [
             {
               "scheme": "https",
