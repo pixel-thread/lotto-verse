@@ -25,6 +25,26 @@ export default function RootLayout({
   const client = new QueryClient();
   return (
     <html lang="en">
+      <head>
+        <title>Lotto Verse</title>
+        <meta name="title" content="Lotto Verse" />
+        <meta
+          name="description"
+          content="Join thousands of winners in the most exciting lucky draw platform. Download our app and start your winning journey today."
+        />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://lotto-verse.vercel.app/" />
+        <meta property="og:title" content="Lotto Verse" />
+        <meta
+          property="og:description"
+          content="Join thousands of winners in the most exciting lucky draw platform. Download our app and start your winning journey today."
+        />
+        <meta
+          property="og:image"
+          content="https://lotto-verse.vercel.app/assets/images/og.webp"
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
