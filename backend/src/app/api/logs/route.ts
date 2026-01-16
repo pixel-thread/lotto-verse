@@ -9,34 +9,15 @@ import { NextRequest } from "next/server";
 import z from "zod";
 
 // Define validation schema for query params
-const QuerySchema = z.object({
-  now: z.string().optional(),
-  startTime: z
-    .string()
-    .optional()
-    .transform((val) => (val ? new Date(val) : undefined)),
-  endTime: z
-    .string()
-    .default(new Date().toISOString())
-    .optional()
-    .transform((val) => (val ? new Date(val) : undefined)),
-  isBackend: z
-    .string()
-    .optional()
-    .default("false")
-    .transform((val) => val === "true"),
-  type: z.string().optional(),
-  message: z.string().optional(),
-});
-
-// Type-safe where clause builder
+// 1. Fix LogFilters type to support case-insensitive search
 type LogFilters = {
   timestamp?: { gte?: Date; lte?: Date };
   isBackend?: boolean;
-  type?: string;
-  message?: { contains: string };
+  type?: "INFO" | "ERROR" | "WARNING" | "DEBUG";
+  message?: { contains: string; mode?: "insensitive" }; // ✅ Added mode
 };
 
+// 2. Update buildWhereClause to handle mode properly
 function buildWhereClause(filters: LogFilters): Prisma.LogWhereInput {
   const where: Prisma.LogWhereInput = {};
 
@@ -53,59 +34,85 @@ function buildWhereClause(filters: LogFilters): Prisma.LogWhereInput {
   }
 
   if (filters.message) {
-    where.message = filters.message;
+    where.message = {
+      contains: filters.message.contains,
+      mode: filters.message.mode || "default",
+    };
   }
 
   return where;
 }
 
+// 3. Fix Zod schema - transform AFTER parsing strings
+const QuerySchema = z
+  .object({
+    startTime: z.string().optional(),
+    endTime: z.string().optional(),
+    isBackend: z
+      .string()
+      .optional()
+      .transform((val) => val === "true"),
+    type: z.enum(["INFO", "ERROR", "WARNING", "DEBUG"]).optional(),
+    message: z.string("please enter a message").optional(),
+  })
+  .transform((data) => ({
+    ...data,
+    // ✅ Transform strings to Dates AFTER Zod parsing
+    startTime: data.startTime ? new Date(data.startTime) : undefined,
+    endTime: data.endTime ? new Date(data.endTime) : undefined,
+  }));
+
 export async function GET(req: NextRequest) {
   try {
-    // Early auth check
     await requireAdmin(req);
 
     const searchParams = req.nextUrl.searchParams;
 
     const validated = QuerySchema.safeParse({
-      now: searchParams.get("now"),
       startTime: searchParams.get("startTime"),
       endTime: searchParams.get("endTime"),
       isBackend: searchParams.get("isBackend"),
       type: searchParams.get("type"),
-      message: searchParams.get("message"),
+      message: searchParams.get("message") || "",
     });
 
     if (!validated.success) {
-      return handleApiErrors(
-        new Error(`Invalid query params: ${validated.error.message}`),
-      );
+      throw new Error(validated.error.message);
     }
 
-    const { now, startTime, endTime, isBackend, type, message } =
-      validated.data;
+    const { startTime, endTime, isBackend, type, message } = validated.data;
 
-    // Use now as fallback for both start/end if provided
-    const finalStartTime = startTime ?? (now ? new Date(now) : undefined);
-    const finalEndTime = endTime ?? (now ? new Date(now) : undefined);
+    // ✅ Safe date handling with fallbacks
+    const now = new Date();
+    const safeStartTime =
+      startTime ?? new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    const safeEndTime = endTime ?? now;
 
     const filters: LogFilters = {
-      timestamp:
-        finalStartTime || finalEndTime
-          ? {
-              gte: finalStartTime,
-              lte: finalEndTime,
-            }
-          : undefined,
+      timestamp: {
+        gte: safeStartTime,
+        lte: safeEndTime,
+      },
       ...(isBackend !== undefined && { isBackend }),
       ...(type && { type }),
-      ...(message && { message: { contains: message } }),
+      ...(message && {
+        message: {
+          contains: message,
+          mode: "insensitive" as const,
+        },
+      }),
     };
 
-    const where = buildWhereClause(filters);
+    const logs = await getLogs({
+      where: buildWhereClause(filters),
+      orderBy: { timestamp: "desc" },
+      take: 1000,
+    });
 
-    const logs = await getLogs({ where });
-
-    return SuccessResponse({ data: logs });
+    return SuccessResponse({
+      data: logs,
+      message: "Successfully fetched logs",
+    });
   } catch (error) {
     return handleApiErrors(error);
   }
