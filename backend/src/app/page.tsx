@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Smartphone } from "lucide-react";
+import { DownloadIcon, Smartphone } from "lucide-react";
 import http from "../utils/http";
 import { AppVersion, Prisma } from "../lib/db/prisma/generated/prisma";
 import { Button } from "../components/ui/button";
@@ -60,30 +60,32 @@ export default function HeroLandingPage() {
           </p>
 
           {/* Download CTA */}
-          <div className="mt-10">
+          <div className="mt-10 flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 items-center">
             {isFetching ? (
-              <div className="inline-flex items-center justify-center h-14 px-8 rounded-xl bg-black text-white font-semibold">
+              <div className="inline-flex items-center md:w-auto w-full  justify-center h-14 px-8 rounded-xl bg-black text-white font-semibold">
                 Loading...
               </div>
             ) : data?.downloadUrl ? (
               <a
                 href={data.downloadUrl}
                 target="_blank"
-                className="inline-flex items-center gap-4 h-14 px-8 rounded-xl bg-black text-white font-semibold hover:bg-gray-900 transition"
+                className="inline-flex items-center gap-4 h-14 px-8 md:w-auto w-full rounded-xl bg-black text-white font-semibold hover:bg-gray-900 transition"
               >
-                <Smartphone className="w-5 h-5" />
+                <DownloadIcon className="w-5 h-5 mr-2" />
                 Download App
               </a>
             ) : (
-              <div className="inline-flex items-center justify-center h-14 px-8 rounded-xl bg-gray-200 text-gray-600 font-semibold">
+              <div className="inline-flex items-center md:w-auto w-full justify-center h-14 px-8 rounded-xl bg-gray-200 text-gray-600 font-semibold">
+                <DownloadIcon className="w-5 h-5 mr-2" />
                 App Not Available
               </div>
             )}
             <Button
               variant="outline"
-              className="inline-flex items-center ml-4 gap-4 h-14 px-8 rounded-xl font-semibold transition"
+              className="inline-flex md:w-auto w-full items-center gap-4 h-14 px-8 rounded-xl font-semibold transition"
               onClick={() => openApp("/")}
             >
+              <Smartphone className="w-5 h-5" />
               Open The App
             </Button>
           </div>
