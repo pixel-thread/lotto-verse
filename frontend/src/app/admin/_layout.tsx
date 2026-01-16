@@ -8,7 +8,7 @@ export default function AdminLayout() {
   const isSuperAdmin = user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN';
 
   if (!isSuperAdmin) {
-    logger.info('Permission denied: Not super admin', { user: user });
+    logger.info('Permission denied: Not admin', { userId: user?.id, role: user?.role });
     return <Redirect href="/" />;
   }
 
