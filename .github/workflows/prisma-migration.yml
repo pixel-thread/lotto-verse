@@ -1,5 +1,6 @@
 name: Migrate PROD Prisma database
 on:
+  workflow_dispatch:
   push:
     paths:
       - "backend/prisma/migrations/**" # Fixed path
