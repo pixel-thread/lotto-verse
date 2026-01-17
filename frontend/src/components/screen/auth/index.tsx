@@ -24,7 +24,7 @@ WebBrowser.maybeCompleteAuthSession();
 
 export function LoginScreen() {
   useWarmUpBrowser();
-  const { isSignedIn, signOut } = useAuth();
+  const { isSignedIn } = useAuth();
   const { startSSOFlow } = useSSO();
   const [isLoading, setIsLoading] = useState(false);
   const colorSchema = useColorScheme();
@@ -44,7 +44,7 @@ export function LoginScreen() {
         await setActive({
           session: createdSessionId,
           navigate: ({ session }) => {
-            if (session) router.replace('/');
+            if (session) router.replace('/(drawer)/(home)');
           },
         });
         return;

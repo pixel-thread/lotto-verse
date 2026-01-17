@@ -12,6 +12,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import EASUpdateProvider from './update';
 import ErrorBoundary from '../common/ErrorBoundary';
 import { ProfileUpdateSheet } from '../common/ProfileUpdateSheet';
+import { ExpoNotificationProvider } from './notification';
 
 export const Wrapper = () => {
   return (
@@ -27,11 +28,13 @@ export const Wrapper = () => {
                 <RNQueryProvider>
                   <EASUpdateProvider>
                     <AuthProvider>
-                      <SafeAreaProvider className="flex-1">
-                        <AuthRedirect />
-                        <ProfileUpdateSheet open={true} setOpen={() => {}} />
-                        <Toaster closeButton position="bottom-center" />
-                      </SafeAreaProvider>
+                      <ExpoNotificationProvider>
+                        <SafeAreaProvider className="flex-1">
+                          <AuthRedirect />
+                          <ProfileUpdateSheet open={true} setOpen={() => {}} />
+                          <Toaster closeButton position="bottom-center" />
+                        </SafeAreaProvider>
+                      </ExpoNotificationProvider>
                     </AuthProvider>
                   </EASUpdateProvider>
                 </RNQueryProvider>
