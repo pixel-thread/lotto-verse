@@ -1,11 +1,10 @@
-name: Migrate Prisma database
+name: Migrate PROD Prisma database
 on:
   push:
     paths:
       - backend/src/lib/db/prisma/migrations/**
     branches:
       - master
-      - uat
 
 jobs:
   deploy:
