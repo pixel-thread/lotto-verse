@@ -1,9 +1,9 @@
 name: Migrate PROD Prisma database
+
 on:
   push:
     paths:
-      - backend/src/lib/db/prisma/migrations/**
-
+      - "backend/src/lib/db/prisma/migrations/**"
     branches:
       - master
 
@@ -12,12 +12,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4 # Updated to latest
+
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20" # Specify Node version
+          cache: "npm"
+
       - name: Install dependencies
-        run: npm install
-      - name: Apply all pending migrations to the database
+        run: |
+          cd backend
+          npm ci  # Use ci instead of install for CI
+        working-directory: backend
+
+      - name: Apply migrations to PROD database
         run: npx prisma migrate deploy
+        working-directory: backend # ← CRITICAL: Run from backend dir
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
