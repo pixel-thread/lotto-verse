@@ -34,25 +34,54 @@ export function LoginScreen() {
   const onClickGoogle = async () => {
     setIsLoading(true);
     try {
-      await startSSOFlow({ strategy: 'oauth_google' }).then(({ createdSessionId, setActive }) => {
-        if (!!createdSessionId && setActive) {
-          toast.success('Login successful');
-          setActive({
-            session: createdSessionId,
-            navigate: ({ session }) => {
-              if (session) {
-                router.replace('/');
-              }
-            },
-          });
-        }
+      const { createdSessionId, setActive, signUp, signIn } = await startSSOFlow({
+        strategy: 'oauth_google',
       });
-    } catch (error: any) {
-      toast.error(error.errors[0].message);
-      if (error.status === 400) {
-        signOut();
+
+      // Case 1: Existing user - direct session
+      if (createdSessionId && setActive) {
+        toast.success('Login successful');
+        await setActive({
+          session: createdSessionId,
+          navigate: ({ session }) => {
+            if (session) router.replace('/');
+          },
+        });
+        return;
       }
-      logger.error('Login error', error);
+
+      // Case 2: New user - incomplete signup
+      if (signUp?.status === 'missing_requirements' && signUp.update) {
+        const completeSignUp = await signUp.update({
+          username: signUp.emailAddress?.split('@')[0]?.replace(/\W/g, ''),
+        });
+
+        if (completeSignUp?.status === 'complete' && completeSignUp.createdSessionId && setActive) {
+          await setActive({
+            session: completeSignUp.createdSessionId,
+            navigate: ({ session }) => router.replace('/'),
+          });
+          toast.success('Account created successfully');
+          return;
+        }
+      }
+
+      // Case 3: Sign-in flow (fallback)
+      if (signIn?.createdSessionId && setActive) {
+        await setActive({
+          session: signIn.createdSessionId,
+          navigate: ({ session }) => router.replace('/'),
+        });
+        toast.success('Login successful');
+        return;
+      }
+
+      // Fallback error
+      toast.error('Authentication incomplete. Please try again.');
+    } catch (error: any) {
+      const errorMessage = error.errors?.[0]?.message || error.message || 'Authentication failed';
+      toast.error(errorMessage);
+      logger.error('Google OAuth error:', error);
     } finally {
       await WebBrowser.coolDownAsync();
       setIsLoading(false);
@@ -60,7 +89,7 @@ export function LoginScreen() {
   };
 
   return (
-    <View flex={1} paddingInline={4}>
+    <View bg={'$background'} flex={1} paddingInline={4}>
       <View
         flex={1}
         paddingInline={5}

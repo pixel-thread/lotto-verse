@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { View, StyleProp, ViewStyle } from 'react-native';
+import { StyleProp, ViewStyle } from 'react-native';
+import { View } from 'tamagui';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -64,6 +65,7 @@ const Dot: React.FC<DotProps> = ({ size = 15, color = '#000', delay }) => {
 export const LoadingScreen: React.FC = () => {
   return (
     <View
+      bg="$background"
       style={{
         flex: 1,
         alignItems: 'center',
