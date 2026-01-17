@@ -24,6 +24,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          ls
           cd backend
           npm ci  # Use ci instead of install for CI
         working-directory: backend
