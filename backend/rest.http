@@ -7,7 +7,12 @@
 
 ### 
 
-GET {{PROD_DEPLOYMENT}} HTTP/1.1
+POST {{PROD_DEPLOYMENT}} HTTP/1.1
+
+
+### 
+
+POST {{UAT_DEPLOYMENT}} HTTP/1.1
 
 
 ### 
