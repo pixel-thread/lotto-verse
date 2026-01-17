@@ -22,7 +22,7 @@ export default function HeroLandingPage() {
   });
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen bg-white text-black h-screen">
       {/* Mock Header */}
       <header className="border-b border-gray-200">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -45,8 +45,8 @@ export default function HeroLandingPage() {
       </header>
 
       {/* Hero Section */}
-      <main className="container mx-auto px-4 py-20">
-        <div className="max-w-3xl">
+      <main className="container mx-auto min-h-full flex items-center px-4 py-20">
+        <div className="max-w-3xl h-full">
           <h1 className="text-5xl lg:text-6xl font-black leading-tight">
             Simple.
             <br />
@@ -73,7 +73,7 @@ export default function HeroLandingPage() {
                 className={cn(
                   buttonVariants({
                     className:
-                      "inline-flex items-center md:w-auto w-full justify-center h-14 px-8 rounded-xl bg-gray-200 text-gray-600 font-semibold",
+                      "inline-flex items-center md:w-auto w-full justify-center h-14 px-8 font-semibold",
                   }),
                 )}
               >
@@ -104,7 +104,7 @@ export default function HeroLandingPage() {
           </div>
 
           {/* Minimal Stats */}
-          <div className="mt-16 grid grid-cols-3 gap-8 max-w-xl">
+          <div className="mt-16 flex  items-center justify-center md:justify-start gap-8 max-w-xl">
             <Stat
               value={isFetchingUsers ? "..." : users?.length.toString() || "0"}
               label="Active Users"
