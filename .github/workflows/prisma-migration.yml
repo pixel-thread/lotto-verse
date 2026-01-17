@@ -5,6 +5,7 @@ on:
       - backend/src/lib/db/prisma/migrations/**
     branches:
       - master
+      - uat
 
 jobs:
   deploy:
