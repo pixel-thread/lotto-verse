@@ -11,6 +11,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: production
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DIRECT_URL: ${{ secrets.DIRECT_URL }}
     steps:
       - uses: actions/checkout@v4
 
@@ -19,16 +22,19 @@ jobs:
           node-version: "20"
           cache: "npm"
 
-      - name: Install deps WITHOUT postinstall
+      - name: Install dependencies
         run: |
           cd backend
           npm install
+        # env:
+        # DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        # DIRECT_URL: ${{ secrets.DIRECT_URL }}
         working-directory: .
 
       - name: Apply migrations
         run: |
           cd backend
           npx prisma migrate deploy
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+        # env:
+        # DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        # DIRECT_URL: ${{ secrets.DIRECT_URL }}
