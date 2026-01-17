@@ -59,21 +59,34 @@ model Notification {
   createdAt DateTime         @default(now())
 
   // Optional user relation — null means it's for ALL users
-  userId String?
-  user   User?   @relation(fields: [userId], references: [id])
+  userId  String?
+  user    User?              @relation(fields: [userId], references: [id])
+  tokenId String?
+  token   NotificationToken? @relation(fields: [tokenId], references: [id])
+}
+
+model NotificationToken {
+  id       String             @id @default(uuid())
+  token    String             @unique
+  platform AppVersionPlatform
+
+  userId        String?
+  user          User?          @relation(fields: [userId], references: [id])
+  notifications Notification[]
 }
 
 model User {
-  id            String         @id @default(uuid())
-  role          Role           @default(USER)
-  clerkId       String         @unique
-  phoneNumber   String?
-  purchases     Purchase[]
-  winnings      Winner[]
-  transactions  Transaction[]
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  notifications Notification[]
+  id                 String              @id @default(uuid())
+  role               Role                @default(USER)
+  clerkId            String              @unique
+  phoneNumber        String?
+  purchases          Purchase[]
+  winnings           Winner[]
+  transactions       Transaction[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  notifications      Notification[]
+  notificationTokens NotificationToken[]
 }
 
 model Draw {
