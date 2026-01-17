@@ -25,13 +25,6 @@ jobs:
           npm ci --ignore-scripts  # Skip prisma generate!
         working-directory: .
 
-      - name: Generate Prisma Client
-        run: |
-          cd backend
-          npx prisma generate
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-
       - name: Apply migrations
         run: |
           cd backend
