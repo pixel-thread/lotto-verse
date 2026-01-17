@@ -4,8 +4,9 @@ import { useQuery } from "@tanstack/react-query";
 import { DownloadIcon, Smartphone } from "lucide-react";
 import http from "../utils/http";
 import { AppVersion, Prisma } from "../lib/db/prisma/generated/prisma";
-import { Button } from "../components/ui/button";
+import { Button, buttonVariants } from "../components/ui/button";
 import { openApp } from "../utils/openApp";
+import { cn } from "../lib/utils";
 
 export default function HeroLandingPage() {
   const { data, isFetching } = useQuery({
@@ -75,7 +76,14 @@ export default function HeroLandingPage() {
                 Download App
               </a>
             ) : (
-              <div className="inline-flex items-center md:w-auto w-full justify-center h-14 px-8 rounded-xl bg-gray-200 text-gray-600 font-semibold">
+              <div
+                className={cn(
+                  buttonVariants({
+                    className:
+                      "inline-flex items-center md:w-auto w-full justify-center h-14 px-8 rounded-xl bg-gray-200 text-gray-600 font-semibold",
+                  }),
+                )}
+              >
                 <DownloadIcon className="w-5 h-5 mr-2" />
                 App Not Available
               </div>
