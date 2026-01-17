@@ -3,8 +3,8 @@ on:
   push:
     paths:
       - backend/src/lib/db/prisma/migrations/**
-    branches:
-      - "*" # Push events on any branch
+
+    branches: ["uat", "main"]
 
 jobs:
   deploy:
