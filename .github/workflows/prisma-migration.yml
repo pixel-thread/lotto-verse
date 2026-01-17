@@ -1,6 +1,5 @@
 name: Migrate PROD Prisma database
 on:
-  workflow_dispatch:
   push:
     paths:
       - "backend/prisma/migrations/**" # Fixed path
@@ -26,15 +25,9 @@ jobs:
         run: |
           cd backend
           npm install
-        # env:
-        # DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        # DIRECT_URL: ${{ secrets.DIRECT_URL }}
         working-directory: .
 
       - name: Apply migrations
         run: |
           cd backend
           npx prisma migrate deploy
-        # env:
-        # DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        # DIRECT_URL: ${{ secrets.DIRECT_URL }}
