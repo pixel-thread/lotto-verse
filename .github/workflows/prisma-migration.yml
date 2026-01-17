@@ -1,33 +1,33 @@
 name: Migrate PROD Prisma database
-
 on:
   push:
     paths:
-      - "backend/src/lib/db/prisma/migrations/**"
+      - "backend/prisma/migrations/**" # Fixed path
     branches:
       - master
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: production
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4 # Updated to latest
+      - uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: "20" # Specify Node version
+          node-version: "20"
           cache: "npm"
 
-      - name: Install dependencies
+      - name: Install deps WITHOUT postinstall
         run: |
           cd backend
-          npm ci  # Use ci instead of install for CI
-        working-directory: backend
+          npm ci --ignore-scripts  # Skip prisma generate!
+        working-directory: .
 
-      - name: Apply migrations to PROD database
-        run: npx prisma migrate deploy
-        working-directory: backend # ← CRITICAL: Run from backend dir
+      - name: Apply migrations
+        run: |
+          cd backend
+          npx prisma migrate deploy
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
