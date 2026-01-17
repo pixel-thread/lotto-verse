@@ -70,7 +70,12 @@ export default function HeroLandingPage() {
               <a
                 href={data.downloadUrl}
                 target="_blank"
-                className="inline-flex items-center gap-4 h-14 px-8 md:w-auto w-full rounded-xl bg-black text-white font-semibold hover:bg-gray-900 transition"
+                className={cn(
+                  buttonVariants({
+                    className:
+                      "inline-flex items-center md:w-auto w-full justify-center h-14 px-8 rounded-xl bg-gray-200 text-gray-600 font-semibold",
+                  }),
+                )}
               >
                 <DownloadIcon className="w-5 h-5 mr-2" />
                 Download App
