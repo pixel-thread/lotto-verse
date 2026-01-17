@@ -7,7 +7,7 @@ type Props = {
   update: Prisma.NotificationTokenUpdateInput;
 };
 
-export async function addToken({ where, create, update }: Props) {
+export async function upsertDevicePushToken({ where, create, update }: Props) {
   return await prisma.notificationToken.upsert({
     where,
     update,
