@@ -1,10 +1,13 @@
 import { pickAndDeclareRandomWinner } from "@/src/services/draw/declearDrawWinner";
 import { getActiveDraw } from "@/src/services/draw/getActiveDraw";
 import { getDrawWinner } from "@/src/services/draw/getDrawWinner";
+import { getNotificationTokens } from "@/src/services/notification/getNotificationToken";
 import { getDrawPurchase } from "@/src/services/purchase/getDrawPurchase";
+import { AppPushNotificationT } from "@/src/types/notifications";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
 import { logger } from "@/src/utils/logger";
 import { ErrorResponse, SuccessResponse } from "@/src/utils/next-response";
+import { sendPushNotifications } from "@/src/utils/notification/sendPushNotifications";
 import { NextRequest } from "next/server";
 
 export const isWinnerDeclarationOpen = (declareAt: Date): boolean => {
@@ -118,6 +121,26 @@ export async function GET(req: NextRequest) {
     });
 
     await pickAndDeclareRandomWinner({ drawId: activeDraw.id });
+
+    const userTokens = await getNotificationTokens();
+
+    const tokens = userTokens.map((token) => token.token);
+
+    const payload: AppPushNotificationT = {
+      title: "Winner Declared",
+      body: `${activeDraw.month}. Checkout the winner of today's draw`,
+      subtitle: "Winner Declared",
+      data: {
+        type: "draw",
+        entityId: activeDraw.id,
+        screen: "draw",
+      },
+    };
+
+    await sendPushNotifications({
+      tokens,
+      payload,
+    });
 
     logger.info("Winner Declared", {
       step: 7,
