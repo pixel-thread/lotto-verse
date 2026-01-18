@@ -242,5 +242,5 @@ Authorization: Bearer {{CRON_SECRET}}
 
 # @name Send test push notifications
 
-POST http://localhost:3000/api/notifications/send HTTP/1.1
+POST https://uat-lotto-verse.vercel.app/api/notifications/send HTTP/1.1
 Content-Type: application/json

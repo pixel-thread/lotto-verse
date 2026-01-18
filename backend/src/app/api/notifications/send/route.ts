@@ -1,16 +1,16 @@
 import { prisma } from "@/src/lib/db/prisma";
 import { AppPushNotificationT } from "@/src/types/notifications";
 import { handleApiErrors } from "@/src/utils/errors/handleApiErrors";
-import { SuccessResponse } from "@/src/utils/next-response";
+import { ErrorResponse, SuccessResponse } from "@/src/utils/next-response";
 import { sendPushNotifications } from "@/src/utils/notification/sendPushNotifications";
-import type { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest } from "next/server";
 
-export async function POST(req: NextApiRequest, res: NextApiResponse) {
+export async function POST(req: NextRequest) {
   const userId = "51927df5-391f-4cf0-bf23-4e3e805b1c7a";
   const message = "This is a test notification";
   const title = "Test Notification";
 
-  if (!message) return res.status(400).json({ error: "message required" });
+  if (!message) return ErrorResponse({ error: "message required" });
 
   try {
     const devices = userId
