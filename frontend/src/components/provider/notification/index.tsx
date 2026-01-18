@@ -25,8 +25,9 @@ export const ExpoNotificationProvider = ({ children }: NotificationProviderProps
   useEffect(() => {
     (async () => {
       const token = await NotificationService.getDeviceToken();
-      if (token) {
-        NotificationService.registerDeviceToken(token, user?.id);
+      // only register device token if user is signed in
+      if (token && user?.id) {
+        NotificationService.registerDeviceToken(token, user.id);
       }
     })();
   }, [user?.id]);

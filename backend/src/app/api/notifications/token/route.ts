@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = TokenSchema.parse(await req.json());
     const addedToken = await upsertDevicePushToken({
-      where: { token: body.token },
+      where: { token: body.token, userId: body.userId },
       update: body,
       create: body,
     });
