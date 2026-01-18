@@ -1,4 +1,3 @@
-// app.config.js
 export default ({ config }) => {
   return {
     ...config,
@@ -14,12 +13,17 @@ export default ({ config }) => {
         tsconfigPaths: true,
       },
       orientation: 'portrait',
-      icon: './src/assets/icons/android-icon/play_store_512.png',
-      userInterfaceStyle: 'automatic',
+      icon: './src/assets/icons/android-icon/res/mipmap-xxxhdpi/ic_launcher.png',
+      userInterfaceStyle: 'light',
       splash: {
-        image: './src/assets/icons/android-icon/play_store_512.png',
+        image: './src/assets/icons/android-icon/res/mipmap-xxxhdpi/ic_launcher_monochrome.png',
         resizeMode: 'contain',
         backgroundColor: '#ffffff',
+        dark: {
+          image: './src/assets/icons/android-icon/res/mipmap-xxxhdpi/ic_launcher_foreground.png',
+          resizeMode: 'contain',
+          backgroundColor: '#000000',
+        },
       },
       assetBundlePatterns: ['**/*'],
       ios: {
@@ -31,13 +35,17 @@ export default ({ config }) => {
       },
       android: {
         adaptiveIcon: {
-          foregroundImage:
-            './src/assets/icons/android-icon/res/mipmap-hdpi/ic_launcher_foreground.png',
-          backgroundImage:
-            './src/assets/icons/android-icon/res/mipmap-hdpi/ic_launcher_background.png',
+          foregroundImage: './src/assets/icons/android-icon/res/mipmap-xxxhdpi/ic_launcher.png',
           monochromeImage:
-            './src/assets/icons/android-icon/res/mipmap-hdpi/ic_launcher_monochrome.png',
+            './src/assets/icons/android-icon/res/mipmap-xxxhdpi/ic_launcher_monochrome.png',
           backgroundColor: '#ffffff',
+          dark: {
+            foregroundImage:
+              './src/assets/icons/android-icon/res/mipmap-xxxhdpi/ic_launcher_foreground.png',
+            monochromeImage:
+              './src/assets/icons/android-icon/res/mipmap-xxxhdpi/ic_launcher_monochrome.png',
+            backgroundColor: '#000000',
+          },
         },
         package: 'com.jyrwaboys.frontend',
         googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
