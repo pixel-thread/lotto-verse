@@ -8,7 +8,6 @@ export async function GET(req: NextRequest) {
     console.log("get latest update", !!req);
 
     const update = await getLatestUpdate();
-    console.log(update);
     if (!update) {
       return ErrorResponse({
         message: "No updates found",
