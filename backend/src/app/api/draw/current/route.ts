@@ -71,11 +71,6 @@ export async function GET(req: NextRequest) {
         },
       };
     }
-    createCache({
-      key: "currentDraw",
-      data: draw,
-      ttl: getTime(1, "h"), // 1 minute
-    });
     return SuccessResponse({
       message: "Successfully fetched current draw",
       data: draw,

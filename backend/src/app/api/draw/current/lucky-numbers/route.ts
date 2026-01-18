@@ -4,7 +4,6 @@ import { ErrorResponse, SuccessResponse } from "@/src/utils/next-response";
 import { getActiveDraw } from "@/src/services/draw/getActiveDraw";
 import { NextRequest } from "next/server";
 import { getMeta } from "@/src/utils/pagination/getMeta";
-import { createCache } from "@/src/services/cache/createCache";
 import { getTime } from "@/src/utils/helper/getTime";
 import { logger } from "@/src/utils/logger";
 
@@ -30,18 +29,6 @@ export async function GET(req: NextRequest) {
     const [numbers, total] = await getLuckyNumbers({
       where: { drawId: draw.id, isPurchased: false },
       page,
-    });
-
-    createCache({
-      key: "current-draw",
-      data: draw,
-      ttl: getTime(1, "h"),
-    });
-
-    createCache({
-      key: `current-luckyNumbers-${draw.id}-${page}`,
-      data: numbers,
-      ttl: getTime(30, "m"),
     });
 
     return SuccessResponse({

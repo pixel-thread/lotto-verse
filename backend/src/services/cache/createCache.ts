@@ -20,7 +20,6 @@ export async function createCache({
     ...data,
     expiresAt,
   };
-  console.log("Cache created", { key });
   return createMapCache({
     key,
     value: JSON.stringify(value),
