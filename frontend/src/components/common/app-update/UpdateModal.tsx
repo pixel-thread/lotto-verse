@@ -57,7 +57,7 @@ export const UpdateModal: React.FC = () => {
   const handleMandatoryUpdate = async () => {
     try {
       if (release?.downloadUrl) {
-        Linking.openURL(release?.downloadUrl);
+        Linking.canOpenURL(release?.downloadUrl);
       }
     } catch (error) {
       logger.error('Unable to open assetUrl: PTA', error);
