@@ -1,53 +1,70 @@
-import { NotificationService } from '@/src/services/notifications';
 import React, { useRef, useEffect } from 'react';
 import * as Notifications from 'expo-notifications';
+import { useLastNotificationResponse } from 'expo-notifications';
+import { NotificationService } from '@/src/services/notifications';
 import { logger } from '@/src/utils/logger';
 import { useAuth } from '@/src/hooks/auth/useAuth';
+import { handleNotificationNavigation } from '@/src/services/notifications/handleNotificationNavigation';
 
 type NotificationProviderProps = {
   children: React.ReactNode;
 };
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
+NotificationService.initialize();
 
 export const ExpoNotificationProvider = ({ children }: NotificationProviderProps) => {
   const { user } = useAuth();
+  const isAuthenticated = !!user;
+
+  const lastNotificationResponse = useLastNotificationResponse();
+
   const notificationListener = useRef<any>(null);
   const responseListener = useRef<any>(null);
 
+  // Register device token
   useEffect(() => {
     (async () => {
       const token = await NotificationService.getDeviceToken();
-
       if (token) {
-        // Send token to your backend. Replace userId with your auth user id.
         NotificationService.registerDeviceToken(token, user?.id);
       }
     })();
+  }, [user?.id]);
 
-    // Listener for incoming notifications when app is foregrounded
+  // Foreground receive
+  useEffect(() => {
     notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
       logger.log('received notification', notification);
     });
 
-    // Listener for when a user interacts with a notification (taps it)
     responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
-      logger.log('notification response', response);
+      const rawData = response.notification.request.content.data;
+
+      logger.log('notification tapped', rawData);
+
+      handleNotificationNavigation(rawData, {
+        isAuthenticated,
+      });
     });
 
     return () => {
       notificationListener.current?.remove();
       responseListener.current?.remove();
     };
-  }, []);
+  }, [isAuthenticated]);
+
+  // ✅ Cold start & resumed from background (NON-DEPRECATED)
+  useEffect(() => {
+    if (!lastNotificationResponse) return;
+
+    const rawData = lastNotificationResponse.notification.request.content.data;
+
+    logger.log('last notification response', rawData);
+
+    handleNotificationNavigation(rawData, {
+      isAuthenticated,
+    });
+  }, [lastNotificationResponse, isAuthenticated]);
 
   return <>{children}</>;
 };

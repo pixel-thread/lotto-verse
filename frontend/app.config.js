@@ -37,6 +37,7 @@ export default ({ config }) => {
         package: 'com.jyrwaboys.frontend',
         // ✅ Uses your EAS secret automatically
         googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
+        useNextNotificationsApi: true,
         intentFilters: [
           {
             action: 'VIEW',

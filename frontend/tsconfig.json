@@ -36,5 +36,5 @@
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
     "nativewind-env.d.ts"
-, "app.config.js"  ]
+, "app.config.js", "src/services/notifications/handleNotificationNavigation"  ]
 }

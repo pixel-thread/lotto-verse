@@ -4,6 +4,7 @@ import Constants from 'expo-constants';
 import { logger } from '@/src/utils/logger';
 import http from '@/src/utils/http';
 import { NOTIFICATIONS_ENDPOINTS } from '@/src/lib/endpoints/notifications';
+import { Platform } from 'react-native';
 
 export class NotificationService {
   static async getDeviceToken(): Promise<string | null> {
@@ -39,8 +40,6 @@ export class NotificationService {
   }
 
   static async registerDeviceToken(token: string, userId?: string): Promise<void> {
-    // Send token to your backend
-
     try {
       const payload = !!userId
         ? { token, userId, platform: Device.osName?.toUpperCase() }
@@ -52,6 +51,26 @@ export class NotificationService {
   }
 
   static async initialize(): Promise<void> {
-    // Set notification handler
+    if (Platform.OS === 'android') {
+      try {
+        await Notifications.setNotificationChannelAsync('default', {
+          name: 'Default',
+          importance: Notifications.AndroidImportance.MAX,
+          sound: 'default',
+          lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
+        });
+      } catch (error) {
+        logger.error('Failed to set Android notification channel:', error);
+      }
+    }
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
+        shouldShowBanner: true,
+        shouldShowList: true,
+      }),
+    });
   }
 }

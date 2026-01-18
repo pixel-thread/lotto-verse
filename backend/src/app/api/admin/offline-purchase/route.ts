@@ -160,6 +160,7 @@ export async function POST(req: NextRequest) {
     await updatePurchase({
       where: { id: createdOrder.id },
       data: { status: "SUCCESS" },
+      paymentMethod: "CASH",
     });
 
     return SuccessResponse({
