@@ -15,7 +15,7 @@ export default ({ config }) => {
       },
       orientation: 'portrait',
       icon: './src/assets/icons/android-icon/play_store_512.png',
-      userInterfaceStyle: 'light',
+      userInterfaceStyle: 'automatic',
       splash: {
         image: './src/assets/icons/android-icon/play_store_512.png',
         resizeMode: 'contain',
@@ -31,11 +31,15 @@ export default ({ config }) => {
       },
       android: {
         adaptiveIcon: {
-          foregroundImage: './src/assets/icons/android-icon/play_store_512.png',
+          foregroundImage:
+            './src/assets/icons/android-icon/res/mipmap-hdpi/ic_launcher_foreground.png',
+          backgroundImage:
+            './src/assets/icons/android-icon/res/mipmap-hdpi/ic_launcher_background.png',
+          monochromeImage:
+            './src/assets/icons/android-icon/res/mipmap-hdpi/ic_launcher_monochrome.png',
           backgroundColor: '#ffffff',
         },
         package: 'com.jyrwaboys.frontend',
-        // ✅ Uses your EAS secret automatically
         googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
         useNextNotificationsApi: true,
         intentFilters: [
