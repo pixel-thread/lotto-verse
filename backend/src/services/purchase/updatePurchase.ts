@@ -4,9 +4,14 @@ import { Prisma } from "@/src/lib/db/prisma/generated/prisma";
 type Props = {
   where: Prisma.PurchaseWhereUniqueInput;
   data: Prisma.PurchaseUpdateInput;
+  paymentMethod?: "RAZORPAY" | "CASH";
 };
 
-export async function updatePurchase({ where, data }: Props) {
+export async function updatePurchase({
+  where,
+  data,
+  paymentMethod = "RAZORPAY",
+}: Props) {
   return prisma.$transaction(async (tx) => {
     const purchase = await tx.purchase.update({ where, data });
 
@@ -20,7 +25,7 @@ export async function updatePurchase({ where, data }: Props) {
           user: { connect: { id: purchase.userId } },
           amount: purchase.amount,
           status: purchase.status,
-          paymentMethod: "RAZORPAY",
+          paymentMethod: paymentMethod,
           purchase: { connect: { id: purchase.id } },
         },
       });

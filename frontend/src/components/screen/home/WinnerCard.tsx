@@ -73,29 +73,20 @@ export function WinnerCard() {
           <Text fontSize={16} text="center" letterSpacing={0.8} color={'gray'}>
             Prize Pool
           </Text>
-          <Text fontSize={24} text="center" letterSpacing={0.8} fontWeight="600">
+          <Text fontSize={30} text="center" letterSpacing={0.8} fontWeight="900">
             ₹&nbsp;{data.prize.amount}
           </Text>
         </YStack>
         {/* Contact Winner Section */}
         {isWinner && (
-          <YStack
-            gap="$2"
-            paddingBlock="$14"
-            paddingInline="$4"
-            rounded="$6"
-            bg="$backgroundFocus"
-            width="100%"
-            items="center"
-            borderWidth={1}
-            borderColor="$borderColorFocus">
-            <Text fontSize={16} text={'center'} color="$color9">
+          <Card bordered gap="$2" bg="$backgroundFocus" padded mb={'$4'} themeInverse>
+            <Text fontSize={16} text={'center'}>
               Please contact the number below for the prize.
             </Text>
             <Text fontSize={18} text={'center'} fontWeight={'500'}>
               +91 7085-566-834
             </Text>
-          </YStack>
+          </Card>
         )}
 
         {/* Contact Admin Section */}

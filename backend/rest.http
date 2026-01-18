@@ -1,6 +1,6 @@
 ### 
 
-@drawId = 867342cf-812a-4f8b-bb53-60417dccf729
+@drawId = 62a5b56e-11f9-4cbd-98bc-b1da82844384
 @luckyNumberId = 02b1eb0d-570c-4f33-a67a-91abda43fc8d
 @userId = d8bb68ec-6c30-49c5-87f4-f41c471a78b0
 
@@ -92,7 +92,7 @@ Authorization: Bearer {{TOKEN}}
 
 # @name Admin declear draw winner
 
-POST {{NEXT_PUBLIC_API_BASE_URL}}/admin/draw/{{drawId}}/winner HTTP/1.1
+POST http://localhost:3000/api/admin/draw/{{drawId}}/winner HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{TOKEN}}
 
@@ -221,7 +221,7 @@ Authorization: Bearer {{TOKEN}}
 
 # @name cron declear winners
 
-GET {{NEXT_PUBLIC_API_BASE_URL}}/cron/declear-winners HTTP/1.1
+GET http://localhost:3000/api/cron/declear-winners HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{CRON_SECRET}}
 
@@ -236,3 +236,11 @@ Authorization: Bearer {{CRON_SECRET}}
 GET {{NEXT_PUBLIC_API_BASE_URL}}/cron/check-time HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{CRON_SECRET}}
+
+
+### 
+
+# @name Send test push notifications
+
+POST http://localhost:3000/api/notifications/send HTTP/1.1
+Content-Type: application/json
