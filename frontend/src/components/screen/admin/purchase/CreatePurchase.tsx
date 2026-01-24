@@ -100,14 +100,16 @@ export const CreatePurchase = () => {
                 <Select.ScrollUpButton themeInverse />
                 <Select.Viewport gap={'$3'} bordered>
                   <Select.Label>Select a User</Select.Label>
-                  {users &&
-                    users?.map((item, i) => (
-                      <Select.Item bordered key={item.id} value={item.id} index={i}>
-                        <Select.ItemText fontWeight={'600'} fontSize="$4">
-                          {i + 1}.&nbsp;{item.email}
-                        </Select.ItemText>
-                      </Select.Item>
-                    ))}
+                  <ScrollView height={'100%'}>
+                    {users &&
+                      users?.map((item, i) => (
+                        <Select.Item bordered key={item.id} value={item.id} index={i}>
+                          <Select.ItemText fontWeight={'600'} fontSize="$4">
+                            {i + 1}.&nbsp;{item.email}
+                          </Select.ItemText>
+                        </Select.Item>
+                      ))}
+                  </ScrollView>
                 </Select.Viewport>
                 <Select.ScrollDownButton />
               </Select.Content>

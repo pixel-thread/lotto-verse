@@ -2,8 +2,7 @@ import { z } from "zod";
 import { $Enums } from "@/src/lib/db/prisma/generated/prisma";
 
 export const updateSchema = z.object({
-  channel: z.enum($Enums.UpdateChannel), // PROD | UAT | DEV
-  type: z.enum($Enums.UpdateType), // OTA | PTA
+  type: z.enum($Enums.AppVersionType), // OTA | PTA
 
   runtimeVersion: z.string().min(1, "Runtime version is required"),
 

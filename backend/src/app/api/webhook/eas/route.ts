@@ -13,9 +13,10 @@ export async function POST(req: NextRequest) {
     const body = await req.text();
 
     const valid = verifyExpoSignature(body, signature);
+
     if (!valid) {
-      logger.error("EAS signature error", {
-        body,
+      logger.error("EAS Webhook error", {
+        reason: "Invalid signature",
         signature,
       });
       return ErrorResponse({
@@ -30,9 +31,14 @@ export async function POST(req: NextRequest) {
     try {
       payload = JSON.parse(body);
     } catch {
+      logger.error("EAS Webhook error", {
+        reason: "Invalid JSON",
+        payload: body,
+      });
       return ErrorResponse({
-        error: JSON.stringify({ error: "Invalid JSON" }),
+        error: JSON.stringify({ error: body }),
         status: 400,
+        message: "Invalid JSON",
       });
     }
 
