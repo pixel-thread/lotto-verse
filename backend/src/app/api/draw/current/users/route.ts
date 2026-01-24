@@ -46,10 +46,6 @@ export async function GET(req: NextRequest) {
     const data = await Promise.all(
       users.data.map(async (user) => {
         const purchase = purchaseMap.get(user.id.toLowerCase().trim());
-        const luckyNumber = await getUniqueLuckyNumber({
-          where: { id: purchase?.luckyNumberId },
-        });
-
         return {
           id: user.id,
           clerkId: user.id,
@@ -58,7 +54,7 @@ export async function GET(req: NextRequest) {
           imageUrl: user.imageUrl,
           phone: user.primaryPhoneNumber?.phoneNumber,
           purchaseAt: purchase ? purchase.createdAt : "",
-          number: luckyNumber?.number || "N/A",
+          number: "#",
         };
       }),
     );
