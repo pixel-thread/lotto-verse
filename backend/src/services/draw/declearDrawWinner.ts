@@ -8,24 +8,37 @@ type DeclareRandomWinnerProps = {
 export async function pickAndDeclareRandomWinner({
   drawId,
 }: DeclareRandomWinnerProps) {
-  // Find all purchases for the draw
+  // Fetch purchases with explicit no-ordering to avoid default sorting bias
   const purchases = await prisma.purchase.findMany({
     where: { drawId, status: "SUCCESS" },
+    orderBy: {}, // Disable Prisma default ordering
   });
 
   if (purchases.length === 0) {
     throw new Error("No purchases found for this draw");
   }
 
-  // Get all previous winners' userIds for this draw to exclude them
+  // Get previous winners to exclude
   const previousWinners = await prisma.winner.findMany({
     where: { drawId },
     select: { userId: true },
   });
   const excludeUserIds = new Set(previousWinners.map((w) => w.userId));
 
-  // Filter out previous winners and pick from eligible purchases
-  const eligiblePurchases = purchases.filter(
+  // Shuffle purchases FIRST (Fisher-Yates - true uniform randomness)
+  function shuffleArray<T>(array: T[]): T[] {
+    const shuffled = [...array]; // Copy to avoid mutating original
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  }
+
+  const shuffledPurchases = shuffleArray(purchases);
+
+  // Filter eligible AFTER shuffle (eliminates any DB order bias)
+  const eligiblePurchases = shuffledPurchases.filter(
     (purchase) => !excludeUserIds.has(purchase.userId),
   );
 
@@ -33,9 +46,8 @@ export async function pickAndDeclareRandomWinner({
     throw new Error("No eligible winners (all previous winners exhausted)");
   }
 
-  // Pick completely random winner from eligible purchases
-  const randomIndex = Math.floor(Math.random() * eligiblePurchases.length);
-  const winnerPurchase = eligiblePurchases[randomIndex];
+  // Pick first from shuffled eligible (perfectly random)
+  const winnerPurchase = eligiblePurchases[0]!;
   const winnerUserId = winnerPurchase.userId;
 
   // Double-check purchase exists
@@ -47,7 +59,7 @@ export async function pickAndDeclareRandomWinner({
     throw new Error("Winner purchase not found. Please try again.");
   }
 
-  // Check if winner already exists for this draw
+  // Check if winner already exists for this draw (single winner logic)
   const existingWinner = await prisma.winner.findUnique({
     where: { drawId },
   });
