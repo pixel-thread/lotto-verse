@@ -9,7 +9,6 @@ import { DrawT } from '@/src/types/draw';
 import { RefreshControl } from 'react-native-gesture-handler';
 import { Ternary } from '../../common/Ternary';
 import { EmptyCard } from '../../common/EmptyCard';
-import { formatMonth } from '@/src/utils/helper/formatMonth';
 
 export const DrawsScreen = () => {
   const {
@@ -32,6 +31,7 @@ export const DrawsScreen = () => {
       />
       <ScrollView
         refreshControl={<RefreshControl refreshing={isFetching} onRefresh={refetch} />}
+        p="$4"
         style={{ width: '100%' }}>
         <Ternary
           condition={prevDraws?.length === 0 || !prevDraws}
@@ -47,7 +47,6 @@ export const DrawsScreen = () => {
             <YStack gap="$4" paddingBlock="$4">
               {prevDraws &&
                 prevDraws?.map((draw) => {
-                  const displayMonth = formatMonth(draw.month || '');
                   return (
                     <Card
                       key={draw.id}
@@ -57,7 +56,7 @@ export const DrawsScreen = () => {
                       borderColor="$borderColor">
                       <YStack gap="$2">
                         <Text fontWeight="700" fontSize={18} textTransform="uppercase">
-                          {displayMonth} Draw
+                          {draw.month} Draw
                         </Text>
                         <Text fontSize={32} fontWeight="900" color="$green10">
                           ₹ {draw.prize.amount}
