@@ -1,4 +1,4 @@
-name: EAS Trigger deployment to production
+name: EAS Trigger - Deploy to production
 
 on:
   push:
