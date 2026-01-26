@@ -4,7 +4,7 @@ import { YStack, Text, Button } from 'tamagui';
 
 export const NotFoundScreen = ({
   title = '404 - Page Not Found',
-  message = 'The page you are trying to access does not exist.',
+  message = 'The page you are trying to access does not exist. Please try again.',
 }: {
   title?: string;
   message?: string;
