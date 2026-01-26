@@ -20,12 +20,14 @@ export const DrawsScreen = () => {
     queryFn: () => http.get<DrawT[]>(DRAW_ENDPOINTS.GET_DRAWS),
     select: (data) => data.data,
   });
+
   return (
     <>
       <Stack.Screen
         options={{
           title: 'Luck Draw',
           headerShown: true,
+          animation: 'fade',
           header: ({ back }) => <CustomHeader back={!!back} />,
         }}
       />
