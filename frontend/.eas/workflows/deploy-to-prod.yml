@@ -10,19 +10,10 @@ jobs:
     type: fingerprint
     environment: production
 
-  get_android_build:
-    name: Get Android Build
-    type: get-build
-    needs: [fingerprint]
-    params:
-      platform: android
-      profile: production
-
   build_android:
     name: Build Android
     type: build
     needs: [get_android_build]
-    if: ${{ !needs.get_android_build.outputs.build_id }}
     params:
       platform: android
       profile: production
