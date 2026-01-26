@@ -2,25 +2,27 @@ name: EAS Trigger - Deploy to production
 
 on:
   push:
-    # Deploy only from your protected branch
     branches: ['master']
 
 jobs:
   fingerprint:
-    # 1) Generate native fingerprint for current commit
-    #    This captures native deps, config, etc. so we know
-    #    whether a new binary is required or JS-only update is enough.
     name: Fingerprint
     type: fingerprint
     environment: production
 
+  get_android_build:
+    name: Get Android Build
+    type: get-build
+    needs: [fingerprint]
+    params:
+      platform: android
+      profile: production
+
   build_android:
-    # 3A) No compatible build found -> create a new native build.
-    #     This is your "mandatory update candidate" (PTA).
     name: Build Android
+    type: build
     needs: [get_android_build]
     if: ${{ !needs.get_android_build.outputs.build_id }}
-    type: build
     params:
       platform: android
       profile: production
