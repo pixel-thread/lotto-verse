@@ -13,7 +13,6 @@ jobs:
   build_android:
     name: Build Android
     type: build
-    needs: [get_android_build]
     params:
       platform: android
       profile: production
